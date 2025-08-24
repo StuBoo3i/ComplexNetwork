@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>理解复杂网络动力学的数理和学科领域基础</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --light-gray: #ecf0f1;
+            --dark-gray: #7f8c8d;
+            --accent-color: #e74c3c;
+            --sidebar-width: 280px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-color);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.8rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-sub-item {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-sub-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .nav-sub-link:hover {
+            color: white;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1200px;
+            margin-right: auto;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Cards for sections */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Chart styles */
+        .chart-container {
+            margin: 2rem 0;
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 2000;
+                background-color: var(--secondary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            .card {
+                padding: 1.2rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>复杂网络动力学</h2>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#intro" class="nav-link"><i class="fas fa-book-open"></i> 引言</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#math" class="nav-link"><i class="fas fa-calculator"></i> 数学基础</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#graph-theory" class="nav-sub-link">图论基础</a></li>
+                        <li class="nav-sub-item"><a href="#linear-algebra" class="nav-sub-link">线性代数</a></li>
+                        <li class="nav-sub-item"><a href="#differential-equations" class="nav-sub-link">微分方程</a></li>
+                        <li class="nav-sub-item"><a href="#probability" class="nav-sub-link">概率论与统计物理</a></li>
+                        <li class="nav-sub-item"><a href="#nonlinear" class="nav-sub-link">非线性动力学</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#disciplines" class="nav-link"><i class="fas fa-university"></i> 学科领域基础</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#physics" class="nav-sub-link">物理学</a></li>
+                        <li class="nav-sub-item"><a href="#computer-science" class="nav-sub-link">计算机科学</a></li>
+                        <li class="nav-sub-item"><a href="#biology" class="nav-sub-link">生物学</a></li>
+                        <li class="nav-sub-item"><a href="#social-science" class="nav-sub-link">社会科学</a></li>
+                        <li class="nav-sub-item"><a href="#engineering" class="nav-sub-link">工程科学</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#methods" class="nav-link"><i class="fas fa-tools"></i> 跨学科研究方法</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#modeling" class="nav-sub-link">计算建模与模拟</a></li>
+                        <li class="nav-sub-item"><a href="#data-analysis" class="nav-sub-link">数据分析与挖掘</a></li>
+                        <li class="nav-sub-item"><a href="#machine-learning" class="nav-sub-link">机器学习与AI</a></li>
+                        <li class="nav-sub-item"><a href="#experiments" class="nav-sub-link">实验与观测</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#frontiers" class="nav-link"><i class="fas fa-rocket"></i> 研究前沿</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#synchronization" class="nav-sub-link">网络同步</a></li>
+                        <li class="nav-sub-item"><a href="#diffusion" class="nav-sub-link">网络传播</a></li>
+                        <li class="nav-sub-item"><a href="#control" class="nav-sub-link">网络控制</a></li>
+                        <li class="nav-sub-item"><a href="#robustness" class="nav-sub-link">网络鲁棒性</a></li>
+                        <li class="nav-sub-item"><a href="#higher-order" class="nav-sub-link">高阶网络</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#conclusion" class="nav-link"><i class="fas fa-flag-checkered"></i> 结论与展望</a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <section id="intro" class="section">
+                <h1>理解复杂网络动力学的数理和学科领域基础</h1>
+                <div class="card">
+                    <p>复杂网络动力学是网络科学的核心研究方向，旨在揭示复杂系统中大量相互作用的组分如何通过网络结构产生集体动力学行为。从神经网络到社会网络，从生态系统到工程系统，复杂网络动力学为理解这些系统的行为提供了统一的框架。</p>
+                    <p>随着大数据和人工智能技术的发展，复杂网络动力学研究已成为多学科交叉的前沿领域，涉及数学、物理学、计算机科学、生物学、社会科学等多个学科。</p>
+                </div>
+            </section>
+
+            <section id="math" class="section">
+                <h2>数学基础</h2>
+                <p>数学是理解复杂网络动力学的基础语言，提供了描述网络结构和动力学过程的精确工具。以下是几个关键的数学领域及其在复杂网络动力学中的应用。</p>
+
+                <div id="graph-theory" class="card">
+                    <h3><i class="fas fa-project-diagram"></i> 图论基础</h3>
+                    <p>图论是研究复杂网络的基础数学工具，为网络结构的描述和分析提供了理论框架。</p>
+                    <h4>基本概念与表示</h4>
+                    <ul>
+                        <li><strong>图的定义</strong>：图论中的图由节点和边组成，通常表示为G=(V,E)</li>
+                        <li><strong>图的表示方法</strong>：邻接矩阵、拉普拉斯矩阵、邻接表</li>
+                        <li><strong>子图与网络结构</strong>：路径与距离、环与圈、树结构</li>
+                    </ul>
+                    <h4>网络拓扑性质</h4>
+                    <ul>
+                        <li><strong>度分布</strong>：复杂网络的度分布通常偏离泊松分布，表现出幂律分布等特性</li>
+                        <li><strong>聚类系数</strong>：描述节点的邻居之间相互连接的程度</li>
+                        <li><strong>小世界特性</strong>：同时具有高聚类系数和短平均路径长度</li>
+                        <li><strong>社区结构</strong>：网络中节点形成紧密连接的子群体</li>
+                    </ul>
+                </div>
+
+                <div id="linear-algebra" class="card">
+                    <h3><i class="fas fa-matrix"></i> 线性代数基础</h3>
+                    <p>线性代数是研究复杂网络动力学的核心数学工具，特别是在处理网络结构和动力学方程时。</p>
+                    <h4>矩阵理论</h4>
+                    <ul>
+                        <li><strong>特征值与特征向量</strong>：邻接矩阵和拉普拉斯矩阵的特征值和特征向量是分析网络动力学的关键工具</li>
+                        <li><strong>矩阵分解</strong>：谱分解、奇异值分解(SVD)</li>
+                        <li><strong>矩阵范数</strong>：用于衡量矩阵的大小和网络的稳定性</li>
+                    </ul>
+                </div>
+
+                <div id="differential-equations" class="card">
+                    <h3><i class="fas fa-calculator"></i> 微分方程与动力系统理论</h3>
+                    <p>微分方程和动力系统理论是描述和分析复杂网络动力学的核心数学工具。</p>
+                    <h4>微分方程基础</h4>
+                    <ul>
+                        <li><strong>常微分方程(ODE)</strong>：描述系统状态随时间的变化率</li>
+                        <li><strong>偏微分方程(PDE)</strong>：用于描述系统状态在空间和时间上的变化</li>
+                        <li><strong>差分方程</strong>：用于离散时间系统的建模</li>
+                    </ul>
+                    <h4>动力系统理论</h4>
+                    <ul>
+                        <li><strong>稳定性理论</strong>：研究系统平衡点或周期轨道的稳定性</li>
+                        <li><strong>分岔理论</strong>：研究系统参数变化导致系统动力学行为发生质变的现象</li>
+                        <li><strong>混沌理论</strong>：研究确定性系统中出现的貌似随机的行为</li>
+                    </ul>
+                </div>
+
+                <div id="probability" class="card">
+                    <h3><i class="fas fa-dice"></i> 概率论与统计物理基础</h3>
+                    <p>概率论和统计物理为理解复杂网络动力学提供了统计方法和宏观描述框架。</p>
+                    <h4>概率论基础</h4>
+                    <ul>
+                        <li><strong>概率分布</strong>：描述随机变量取值的可能性</li>
+                        <li><strong>随机过程</strong>：描述随机变量随时间的变化</li>
+                        <li><strong>马尔可夫链</strong>：具有无后效性的随机过程</li>
+                    </ul>
+                    <h4>统计物理基础</h4>
+                    <ul>
+                        <li><strong>统计系综</strong>：为研究大量粒子的集体行为提供了框架</li>
+                        <li><strong>相变理论</strong>：研究系统在参数变化下发生的质变现象</li>
+                        <li><strong>临界现象</strong>：研究系统在相变点附近的行为</li>
+                    </ul>
+                </div>
+
+                <div id="nonlinear" class="card">
+                    <h3><i class="fas fa-bolt"></i> 非线性动力学与混沌理论</h3>
+                    <p>非线性动力学与混沌理论是理解复杂网络中复杂动力学行为的关键。</p>
+                    <h4>非线性动力学基础</h4>
+                    <ul>
+                        <li><strong>非线性系统</strong>：状态变量之间存在非线性关系的系统</li>
+                        <li><strong>相空间重构</strong>：从时间序列数据中恢复系统动力学特性</li>
+                        <li><strong>分形与维数</strong>：描述复杂系统的几何特性</li>
+                    </ul>
+                    <h4>混沌理论基础</h4>
+                    <ul>
+                        <li><strong>混沌现象</strong>：确定性系统中出现的貌似随机的行为</li>
+                        <li><strong>Lyapunov指数</strong>：衡量系统对初始条件的敏感程度</li>
+                        <li><strong>奇怪吸引子</strong>：混沌系统的长期行为归宿</li>
+                    </ul>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="mathDistributionChart"></canvas>
+                </div>
+            </section>
+
+            <section id="disciplines" class="section">
+                <h2>学科领域基础</h2>
+                <p>复杂网络动力学是一门交叉学科，其研究涉及多个学科领域的知识和方法。以下是几个关键的学科领域及其在复杂网络动力学中的应用。</p>
+
+                <div id="physics" class="card">
+                    <h3><i class="fas fa-atom"></i> 物理学基础</h3>
+                    <p>物理学是研究复杂网络动力学的重要基础学科，特别是统计物理和非线性物理为理解复杂网络的动力学行为提供了理论框架和方法。</p>
+                    <h4>统计物理</h4>
+                    <ul>
+                        <li><strong>统计力学</strong>：研究大量粒子集体行为的物理学分支</li>
+                        <li><strong>相变与临界现象</strong>：理解复杂网络中的同步相变、传播相变等现象</li>
+                        <li><strong>重整化群理论</strong>：研究临界现象的重要工具</li>
+                    </ul>
+                    <h4>非线性物理</h4>
+                    <ul>
+                        <li><strong>非线性振动</strong>：研究复杂网络中的振荡和同步现象</li>
+                        <li><strong>孤子与波传播</strong>：研究网络中的信息传播和能量传输</li>
+                        <li><strong>流体力学</strong>：为理解复杂网络中的混沌行为和能量耗散提供类比</li>
+                    </ul>
+                </div>
+
+                <div id="computer-science" class="card">
+                    <h3><i class="fas fa-laptop-code"></i> 计算机科学基础</h3>
+                    <p>计算机科学为复杂网络动力学研究提供了计算工具、算法和数据处理方法，是进行网络建模、模拟和分析的基础。</p>
+                    <h4>数据结构与算法</h4>
+                    <ul>
+                        <li><strong>图数据结构</strong>：邻接矩阵、邻接表等数据结构为网络分析提供支持</li>
+                        <li><strong>算法设计与分析</strong>：最短路径算法、社区发现算法、网络嵌入算法</li>
+                        <li><strong>数值计算方法</strong>：Runge-Kutta方法、Euler方法等</li>
+                    </ul>
+                    <h4>编程语言与工具</h4>
+                    <ul>
+                        <li><strong>编程语言</strong>：Python、C++、MATLAB等</li>
+                        <li><strong>网络分析库</strong>：NetworkX、igraph、TensorFlow、PyTorch等</li>
+                        <li><strong>并行计算</strong>：处理大规模网络的关键技术</li>
+                    </ul>
+                </div>
+
+                <div id="biology" class="card">
+                    <h3><i class="fas fa-dna"></i> 生物学基础</h3>
+                    <p>生物学是复杂网络动力学的重要应用领域，生物网络为研究复杂网络的结构和动力学提供了丰富的案例和问题。</p>
+                    <h4>细胞与分子生物学</h4>
+                    <ul>
+                        <li><strong>代谢网络</strong>：描述细胞内化学反应的网络</li>
+                        <li><strong>基因调控网络</strong>：描述基因之间的调控关系</li>
+                        <li><strong>蛋白质相互作用网络</strong>：描述蛋白质之间的物理相互作用</li>
+                    </ul>
+                    <h4>神经科学</h4>
+                    <ul>
+                        <li><strong>神经网络</strong>：描述神经元之间连接和信息传递的网络</li>
+                        <li><strong>大脑功能网络</strong>：描述大脑不同区域之间的功能连接</li>
+                        <li><strong>神经元模型</strong>：如Hodgkin-Huxley模型、Izhikevich模型等</li>
+                    </ul>
+                </div>
+
+                <div id="social-science" class="card">
+                    <h3><i class="fas fa-users"></i> 社会科学基础</h3>
+                    <p>社会科学是复杂网络动力学的重要应用领域，社会网络为研究复杂网络的结构和动力学提供了丰富的案例和问题。</p>
+                    <h4>社会学</h4>
+                    <ul>
+                        <li><strong>社会网络分析</strong>：研究社会行动者及其关系构成的网络结构</li>
+                        <li><strong>社会影响与传播</strong>：研究社会信息、行为和观念如何在社会网络中传播</li>
+                        <li><strong>集体行为与社会运动</strong>：研究群体行为的形成和演化机制</li>
+                    </ul>
+                    <h4>经济学</h4>
+                    <ul>
+                        <li><strong>经济网络</strong>：描述经济主体之间的交易关系</li>
+                        <li><strong>博弈论</strong>：研究决策主体之间的策略互动</li>
+                        <li><strong>市场动力学</strong>：研究市场价格和交易量的变化规律</li>
+                    </ul>
+                </div>
+
+                <div id="engineering" class="card">
+                    <h3><i class="fas fa-industry"></i> 工程科学基础</h3>
+                    <p>工程科学是复杂网络动力学的重要应用领域，工程网络为研究复杂网络的结构和动力学提供了丰富的案例和问题。</p>
+                    <h4>控制理论</h4>
+                    <ul>
+                        <li><strong>线性系统理论</strong>：研究线性网络动力学系统的稳定性和可控性</li>
+                        <li><strong>非线性控制</strong>：研究非线性网络动力学系统的控制和同步</li>
+                        <li><strong>网络控制</strong>：研究如何通过控制网络中的部分节点来影响整个网络</li>
+                    </ul>
+                    <h4>信号与信息处理</h4>
+                    <ul>
+                        <li><strong>信号处理</strong>：分析网络中的信息传播和处理</li>
+                        <li><strong>信息论</strong>：衡量网络的信息传递效率和复杂性</li>
+                        <li><strong>图像处理</strong>：分析网络的结构和动力学的可视化</li>
+                    </ul>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="disciplineChart"></canvas>
+                </div>
+            </section>
+
+            <section id="methods" class="section">
+                <h2>跨学科研究方法与工具</h2>
+                <p>复杂网络动力学是一门交叉学科，其研究需要综合运用多学科的方法和工具。以下是几种重要的跨学科研究方法和工具。</p>
+
+                <div id="modeling" class="card">
+                    <h3><i class="fas fa-code"></i> 计算建模与模拟</h3>
+                    <p>计算建模与模拟是研究复杂网络动力学的核心方法，通过建立数学模型和进行数值模拟，可以深入理解复杂网络的动力学行为。</p>
+                    <h4>建模方法</h4>
+                    <ul>
+                        <li><strong>基于个体的模型</strong>：将网络中的每个节点视为具有特定行为规则的个体</li>
+                        <li><strong>平均场模型</strong>：用平均值来描述系统的状态，适用于大规模网络</li>
+                        <li><strong>混合模型</strong>：结合了基于个体的模型和平均场模型的优点</li>
+                    </ul>
+                    <h4>模拟技术</h4>
+                    <ul>
+                        <li><strong>数值积分方法</strong>：Euler方法、Runge-Kutta方法等</li>
+                        <li><strong>蒙特卡洛模拟</strong>：处理随机因素在网络动力学中的作用</li>
+                        <li><strong>并行计算技术</strong>：加速大规模网络的模拟</li>
+                    </ul>
+                </div>
+
+                <div id="data-analysis" class="card">
+                    <h3><i class="fas fa-database"></i> 数据分析与挖掘</h3>
+                    <p>数据分析与挖掘是研究复杂网络动力学的重要方法，通过对真实网络数据的分析，可以揭示网络的结构和动力学特性。</p>
+                    <h4>数据采集与处理</h4>
+                    <ul>
+                        <li><strong>网络数据采集</strong>：获取真实网络的结构和动力学数据</li>
+                        <li><strong>数据清洗与预处理</strong>：处理原始数据中的噪声和缺失值</li>
+                        <li><strong>特征提取与表示</strong>：从原始数据中提取有意义的特征</li>
+                    </ul>
+                    <h4>数据分析方法</h4>
+                    <ul>
+                        <li><strong>统计分析</strong>：描述网络的基本特征和分布规律</li>
+                        <li><strong>可视化分析</strong>：直观展示网络的结构和动力学行为</li>
+                        <li><strong>时序分析</strong>：分析网络动力学行为随时间的变化规律</li>
+                    </ul>
+                </div>
+
+                <div id="machine-learning" class="card">
+                    <h3><i class="fas fa-brain"></i> 机器学习与人工智能</h3>
+                    <p>机器学习与人工智能技术为研究复杂网络动力学提供了新的方法和工具，特别是在处理大规模数据和复杂模型时具有显著优势。</p>
+                    <h4>机器学习方法</h4>
+                    <ul>
+                        <li><strong>监督学习</strong>：从标记数据中学习预测模型</li>
+                        <li><strong>无监督学习</strong>：从无标记数据中发现模式和结构</li>
+                        <li><strong>强化学习</strong>：在动态环境中学习最优行为策略</li>
+                    </ul>
+                    <h4>深度学习技术</h4>
+                    <ul>
+                        <li><strong>图神经网络</strong>：专门处理图结构数据的深度学习模型</li>
+                        <li><strong>循环神经网络</strong>：处理序列数据的深度学习模型</li>
+                        <li><strong>生成对抗网络</strong>：用于生成数据的深度学习模型</li>
+                    </ul>
+                </div>
+
+                <div id="experiments" class="card">
+                    <h3><i class="fas fa-flask"></i> 实验与观测方法</h3>
+                    <p>实验与观测是研究复杂网络动力学的基础，通过实验和观测可以获取真实网络的数据，验证理论模型的预测，发现新的现象和规律。</p>
+                    <h4>实验设计</h4>
+                    <ul>
+                        <li><strong>实验室实验</strong>：在控制条件下进行的实验</li>
+                        <li><strong>现场实验</strong>：在真实环境中进行的实验</li>
+                        <li><strong>自然实验</strong>：利用自然发生的事件进行的研究</li>
+                    </ul>
+                    <h4>观测技术</h4>
+                    <ul>
+                        <li><strong>传感器网络</strong>：采集环境数据的网络</li>
+                        <li><strong>社会观测</strong>：通过观察和记录社会现象来获取数据</li>
+                        <li><strong>生物观测</strong>：通过观察和记录生物系统的行为来获取数据</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="frontiers" class="section">
+                <h2>研究方向与前沿领域</h2>
+                <p>复杂网络动力学是一个快速发展的研究领域，其研究方向和前沿领域不断扩展和深化。以下是几个重要的研究方向和前沿领域。</p>
+
+                <div id="synchronization" class="card">
+                    <h3><i class="fas fa-sync-alt"></i> 网络同步与振荡</h3>
+                    <p>网络同步与振荡是复杂网络动力学的经典研究方向，近年来在理论和应用方面都取得了重要进展。</p>
+                    <h4>同步理论</h4>
+                    <ul>
+                        <li><strong>Kuramoto模型</strong>：描述网络同步的经典模型</li>
+                        <li><strong>广义同步</strong>：包括滞后同步、完全同步、相位同步等</li>
+                        <li><strong>复杂网络的同步条件</strong>：研究耦合强度、网络拓扑等因素的影响</li>
+                    </ul>
+                    <h4>应用领域</h4>
+                    <ul>
+                        <li><strong>神经网络</strong>：理解大脑的信息处理和认知功能</li>
+                        <li><strong>电力网络</strong>：保障电网的稳定运行和防止大面积停电</li>
+                        <li><strong>化学振荡</strong>：理解复杂的化学过程和设计新型化学反应器</li>
+                    </ul>
+                </div>
+
+                <div id="diffusion" class="card">
+                    <h3><i class="fas fa-project-diagram"></i> 网络传播与扩散</h3>
+                    <p>网络传播与扩散是复杂网络动力学的重要研究方向，涉及信息、疾病、观点等在网络中的传播过程。</p>
+                    <h4>传播模型</h4>
+                    <ul>
+                        <li><strong>疾病传播模型</strong>：SIR、SIS、SEIR等</li>
+                        <li><strong>信息传播模型</strong>：阈值模型、级联模型、独立级联模型等</li>
+                        <li><strong>复杂传播</strong>：传播过程中需要多个条件同时满足的现象</li>
+                    </ul>
+                    <h4>应用领域</h4>
+                    <ul>
+                        <li><strong>公共卫生</strong>：为疾病防控和疫苗接种策略提供依据</li>
+                        <li><strong>社交媒体</strong>：为信息推荐、谣言控制等提供方法</li>
+                        <li><strong>市场营销</strong>：为营销策略和产品推广提供指导</li>
+                    </ul>
+                </div>
+
+                <div id="control" class="card">
+                    <h3><i class="fas fa-sliders-h"></i> 网络控制与优化</h3>
+                    <p>网络控制与优化是复杂网络动力学的重要应用方向，旨在通过控制网络中的部分节点来影响整个网络的行为。</p>
+                    <h4>网络控制理论</h4>
+                    <ul>
+                        <li><strong>可控性理论</strong>：研究网络是否可以通过控制部分节点达到任意目标状态</li>
+                        <li><strong>最小控制集</strong>：能够控制整个网络的最小节点集合</li>
+                        <li><strong>牵制控制</strong>：通过控制网络中的部分节点来影响整个网络</li>
+                    </ul>
+                    <h4>应用领域</h4>
+                    <ul>
+                        <li><strong>智能电网</strong>：提高电网的稳定性和效率</li>
+                        <li><strong>交通网络</strong>：缓解交通拥堵，提高交通效率</li>
+                        <li><strong>社交网络</strong>：引导信息传播，促进健康行为</li>
+                    </ul>
+                </div>
+
+                <div id="robustness" class="card">
+                    <h3><i class="fas fa-shield-alt"></i> 网络鲁棒性与脆弱性</h3>
+                    <p>网络鲁棒性与脆弱性是研究网络在故障和攻击下的稳定性和恢复能力的重要方向。</p>
+                    <h4>鲁棒性分析</h4>
+                    <ul>
+                        <li><strong>网络容错性</strong>：研究网络在随机故障下的稳定性</li>
+                        <li><strong>网络抗毁性</strong>：研究网络在恶意攻击下的稳定性</li>
+                        <li><strong>级联失效</strong>：研究网络中局部故障引发的连锁反应</li>
+                    </ul>
+                    <h4>应用领域</h4>
+                    <ul>
+                        <li><strong>通信网络</strong>：提高网络的可靠性和抗攻击能力</li>
+                        <li><strong>电力网络</strong>：防止大面积停电和提高恢复能力</li>
+                        <li><strong>生态系统</strong>：保护生物多样性和生态系统稳定性</li>
+                    </ul>
+                </div>
+
+                <div id="higher-order" class="card">
+                    <h3><i class="fas fa-layer-group"></i> 高阶网络与多尺度分析</h3>
+                    <p>高阶网络与多尺度分析是近年来复杂网络动力学研究的前沿方向，旨在更全面地描述和分析复杂系统的结构和动力学。</p>
+                    <h4>高阶网络模型</h4>
+                    <ul>
+                        <li><strong>超图</strong>：允许一条边连接任意多个节点</li>
+                        <li><strong>多层网络</strong>：由多个单层网络组成的网络结构</li>
+                        <li><strong>时间网络</strong>：考虑时间因素的网络模型</li>
+                    </ul>
+                    <h4>多尺度分析方法</h4>
+                    <ul>
+                        <li><strong>粗粒化方法</strong>：将网络的局部结构和动力学进行聚合</li>
+                        <li><strong>多分辨率分析</strong>：在不同尺度上分析网络的结构和动力学</li>
+                        <li><strong>层次分析</strong>：将网络分解为不同层次的结构</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>结论与展望</h2>
+                <div class="card">
+                    <p>复杂网络动力学是一门交叉学科，其研究需要综合运用数学、物理学、计算机科学、生物学、社会科学和工程科学等多学科的知识和方法。本文系统梳理了理解复杂网络动力学所需的数理基础和学科领域基础，为研究者提供了清晰的学习路径和知识框架。</p>
+                    
+                    <p>随着大数据、人工智能和高性能计算技术的发展，复杂网络动力学将在更广泛的领域发挥重要作用。未来的研究将更加注重多学科交叉融合，更加关注实际应用问题，更加注重理论与实践的结合。复杂网络动力学将为理解和控制复杂系统提供更强大的理论框架和方法工具，为解决人类面临的复杂系统问题提供新的思路和方法。</p>
+                    
+                    <p>总之，理解复杂网络动力学需要建立系统的数理基础和跨学科思维方式，需要综合运用多学科的知识和方法，需要关注前沿领域和实际应用。只有这样，才能在复杂网络动力学这一充满挑战和机遇的研究领域取得有价值的成果。</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Close sidebar when clicking a link
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+
+        // Math distribution chart
+        const mathCtx = document.getElementById('mathDistributionChart').getContext('2d');
+        const mathChart = new Chart(mathCtx, {
+            type: 'pie',
+            data: {
+                labels: ['图论', '线性代数', '微分方程', '概率论与统计物理', '非线性动力学'],
+                datasets: [{
+                    data: [25, 20, 20, 15, 20],
+                    backgroundColor: [
+                        '#3498db',
+                        '#2ecc71',
+                        '#e74c3c',
+                        '#f39c12',
+                        '#9b59b6'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    title: {
+                        display: true,
+                        text: '复杂网络动力学数学基础分布',
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            }
+        });
+
+        // Discipline chart
+        const disciplineCtx = document.getElementById('disciplineChart').getContext('2d');
+        const disciplineChart = new Chart(disciplineCtx, {
+            type: 'bar',
+            data: {
+                labels: ['物理学', '计算机科学', '生物学', '社会科学', '工程科学'],
+                datasets: [{
+                    label: '研究关注度',
+                    data: [90, 85, 80, 75, 85],
+                    backgroundColor: [
+                        '#3498db',
+                        '#2ecc71',
+                        '#e74c3c',
+                        '#f39c12',
+                        '#9b59b6'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '复杂网络动力学相关学科研究关注度',
+                        font: {
+                            size: 18
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '关注度指数 (0-100)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
