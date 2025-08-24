@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复杂网络基础知识调研：模型与指标分析报告</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --light-gray: #ecf0f1;
+            --dark-gray: #7f8c8d;
+            --accent-color: #e74c3c;
+            --sidebar-width: 280px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-color);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.8rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-sub-item {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-sub-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .nav-sub-link:hover {
+            color: white;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1200px;
+            margin-right: auto;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Cards for sections */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Chart styles */
+        .chart-container {
+            margin: 2rem 0;
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        /* Table styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .comparison-table th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 2000;
+                background-color: var(--secondary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            .card {
+                padding: 1.2rem;
+            }
+
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+
+            .comparison-table th, .comparison-table td {
+                padding: 8px 10px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>网络模型与指标</h2>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#intro" class="nav-link"><i class="fas fa-book-open"></i> 引言</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#models" class="nav-link"><i class="fas fa-sitemap"></i> 网络模型</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#random-models" class="nav-sub-link">随机网络模型</a></li>
+                        <li class="nav-sub-item"><a href="#deterministic-models" class="nav-sub-link">确定性网络模型</a></li>
+                        <li class="nav-sub-item"><a href="#scale-free-models" class="nav-sub-link">无标度网络模型</a></li>
+                        <li class="nav-sub-item"><a href="#small-world-models" class="nav-sub-link">小世界网络模型</a></li>
+                        <li class="nav-sub-item"><a href="#other-models" class="nav-sub-link">其他网络模型</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#metrics" class="nav-link"><i class="fas fa-chart-line"></i> 网络指标</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#node-metrics" class="nav-sub-link">节点级指标</a></li>
+                        <li class="nav-sub-item"><a href="#global-metrics" class="nav-sub-link">全局网络指标</a></li>
+                        <li class="nav-sub-item"><a href="#community-metrics" class="nav-sub-link">社区结构指标</a></li>
+                        <li class="nav-sub-item"><a href="#dynamics-metrics" class="nav-sub-link">动力学相关指标</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#comparison" class="nav-link"><i class="fas fa-balance-scale"></i> 模型比较分析</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#application" class="nav-link"><i class="fas fa-cogs"></i> 指标应用场景</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#case-study" class="nav-link"><i class="fas fa-flask"></i> 案例研究</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#conclusion" class="nav-link"><i class="fas fa-flag-checkered"></i> 结论与展望</a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <section id="intro" class="section">
+                <h1>复杂网络基础知识调研：模型与指标分析报告</h1>
+                <div class="card">
+                    <p>复杂网络作为描述复杂系统结构的有力工具，已广泛应用于物理、生物、社会、计算机等多个领域。本报告旨在系统梳理复杂网络的基础模型与核心指标，为深入理解网络结构与功能的关系提供理论基础。</p>
+                    <p>网络模型是理解真实系统拓扑特征的抽象框架，而网络指标则是量化分析网络结构的关键工具。通过对模型和指标的系统研究，能够揭示复杂系统的组织规律和动力学特性，为网络设计、优化和控制提供指导。</p>
+                </div>
+            </section>
+
+            <section id="models" class="section">
+                <h2>网络模型</h2>
+                <p>网络模型是对真实网络系统的抽象与简化，通过设定特定的连接规则来生成具有特定拓扑特征的网络。不同的网络模型反映了不同类型真实系统的结构特性。</p>
+
+                <div id="random-models" class="card">
+                    <h3><i class="fas fa-random"></i> 随机网络模型</h3>
+                    <p>随机网络模型是最早提出的网络模型之一，其核心思想是节点间的连接是随机形成的。</p>
+                    
+                    <h4>Erdős-Rényi (ER) 模型</h4>
+                    <ul>
+                        <li><strong>基本原理</strong>：给定N个节点，任意两个节点之间以概率p独立连接</li>
+                        <li><strong>构造方法</strong>：有两种等价表述，G(N,M)模型（固定边数M）和G(N,p)模型（固定连接概率p）</li>
+                        <li><strong>主要特征</strong>：度分布服从泊松分布，平均路径长度短，聚类系数低</li>
+                        <li><strong>适用场景</strong>：描述连接随机的简单系统，作为其他复杂网络模型的基准</li>
+                    </ul>
+                    
+                    <h4>扩展随机网络模型</h4>
+                    <ul>
+                        <li><strong>配置模型</strong>：能够生成具有指定度分布的随机网络</li>
+                        <li><strong>随机规则图</strong>：每个节点具有相同度数的随机连接网络</li>
+                        <li><strong>隐参数模型</strong>：基于节点自身属性的随机连接模型</li>
+                    </ul>
+                </div>
+
+                <div id="deterministic-models" class="card">
+                    <h3><i class="fas fa-project-diagram"></i> 确定性网络模型</h3>
+                    <p>确定性网络模型通过精确的数学规则构建，具有高度规则的结构和可预测的特性。</p>
+                    
+                    <h4>规则网络模型</h4>
+                    <ul>
+                        <li><strong>完全图</strong>：每个节点与其他所有节点都相连</li>
+                        <li><strong>环形网络</strong>：节点排列成环，每个节点与相邻k个节点相连</li>
+                        <li><strong>格子网络</strong>：节点按二维网格排列，与邻近节点相连</li>
+                        <li><strong>二分图</strong>：节点分为两组，连接只存在于组间而非组内</li>
+                    </ul>
+                    
+                    <h4>分形网络模型</h4>
+                    <ul>
+                        <li><strong>自相似结构</strong>：在不同尺度下具有相似的结构特征</li>
+                        <li><strong>构造方法</strong>：通过迭代生成规则构建</li>
+                        <li><strong>主要特征</strong>：度分布具有幂律特性，聚类系数高，平均路径长度随规模多项式增长</li>
+                    </ul>
+                </div>
+
+                <div id="scale-free-models" class="card">
+                    <h3><i class="fas fa-arrows-alt-h"></i> 无标度网络模型</h3>
+                    <p>无标度网络模型的度分布服从幂律分布，反映了现实世界中"富者愈富"的现象。</p>
+                    
+                    <h4>Barabási-Albert (BA) 模型</h4>
+                    <ul>
+                        <li><strong>基本原理</strong>：基于增长和偏好连接机制</li>
+                        <li><strong>构造方法</strong>：从少量节点开始，每次添加新节点并与已有节点以与度数成正比的概率连接</li>
+                        <li><strong>主要特征</strong>：度分布服从幂律P(k) ~ k^(-γ)，γ=3；存在少数度很大的枢纽节点</li>
+                        <li><strong>适用场景</strong>：互联网、社交网络、代谢网络等具有增长特性的真实网络</li>
+                    </ul>
+                    
+                    <h4>扩展无标度模型</h4>
+                    <ul>
+                        <li><strong>适应度模型</strong>：节点连接概率不仅依赖于度数，还依赖于节点自身的适应度</li>
+                        <li><strong>复制模型</strong>：通过节点复制和变异机制生成无标度网络</li>
+                        <li><strong>局域世界演化模型</strong>：节点只在有限的局域范围内进行偏好连接</li>
+                    </ul>
+                </div>
+
+                <div id="small-world-models" class="card">
+                    <h3><i class="fas fa-globe-americas"></i> 小世界网络模型</h3>
+                    <p>小世界网络模型同时具有高聚类系数和短平均路径长度，介于规则网络和随机网络之间。</p>
+                    
+                    <h4>Watts-Strogatz (WS) 模型</h4>
+                    <ul>
+                        <li><strong>基本原理</strong>：通过随机化规则网络的部分边生成</li>
+                        <li><strong>构造方法</strong>：从环形规则网络开始，以概率p随机重连每条边的一个端点</li>
+                        <li><strong>主要特征</strong>：当p较小时，保持高聚类系数，同时平均路径长度显著缩短</li>
+                        <li><strong>适用场景</strong>：社交网络、神经网络、电力网络等兼具局部聚集和全局连通性的网络</li>
+                    </ul>
+                    
+                    <h4>Newman-Watts (NW) 模型</h4>
+                    <ul>
+                        <li><strong>改进点</strong>：不重连边而是添加新边，避免破坏原有聚类结构</li>
+                        <li><strong>特性</strong>：保持原有规则网络的连接，通过添加少量捷径边获得小世界特性</li>
+                    </ul>
+                </div>
+
+                <div id="other-models" class="card">
+                    <h3><i class="fas fa-ellipsis-h"></i> 其他网络模型</h3>
+                    <p>除上述主要模型外，还有多种针对特定场景设计的网络模型。</p>
+                    
+                    <h4>层次网络模型</h4>
+                    <ul>
+                        <li><strong>特征</strong>：具有明显的层次结构，节点按层级组织</li>
+                        <li><strong>应用</strong>：组织结构网络、生物分类网络等</li>
+                    </ul>
+                    
+                    <h4>社区网络模型</h4>
+                    <ul>
+                        <li><strong>特征</strong>：网络由多个紧密连接的社区组成，社区内部连接密集，社区间连接稀疏</li>
+                        <li><strong>代表模型</strong>：GN模型、LFR基准网络等</li>
+                    </ul>
+                    
+                    <h4>时变网络模型</h4>
+                    <ul>
+                        <li><strong>特征</strong>：网络连接随时间动态变化</li>
+                        <li><strong>应用</strong>：动态社交网络、移动通讯网络等</li>
+                    </ul>
+                    
+                    <h4>多层网络模型</h4>
+                    <ul>
+                        <li><strong>特征</strong>：包含多个网络层，层内和层间都可能存在连接</li>
+                        <li><strong>应用</strong>：多关系社交网络、基础设施网络等</li>
+                    </ul>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="modelComparisonChart"></canvas>
+                </div>
+            </section>
+
+            <section id="metrics" class="section">
+                <h2>网络指标</h2>
+                <p>网络指标是量化描述网络结构特征的参数，通过计算这些指标可以揭示网络的拓扑特性和功能属性。网络指标通常分为节点级、全局级、社区级和动力学相关指标。</p>
+
+                <div id="node-metrics" class="card">
+                    <h3><i class="fas fa-user-circle"></i> 节点级指标</h3>
+                    <p>节点级指标用于描述单个节点在网络中的地位和作用，反映节点的重要性。</p>
+                    
+                    <h4>度与度中心性</h4>
+                    <ul>
+                        <li><strong>定义</strong>：节点的度是指与该节点直接相连的边的数量</li>
+                        <li><strong>计算</strong>：对于无向图，度为邻接矩阵中对应行的元素和；对于有向图，分为入度和出度</li>
+                        <li><strong>意义</strong>：度越大的节点通常被认为在网络中越重要，具有更多直接连接</li>
+                    </ul>
+                    
+                    <h4>中心性指标</h4>
+                    <ul>
+                        <li><strong>介数中心性</strong>：衡量节点位于其他节点最短路径上的次数，反映节点的"桥梁"作用</li>
+                        <li><strong>接近中心性</strong>：节点到其他所有节点的平均距离的倒数，反映节点与网络中其他节点的接近程度</li>
+                        <li><strong>特征向量中心性</strong>：不仅考虑节点自身的度，还考虑其邻居节点的重要性，适用于衡量节点的影响力</li>
+                        <li><strong>PageRank</strong>：基于网页链接结构的中心性度量，是特征向量中心性的扩展</li>
+                    </ul>
+                    
+                    <h4>节点其他属性</h4>
+                    <ul>
+                        <li><strong>聚类系数</strong>：节点的邻居节点之间实际存在的边数与可能存在的最大边数之比</li>
+                        <li><strong>核数(k-core)</strong>：节点所属的最大k核子图的k值，反映节点在网络核心区域的位置</li>
+                        <li><strong>邻居连接性</strong>：节点邻居的平均度，反映节点所处的网络环境</li>
+                    </ul>
+                </div>
+
+                <div id="global-metrics" class="card">
+                    <h3><i class="fas fa-globe"></i> 全局网络指标</h3>
+                    <p>全局网络指标描述整个网络的宏观特性，反映网络的整体结构和组织方式。</p>
+                    
+                    <h4>度分布</h4>
+                    <ul>
+                        <li><strong>定义</strong>：网络中节点度值的概率分布P(k)</li>
+                        <li><strong>类型</strong>：泊松分布（随机网络）、幂律分布（无标度网络）、指数分布等</li>
+                        <li><strong>意义</strong>：反映网络的异质性，度分布的尾部特征决定了网络对故障和攻击的鲁棒性</li>
+                    </ul>
+                    
+                    <h4>路径与距离指标</h4>
+                    <ul>
+                        <li><strong>平均路径长度</strong>：所有节点对之间最短路径长度的平均值</li>
+                        <li><strong>直径</strong>：网络中任意两个节点之间的最长最短路径长度</li>
+                        <li><strong>效率</strong>：网络中信息传递效率的度量，与平均路径长度成反比</li>
+                    </ul>
+                    
+                    <h4>聚集特性指标</h4>
+                    <ul>
+                        <li><strong>平均聚类系数</strong>：所有节点聚类系数的平均值，反映网络的整体聚集程度</li>
+                        <li><strong>传递性</strong>：所有闭合三角形数量与所有可能三角形数量之比，是另一种衡量网络聚集性的指标</li>
+                    </ul>
+                    
+                    <h4>连通性指标</h4>
+                    <ul>
+                        <li><strong>连通分量</strong>：网络中最大连通子图的大小和数量</li>
+                        <li><strong>坚韧度</strong>：衡量网络在节点移除情况下保持连通的能力</li>
+                        <li><strong>顶点覆盖数与独立集</strong>：反映网络的结构脆弱性</li>
+                    </ul>
+                </div>
+
+                <div id="community-metrics" class="card">
+                    <h3><i class="fas fa-users"></i> 社区结构指标</h3>
+                    <p>社区结构指标用于描述网络中节点的分组特性，衡量网络的模块化组织程度。</p>
+                    
+                    <h4>社区划分质量指标</h4>
+                    <ul>
+                        <li><strong>模块化Q值</strong>：衡量社区内部连接密度与社区之间连接密度的差异，取值范围[-1/2, 1)</li>
+                        <li><strong>归一化切割(Ncut)</strong>：基于图切割的社区质量度量，考虑社区大小的影响</li>
+                        <li><strong> conductance</strong>：社区与外部连接数与社区总连接数的比值，值越小表示社区结构越明显</li>
+                    </ul>
+                    
+                    <h4>社区属性指标</h4>
+                    <ul>
+                        <li><strong>社区大小分布</strong>：不同规模社区的数量分布</li>
+                        <li><strong>社区中心性</strong>：衡量整个社区在网络中的重要性</li>
+                        <li><strong>社区间连接密度</strong>：描述不同社区之间的连接强度</li>
+                        <li><strong>社区重叠度</strong>：节点同时属于多个社区的程度</li>
+                    </ul>
+                </div>
+
+                <div id="dynamics-metrics" class="card">
+                    <h3><i class="fas fa-running"></i> 动力学相关指标</h3>
+                    <p>动力学相关指标用于评估网络对动力学过程的影响，预测网络上动力学行为的特性。</p>
+                    
+                    <h4>传播相关指标</h4>
+                    <ul>
+                        <li><strong>传播阈值</strong>：网络中信息或疾病能够持续传播的最小感染率</li>
+                        <li><strong>扩散效率</strong>：物质或信息在网络中扩散的速度和范围</li>
+                        <li><strong>影响范围</strong>：特定节点能够影响的网络范围</li>
+                    </ul>
+                    
+                    <h4>同步相关指标</h4>
+                    <ul>
+                        <li><strong>同步能力</strong>：网络中节点动力学达到同步状态的难易程度</li>
+                        <li><strong>主稳定性函数</strong>：基于网络拉普拉斯矩阵特征值分析网络同步能力</li>
+                    </ul>
+                    
+                    <h4>鲁棒性指标</h4>
+                    <ul>
+                        <li><strong>容错性</strong>：网络在随机节点/边失效情况下保持功能的能力</li>
+                        <li><strong>抗毁性</strong>：网络在目标攻击下保持功能的能力</li>
+                        <li><strong>恢复力</strong>：网络在受到扰动后恢复到正常状态的能力</li>
+                    </ul>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="metricsRelationshipChart"></canvas>
+                </div>
+            </section>
+
+            <section id="comparison" class="section">
+                <h2>模型比较分析</h2>
+                <p>不同网络模型具有不同的拓扑特性，适用于描述不同类型的真实系统。通过对比分析可以明确各类模型的优缺点和适用范围。</p>
+
+                <div class="card">
+                    <h3>主要网络模型的关键特性对比</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>模型类型</th>
+                                <th>度分布</th>
+                                <th>平均路径长度</th>
+                                <th>聚类系数</th>
+                                <th>鲁棒性</th>
+                                <th>主要优点</th>
+                                <th>主要缺点</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>规则网络</td>
+                                <td>单峰分布</td>
+                                <td>长 (O(N))</td>
+                                <td>高</td>
+                                <td>对随机故障敏感</td>
+                                <td>结构简单，易于分析</td>
+                                <td>路径长，缺乏全局连通性</td>
+                            </tr>
+                            <tr>
+                                <td>随机网络</td>
+                                <td>泊松分布</td>
+                                <td>短 (O(logN))</td>
+                                <td>低</td>
+                                <td>对随机故障稳健，对目标攻击敏感</td>
+                                <td>数学可解性好，路径短</td>
+                                <td>缺乏聚类特性，与多数真实网络不符</td>
+                            </tr>
+                            <tr>
+                                <td>小世界网络</td>
+                                <td>近似单峰分布</td>
+                                <td>短 (O(logN))</td>
+                                <td>高</td>
+                                <td>中等</td>
+                                <td>兼具高聚类和短路径，符合多种真实网络</td>
+                                <td>缺乏度异质性，无法描述枢纽节点现象</td>
+                            </tr>
+                            <tr>
+                                <td>无标度网络</td>
+                                <td>幂律分布</td>
+                                <td>短 (O(loglogN))</td>
+                                <td>中等</td>
+                                <td>对随机故障稳健，对目标攻击敏感</td>
+                                <td>描述了真实网络的增长特性和枢纽节点现象</td>
+                                <td>聚类特性不足，未考虑社区结构</td>
+                            </tr>
+                            <tr>
+                                <td>社区网络</td>
+                                <td>多样</td>
+                                <td>中等至短</td>
+                                <td>社区内高，社区间低</td>
+                                <td>依赖社区结构</td>
+                                <td>反映了网络的模块化组织</td>
+                                <td>模型复杂度高，分析困难</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>网络模型的适用场景分析</h3>
+                    <h4>随机网络模型</h4>
+                    <p>适用于描述连接形成机制主要是随机过程的系统，如某些科学合作网络的早期阶段、随机连接的电路网络等。更多时候作为基准模型，用于与其他复杂网络模型进行对比。</p>
+                    
+                    <h4>小世界网络模型</h4>
+                    <p>广泛应用于描述社交网络、神经网络、电力网络等兼具局部聚集性和全局连通性的系统。例如，朋友关系网络中，人们倾向于与邻居和同事形成紧密连接（高聚类），同时通过少数长距离连接实现全球范围内的连通（短路径）。</p>
+                    
+                    <h4>无标度网络模型</h4>
+                    <p>适用于描述具有增长特性和偏好连接机制的系统，如互联网、万维网、 citation网络、代谢网络等。这些网络中，早期节点更容易积累连接，形成少数枢纽节点，如互联网中的核心路由器、社交网络中的名人节点等。</p>
+                    
+                    <h4>社区网络模型</h4>
+                    <p>适用于描述具有明显分组结构的系统，如组织网络、学术合作网络、兴趣社交网络等。这些网络中，节点倾向于形成紧密连接的子群体（社区），社区内部互动频繁，社区之间互动相对较少。</p>
+                </div>
+            </section>
+
+            <section id="application" class="section">
+                <h2>指标应用场景</h2>
+                <p>网络指标在不同研究和应用领域具有广泛用途，通过量化分析可以解决实际问题并提供决策支持。</p>
+
+                <div class="card">
+                    <h3><i class="fas fa-search"></i> 网络分析与理解</h3>
+                    <ul>
+                        <li><strong>网络分类</strong>：通过度分布、聚类系数和平均路径长度等指标区分网络类型（随机、小世界、无标度等）</li>
+                        <li><strong>结构特性识别</strong>：使用社区发现指标识别网络中的模块化结构</li>
+                        <li><strong>演化模式分析</strong>：通过跟踪关键指标的时间变化，理解网络的演化规律</li>
+                        <li><strong>真实网络建模指导</strong>：基于真实网络的指标特征，选择或改进合适的网络模型</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-user-check"></i> 节点重要性评估</h3>
+                    <ul>
+                        <li><strong>关键节点识别</strong>：使用度中心性、介数中心性等指标识别网络中的关键节点</li>
+                        <li><strong>影响力分析</strong>：在社交网络中，通过特征向量中心性等指标评估用户的影响力</li>
+                        <li><strong>目标选择</strong>：在营销、公共卫生等领域，选择具有高影响力的节点作为目标</li>
+                        <li><strong>脆弱点识别</strong>：在基础设施网络中，识别对网络功能至关重要的脆弱节点</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-shield-alt"></i> 网络鲁棒性与安全</h3>
+                    <ul>
+                        <li><strong>抗攻击能力评估</strong>：通过模拟攻击（随机故障和目标攻击）并监测连通性等指标变化，评估网络鲁棒性</li>
+                        <li><strong>网络优化设计</strong>：基于鲁棒性指标，优化网络结构以提高抗毁能力</li>
+                        <li><strong>风险评估</strong>：评估网络在遭受各种扰动时的风险水平</li>
+                        <li><strong>安全策略制定</strong>：根据关键节点识别结果，制定有针对性的安全防护策略</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-virus"></i> 传播与扩散分析</h3>
+                    <ul>
+                        <li><strong>传播预测</strong>：使用传播阈值和网络结构指标预测信息、疾病等的传播范围</li>
+                        <li><strong>干预策略</strong>：基于节点重要性指标，制定有效的传播控制策略</li>
+                        <li><strong>免疫策略优化</strong>：在疾病传播模型中，使用中心性指标指导疫苗分配</li>
+                        <li><strong>扩散效率评估</strong>：评估不同网络结构对资源、信息扩散效率的影响</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-project-diagram"></i> 网络控制与优化</h3>
+                    <ul>
+                        <li><strong>控制节点选择</strong>：基于可控性指标，选择最小的节点集合实现对整个网络的控制</li>
+                        <li><strong>同步优化</strong>：利用同步能力指标优化网络结构，提高网络同步性能</li>
+                        <li><strong>资源分配</strong>：基于网络指标优化资源在网络节点中的分配</li>
+                        <li><strong>网络设计</strong>：根据特定功能需求（如高效传播、高鲁棒性）设计网络结构</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="case-study" class="section">
+                <h2>案例研究</h2>
+                <p>通过实际案例分析，展示网络模型与指标在解决具体问题中的应用。</p>
+
+                <div class="card">
+                    <h3><i class="fas fa-hospital"></i> 案例一：传染病传播网络分析</h3>
+                    <h4>背景与问题</h4>
+                    <p>在COVID-19疫情期间，理解病毒在人群中的传播机制对于制定防控策略至关重要。通过构建接触网络模型，分析网络指标可以识别关键传播节点和制定有效的干预措施。</p>
+                    
+                    <h4>网络模型构建</h4>
+                    <p>基于实际接触调查数据，构建人群接触网络，节点代表个体，边代表个体间的密切接触。网络具有明显的社区结构（家庭、工作单位、学校等），整体呈现小世界特性。</p>
+                    
+                    <h4>关键指标分析</h4>
+                    <ul>
+                        <li><strong>度分布</strong>：呈现右偏分布，少数个体有大量接触（如教师、医护人员）</li>
+                        <li><strong>介数中心性</strong>：识别出连接不同社区的关键节点（如公共交通工作者）</li>
+                        <li><strong>社区结构</strong>：发现家庭和工作场所是病毒传播的主要社区</li>
+                        <li><strong>传播阈值</strong>：计算不同防控措施下的传播阈值变化</li>
+                    </ul>
+                    
+                    <h4>应用结果</h4>
+                    <p>基于网络分析结果，识别出高风险节点和社区，针对性地采取隔离措施，有效降低了病毒传播速度。同时，通过关闭高介数节点所在的场所（如公共交通），显著提高了传播阈值。</p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-network-wired"></i> 案例二：电力网络脆弱性评估</h3>
+                    <h4>背景与问题</h4>
+                    <p>电力网络作为关键基础设施，其可靠性直接关系到社会稳定和经济发展。评估电力网络在故障和攻击下的脆弱性，对于提高电网韧性具有重要意义。</p>
+                    
+                    <h4>网络模型构建</h4>
+                    <p>以某区域电网为研究对象，构建节点为变电站、边为输电线路的网络模型。该网络具有小世界特性和明显的社区结构（区域划分）。</p>
+                    
+                    <h4>关键指标分析</h4>
+                    <ul>
+                        <li><strong>度中心性</strong>：识别出连接多条线路的枢纽变电站</li>
+                        <li><strong>介数中心性</strong>：发现位于电力传输关键路径上的变电站</li>
+                        <li><strong>鲁棒性分析</strong>：通过模拟随机故障和目标攻击，评估网络连通性和输电效率变化</li>
+                        <li><strong>级联失效模拟</strong>：分析故障在网络中的传播规律</li>
+                    </ul>
+                    
+                    <h4>应用结果</h4>
+                    <p>基于分析结果，对高风险节点进行了强化改造，增加了备用线路，优化了电力传输路径。改造后，电网在遭受极端天气和有意攻击时的韧性显著提高，减少了大规模停电的风险。</p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-comments"></i> 案例三：社交媒体信息传播分析</h3>
+                    <h4>背景与问题</h4>
+                    <p>在社交媒体平台上，信息（包括谣言和不实信息）可以迅速传播，影响公众舆论。分析信息传播网络，识别关键传播者，对于引导舆论和控制谣言具有重要意义。</p>
+                    
+                    <h4>网络模型构建</h4>
+                    <p>基于某社交平台的用户互动数据（转发、评论、点赞），构建有向信息传播网络。节点代表用户，有向边代表信息从一个用户传播到另一个用户的可能性。</p>
+                    
+                    <h4>关键指标分析</h4>
+                    <ul>
+                        <li><strong>出度中心性</strong>：识别出信息发布能力强的用户</li>
+                        <li><strong>特征向量中心性</strong>：发现具有广泛影响力的意见领袖</li>
+                        <li><strong>传播路径分析</strong>：通过介数中心性识别信息传播的关键路径</li>
+                        <li><strong>社区结构</strong>：发现信息传播的主要社群和跨界传播节点</li>
+                    </ul>
+                    
+                    <h4>应用结果</h4>
+                    <p>通过识别关键传播节点和路径，平台制定了有针对性的信息引导策略。与意见领袖合作发布权威信息，有效遏制了谣言的传播，提高了平台信息环境的健康度。</p>
+                </div>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>结论与展望</h2>
+                
+                <div class="card">
+                    <h3>主要结论</h3>
+                    <p>本报告系统梳理了复杂网络的基础模型与核心指标，通过分析可以得出以下结论：</p>
+                    <ul>
+                        <li>不同网络模型具有独特的拓扑特性，适用于描述不同类型的真实系统。小世界和无标度特性是多数真实网络的共同特征。</li>
+                        <li>网络指标从不同角度量化了网络的结构特征，节点级指标反映个体重要性，全局指标描述整体特性，社区指标揭示模块化结构，动力学指标预测网络功能。</li>
+                        <li>网络模型与指标的结合应用，为理解复杂系统的结构与功能关系提供了强有力的工具，在多个领域具有重要应用价值。</li>
+                        <li>实际案例表明，基于网络分析的决策能够有效解决复杂系统中的实际问题，提高系统性能和可靠性。</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>研究挑战</h3>
+                    <p>尽管复杂网络模型与指标研究取得了显著进展，但仍面临诸多挑战：</p>
+                    <ul>
+                        <li><strong>动态网络分析</strong>：现有多数模型和指标基于静态网络，难以描述网络的动态演化特性。</li>
+                        <li><strong>大规模网络计算</strong>：随着网络规模增长，许多指标的计算复杂度急剧增加，需要开发高效算法。</li>
+                        <li><strong>多层网络建模</strong>：现实中的许多系统具有多层结构，现有模型和指标难以有效描述多层网络特性。</li>
+                        <li><strong>指标的普适性</strong>：多数指标针对特定问题设计，缺乏普适性的网络评价体系。</li>
+                        <li><strong>理论与应用结合</strong>：如何将网络理论更好地应用于实际问题，仍需深入研究。</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>未来展望</h3>
+                    <p>未来复杂网络模型与指标研究可能在以下方向取得突破：</p>
+                    <ul>
+                        <li><strong>动态网络模型与指标</strong>：发展能够描述网络演化过程的动态模型和时间依赖的指标体系。</li>
+                        <li><strong>智能分析方法</strong>：结合机器学习和人工智能技术，开发自动识别网络模式和预测网络行为的方法。</li>
+                        <li><strong>多层网络理论</strong>：建立完善的多层网络模型和分析指标，更真实地描述复杂系统。</li>
+                        <li><strong>网络控制与优化</strong>：基于网络指标开发更有效的网络控制策略，实现对复杂系统的主动调控。</li>
+                        <li><strong>跨学科应用</strong>：将网络分析方法更深入地应用于各学科领域，解决实际问题，如智慧城市、精准医疗、气候变化等。</li>
+                    </ul>
+                    <p>随着数据获取能力的增强和计算技术的发展，复杂网络模型与指标研究将在理解和调控复杂系统方面发挥越来越重要的作用。</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // 侧边栏切换
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // 点击导航链接后在移动设备上关闭侧边栏
+        document.querySelectorAll('.nav-link, .nav-sub-link').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 回到顶部按钮
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+
+        // 模型比较图表
+        const modelCtx = document.getElementById('modelComparisonChart').getContext('2d');
+        new Chart(modelCtx, {
+            type: 'radar',
+            data: {
+                labels: ['平均路径长度', '聚类系数', '度异质性', '鲁棒性', '社区结构'],
+                datasets: [
+                    {
+                        label: '规则网络',
+                        data: [1, 9, 1, 3, 7],
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)'
+                    },
+                    {
+                        label: '随机网络',
+                        data: [9, 1, 3, 6, 2],
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+                    },
+                    {
+                        label: '小世界网络',
+                        data: [8, 8, 4, 5, 6],
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        pointBackgroundColor: 'rgba(255, 206, 86, 1)'
+                    },
+                    {
+                        label: '无标度网络',
+                        data: [9, 5, 9, 8, 4],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        pointBackgroundColor: 'rgba(75, 192, 192, 1)'
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 10,
+                        ticks: {
+                            stepSize: 2
+                        }
+                    }
+                }
+            }
+        });
+
+        // 指标关系图表
+        const metricsCtx = document.getElementById('metricsRelationshipChart').getContext('2d');
+        new Chart(metricsCtx, {
+            type: 'bubble',
+            data: {
+                datasets: [
+                    {
+                        label: '节点级指标',
+                        data: [
+                            { x: 2, y: 8, r: 10 },  // 度中心性
+                            { x: 3, y: 7, r: 12 },  // 介数中心性
+                            { x: 4, y: 6, r: 9 },   // 接近中心性
+                            { x: 5, y: 5, r: 11 }   // 特征向量中心性
+                        ],
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    },
+                    {
+                        label: '全局指标',
+                        data: [
+                            { x: 7, y: 8, r: 15 },  // 平均路径长度
+                            { x: 8, y: 7, r: 14 },  // 聚类系数
+                            { x: 9, y: 6, r: 13 },  // 度分布
+                            { x: 6, y: 9, r: 12 }   // 连通性
+                        ],
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                    },
+                    {
+                        label: '社区指标',
+                        data: [
+                            { x: 2, y: 3, r: 12 },  // 模块化Q值
+                            { x: 3, y: 2, r: 10 },  // 社区大小分布
+                            { x: 4, y: 1, r: 9 }    // 社区间连接
+                        ],
+                        backgroundColor: 'rgba(255, 206, 86, 0.7)'
+                    },
+                    {
+                        label: '动力学指标',
+                        data: [
+                            { x: 7, y: 2, r: 13 },  // 传播阈值
+                            { x: 8, y: 3, r: 14 },  // 同步能力
+                            { x: 9, y: 4, r: 15 }   // 鲁棒性
+                        ],
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)'
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '计算复杂度'
+                        },
+                        min: 0,
+                        max: 10
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: '应用广泛度'
+                        },
+                        min: 0,
+                        max: 10
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
