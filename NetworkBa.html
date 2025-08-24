@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>复杂网络基础知识调研：模型与指标分析报告</title>
+    <title>复杂网络基础</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -383,7 +384,7 @@
                     <a href="#case-study" class="nav-link"><i class="fas fa-flask"></i> 案例研究</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#conclusion" class="nav-link"><i class="fas fa-flag-checkered"></i> 结论与展望</a>
+                    <a href="#conclusion" class="nav-link"><i class="fas fa-flag-checkered"></i> 总结</a>
                 </li>
             </ul>
         </aside>
@@ -408,16 +409,42 @@
                     <h4>Erdős-Rényi (ER) 模型</h4>
                     <ul>
                         <li><strong>基本原理</strong>：给定N个节点，任意两个节点之间以概率p独立连接</li>
-                        <li><strong>构造方法</strong>：有两种等价表述，G(N,M)模型（固定边数M）和G(N,p)模型（固定连接概率p）</li>
-                        <li><strong>主要特征</strong>：度分布服从泊松分布，平均路径长度短，聚类系数低</li>
+                        <li><strong>构造方法</strong>：有两种等价表述
+                            <ul class="sub-list">
+                                <li>G(N,M)模型：固定总边数为M，所有可能的M边组合被等概率选择</li>
+                                <li>G(N,p)模型：固定连接概率p，每对节点独立连接</li>
+                            </ul>
+                        </li>
+                        <li><strong>度分布</strong>：服从二项分布，当N很大且p较小时可近似为泊松分布
+                            <div class="formula-block">
+                                \[
+                                P(k) = \binom{N-1}{k}p^k(1-p)^{N-1-k} \approx \frac{\lambda^k e^{-\lambda}}{k!}, \quad \lambda = (N-1)p
+                                \]
+                            </div>
+                        </li>
+                        <li><strong>平均路径长度</strong>：
+                            <div class="formula-block">
+                                \[
+                                L \approx \frac{\ln N}{\ln \langle k \rangle}
+                                \]
+                            </div>
+                        </li>
+                        <li><strong>聚类系数</strong>：
+                            <div class="formula-block">
+                                \[
+                                C \approx p = \frac{\langle k \rangle}{N}
+                                \]
+                            </div>
+                        </li>
+                        <li><strong>相变特性</strong>：当连接概率达到临界值\( p_c = \frac{1}{N} \)时，网络出现巨连通分量</li>
                         <li><strong>适用场景</strong>：描述连接随机的简单系统，作为其他复杂网络模型的基准</li>
                     </ul>
                     
                     <h4>扩展随机网络模型</h4>
                     <ul>
-                        <li><strong>配置模型</strong>：能够生成具有指定度分布的随机网络</li>
-                        <li><strong>随机规则图</strong>：每个节点具有相同度数的随机连接网络</li>
-                        <li><strong>隐参数模型</strong>：基于节点自身属性的随机连接模型</li>
+                        <li><strong>配置模型</strong>：能够生成具有指定度分布的随机网络，通过度序列匹配实现</li>
+                        <li><strong>随机规则图</strong>：每个节点具有相同度数k的随机连接网络，聚类系数为\( C = \frac{3(k-2)}{4(k-1)} \)</li>
+                        <li><strong>隐参数模型</strong>：基于节点自身属性的随机连接模型，连接概率为\( p_{ij} = f(a_i, a_j) \)，其中\( a_i, a_j \)是节点属性</li>
                     </ul>
                 </div>
 
@@ -427,17 +454,23 @@
                     
                     <h4>规则网络模型</h4>
                     <ul>
-                        <li><strong>完全图</strong>：每个节点与其他所有节点都相连</li>
-                        <li><strong>环形网络</strong>：节点排列成环，每个节点与相邻k个节点相连</li>
-                        <li><strong>格子网络</strong>：节点按二维网格排列，与邻近节点相连</li>
-                        <li><strong>二分图</strong>：节点分为两组，连接只存在于组间而非组内</li>
+                        <li><strong>完全图</strong>：每个节点与其他所有节点都相连，总边数为\( M = \frac{N(N-1)}{2} \)，平均度为\( \langle k \rangle = N-1 \)</li>
+                        <li><strong>环形网络</strong>：节点排列成环，每个节点与相邻k个节点相连，聚类系数为\( C = \frac{3(k-2)}{4(k-1)} \)，平均路径长度为\( L \approx \frac{N}{2k} \)</li>
+                        <li><strong>格子网络</strong>：节点按二维网格排列，与邻近节点相连，在d维网格中，平均路径长度随系统尺寸线性增长</li>
+                        <li><strong>二分图</strong>：节点分为两组，连接只存在于组间而非组内，邻接矩阵具有块结构</li>
                     </ul>
                     
                     <h4>分形网络模型</h4>
                     <ul>
-                        <li><strong>自相似结构</strong>：在不同尺度下具有相似的结构特征</li>
-                        <li><strong>构造方法</strong>：通过迭代生成规则构建</li>
-                        <li><strong>主要特征</strong>：度分布具有幂律特性，聚类系数高，平均路径长度随规模多项式增长</li>
+                        <li><strong>自相似结构</strong>：在不同尺度下具有相似的结构特征，满足标度不变性</li>
+                        <li><strong>构造方法</strong>：通过迭代生成规则构建，如Koch网络、Sierpiński网络等</li>
+                        <li><strong>主要特征</strong>：
+                            <ul class="sub-list">
+                                <li>度分布具有幂律特性：\( P(k) \sim k^{-\gamma} \)</li>
+                                <li>分形维数：\( d_f = \frac{\ln N}{\ln l} \)，其中l是特征长度</li>
+                                <li>平均路径长度随规模多项式增长：\( L \sim N^{\delta} \)，\( 0 < \delta < 1 \)</li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
 
@@ -447,17 +480,60 @@
                     
                     <h4>Barabási-Albert (BA) 模型</h4>
                     <ul>
-                        <li><strong>基本原理</strong>：基于增长和偏好连接机制</li>
-                        <li><strong>构造方法</strong>：从少量节点开始，每次添加新节点并与已有节点以与度数成正比的概率连接</li>
-                        <li><strong>主要特征</strong>：度分布服从幂律P(k) ~ k^(-γ)，γ=3；存在少数度很大的枢纽节点</li>
+                        <li><strong>基本原理</strong>：基于两个关键机制
+                            <ul class="sub-list">
+                                <li>增长：网络随时间不断添加新节点</li>
+                                <li>偏好连接：新节点连接到现有节点的概率与节点度数成正比
+                                    <div class="formula-block">
+                                        \[
+                                        \Pi(k_i) = \frac{k_i}{\sum_j k_j}
+                                        \]
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><strong>构造方法</strong>：从m₀个节点开始，每次添加新节点并带有m条边（m ≤ m₀），每条边按偏好连接概率连接到现有节点</li>
+                        <li><strong>度分布</strong>：服从幂律分布
+                            <div class="formula-block">
+                                \[
+                                P(k) \sim k^{-\gamma}, \quad \gamma = 3
+                                \]
+                            </div>
+                            更精确的表达式为：
+                            <div class="formula-block">
+                                \[
+                                P(k) = \frac{2m(m+1)}{k(k+1)(k+2)}
+                                \]
+                            </div>
+                        </li>
+                        <li><strong>节点度数演化</strong>：在时间tᵢ加入的节点，其度数随时间演化满足
+                            <div class="formula-block">
+                                \[
+                                k_i(t) = m \left( \frac{t}{t_i} \right)^{1/2}
+                                \]
+                            </div>
+                        </li>
+                        <li><strong>平均路径长度</strong>：
+                            <div class="formula-block">
+                                \[
+                                L \sim \frac{\ln N}{\ln \ln N}
+                                \]
+                            </div>
+                        </li>
                         <li><strong>适用场景</strong>：互联网、社交网络、代谢网络等具有增长特性的真实网络</li>
                     </ul>
                     
                     <h4>扩展无标度模型</h4>
                     <ul>
-                        <li><strong>适应度模型</strong>：节点连接概率不仅依赖于度数，还依赖于节点自身的适应度</li>
-                        <li><strong>复制模型</strong>：通过节点复制和变异机制生成无标度网络</li>
-                        <li><strong>局域世界演化模型</strong>：节点只在有限的局域范围内进行偏好连接</li>
+                        <li><strong>适应度模型</strong>：节点连接概率不仅依赖于度数，还依赖于节点自身的适应度ηᵢ
+                            <div class="formula-block">
+                                \[
+                                \Pi(k_i) = \frac{\eta_i k_i}{\sum_j \eta_j k_j}
+                                \]
+                            </div>
+                        </li>
+                        <li><strong>复制模型</strong>：通过节点复制和变异机制生成无标度网络，新节点复制已有节点的部分连接并随机变异</li>
+                        <li><strong>局域世界演化模型</strong>：节点只在有限的局域范围内进行偏好连接，连接概率取决于局域世界内的节点度数分布</li>
                     </ul>
                 </div>
 
@@ -467,16 +543,41 @@
                     
                     <h4>Watts-Strogatz (WS) 模型</h4>
                     <ul>
-                        <li><strong>基本原理</strong>：通过随机化规则网络的部分边生成</li>
-                        <li><strong>构造方法</strong>：从环形规则网络开始，以概率p随机重连每条边的一个端点</li>
-                        <li><strong>主要特征</strong>：当p较小时，保持高聚类系数，同时平均路径长度显著缩短</li>
+                        <li><strong>基本原理</strong>：通过随机化规则网络的部分边生成，在规则性和随机性之间取得平衡</li>
+                        <li><strong>构造方法</strong>：
+                            <ol class="sub-list">
+                                <li>从环形规则网络开始，每个节点连接到其k个最近邻（k为偶数）</li>
+                                <li>以概率p随机重连每条边的一个端点，避免自环和重复边</li>
+                            </ol>
+                        </li>
+                        <li><strong>聚类系数</strong>：随重连概率p变化
+                            <div class="formula-block">
+                                \[
+                                C(p) \approx C(0) \left(1 - p\right)^3, \quad C(0) = \frac{3(k-2)}{4(k-1)}
+                                \]
+                            </div>
+                        </li>
+                        <li><strong>平均路径长度</strong>：当p较小时显著缩短
+                            <div class="formula-block">
+                                \[
+                                L(p) \approx \frac{L(0)}{\sqrt{pN}} \quad \text{对于小p值}
+                                \]
+                            </div>
+                            其中L(0)是规则网络的平均路径长度
+                        </li>
                         <li><strong>适用场景</strong>：社交网络、神经网络、电力网络等兼具局部聚集和全局连通性的网络</li>
                     </ul>
                     
                     <h4>Newman-Watts (NW) 模型</h4>
                     <ul>
-                        <li><strong>改进点</strong>：不重连边而是添加新边，避免破坏原有聚类结构</li>
-                        <li><strong>特性</strong>：保持原有规则网络的连接，通过添加少量捷径边获得小世界特性</li>
+                        <li><strong>改进点</strong>：不重连边而是添加新边，避免破坏原有聚类结构，以概率p在随机节点对之间添加边</li>
+                        <li><strong>特性</strong>：
+                            <ul class="sub-list">
+                                <li>保持原有规则网络的高聚类系数</li>
+                                <li>通过添加少量捷径边获得小世界特性</li>
+                                <li>当p → 0时，平均路径长度满足：\( L(p) \sim \ln N / \ln(pN) \)</li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
 
@@ -486,25 +587,47 @@
                     
                     <h4>层次网络模型</h4>
                     <ul>
-                        <li><strong>特征</strong>：具有明显的层次结构，节点按层级组织</li>
+                        <li><strong>特征</strong>：具有明显的层次结构，节点按层级组织，连接概率随层级距离衰减</li>
+                        <li><strong>度分布</strong>：通常服从幂律分布\( P(k) \sim k^{-\gamma} \)，γ值在2到3之间</li>
+                        <li><strong>聚类系数</strong>：随节点度数增加而减小，\( C(k) \sim k^{-\alpha} \)，体现层次特性</li>
                         <li><strong>应用</strong>：组织结构网络、生物分类网络等</li>
                     </ul>
                     
                     <h4>社区网络模型</h4>
                     <ul>
                         <li><strong>特征</strong>：网络由多个紧密连接的社区组成，社区内部连接密集，社区间连接稀疏</li>
+                        <li><strong>模块度</strong>：衡量社区结构强度的指标
+                            <div class="formula-block">
+                                \[
+                                Q = \frac{1}{2m} \sum_{i,j} \left( A_{ij} - \frac{k_i k_j}{2m} \right) \delta(c_i, c_j)
+                                \]
+                            </div>
+                            其中\( c_i \)是节点i所属社区，δ是克罗内克函数
+                        </li>
                         <li><strong>代表模型</strong>：GN模型、LFR基准网络等</li>
                     </ul>
                     
                     <h4>时变网络模型</h4>
                     <ul>
-                        <li><strong>特征</strong>：网络连接随时间动态变化</li>
+                        <li><strong>特征</strong>：网络连接随时间动态变化，可用时间序列邻接矩阵\( A(t) \)表示</li>
+                        <li><strong>时间特性</strong>：包含连接持续时间分布、间隔时间分布等时序特征</li>
                         <li><strong>应用</strong>：动态社交网络、移动通讯网络等</li>
                     </ul>
                     
                     <h4>多层网络模型</h4>
                     <ul>
-                        <li><strong>特征</strong>：包含多个网络层，层内和层间都可能存在连接</li>
+                        <li><strong>特征</strong>：包含多个网络层，层内和层间都可能存在连接，可用张量表示
+                            <div class="formula-block">
+                                \[
+                                \mathcal{A}_{ijl} = 
+                                \begin{cases} 
+                                1 & \text{若层} l \text{中节点} i \text{和} j \text{相连} \\
+                                0 & \text{否则}
+                                \end{cases}
+                                \]
+                            </div>
+                        </li>
+                        <li><strong>层间连接</strong>：可通过耦合矩阵描述不同层节点间的连接关系</li>
                         <li><strong>应用</strong>：多关系社交网络、基础设施网络等</li>
                     </ul>
                 </div>
@@ -513,6 +636,7 @@
                     <canvas id="modelComparisonChart"></canvas>
                 </div>
             </section>
+
 
             <section id="metrics" class="section">
                 <h2>网络指标</h2>
@@ -525,23 +649,86 @@
                     <h4>度与度中心性</h4>
                     <ul>
                         <li><strong>定义</strong>：节点的度是指与该节点直接相连的边的数量</li>
-                        <li><strong>计算</strong>：对于无向图，度为邻接矩阵中对应行的元素和；对于有向图，分为入度和出度</li>
+                        <li><strong>计算</strong>：
+                            <ul class="ml-4 mt-2 space-y-2">
+                                <li>无向图中节点 \( i \) 的度：
+                                    \[
+                                    d_i = \sum_{j} A_{ij}
+                                    \]
+                                    其中 \( A \) 是网络的邻接矩阵，\( A_{ij} = 1 \) 表示节点 \( i \) 和 \( j \) 之间存在边，否则为 0
+                                </li>
+                                <li>有向图中节点 \( i \) 的出度：
+                                    \[
+                                    outd_i = \sum_{j} A_{ij}
+                                    \]
+                                </li>
+                                <li>有向图中节点 \( i \) 的入度：
+                                    \[
+                                    ind_i = \sum_{j} A_{ji}
+                                    \]
+                                </li>
+                            </ul>
+                        </li>
                         <li><strong>意义</strong>：度越大的节点通常被认为在网络中越重要，具有更多直接连接</li>
                     </ul>
                     
                     <h4>中心性指标</h4>
-                    <ul>
-                        <li><strong>介数中心性</strong>：衡量节点位于其他节点最短路径上的次数，反映节点的"桥梁"作用</li>
-                        <li><strong>接近中心性</strong>：节点到其他所有节点的平均距离的倒数，反映节点与网络中其他节点的接近程度</li>
-                        <li><strong>特征向量中心性</strong>：不仅考虑节点自身的度，还考虑其邻居节点的重要性，适用于衡量节点的影响力</li>
-                        <li><strong>PageRank</strong>：基于网页链接结构的中心性度量，是特征向量中心性的扩展</li>
+                    <ul class="space-y-3">
+                        <li><strong>介数中心性</strong>：
+                            <p class="mt-1">衡量节点位于其他节点最短路径上的次数，反映节点的"桥梁"作用</p>
+                            \[
+                            C_B(v) = \sum_{s \neq v \neq t} \frac{\sigma_{st}(v)}{\sigma_{st}}
+                            \]
+                            <p class="text-sm mt-1">其中 \( \sigma_{st} \) 是节点 \( s \) 到节点 \( t \) 的最短路径总数，\( \sigma_{st}(v) \) 是 \( s \) 到 \( t \) 经过节点 \( v \) 的最短路径数</p>
+                        </li>
+                        
+                        <li><strong>接近中心性</strong>：
+                            <p class="mt-1">节点到其他所有节点的平均距离的倒数，反映节点与网络中其他节点的接近程度</p>
+                            \[
+                            C_C(v) = \frac{1}{\sum_{u \neq v} d(v, u)}
+                            \]
+                            <p class="text-sm mt-1">其中 \( d(v, u) \) 是节点 \( v \) 到节点 \( u \) 的最短路径长度</p>
+                        </li>
+                        
+                        <li><strong>特征向量中心性</strong>：
+                            <p class="mt-1">不仅考虑节点自身的度，还考虑其邻居节点的重要性，适用于衡量节点的影响力</p>
+                            \[
+                            x_v = \frac{1}{\lambda} \sum_{u \in N(v)} x_u
+                            \]
+                            <p class="text-sm mt-1">其中 \( N(v) \) 是节点 \( v \) 的邻居节点集合，\( \lambda \) 是邻接矩阵的最大特征值，\( x_u \) 是邻居节点 \( u \) 的特征向量中心性</p>
+                        </li>
+                        
+                        <li><strong>PageRank</strong>：
+                            <p class="mt-1">基于网页链接结构的中心性度量，是特征向量中心性的扩展</p>
+                            \[
+                            PR(v_i) = (1-d) + d \sum_{v_j \in B(v_i)} \frac{PR(v_j)}{L(v_j)}
+                            \]
+                            <p class="text-sm mt-1">其中 \( d \) 是阻尼因子（通常取 0.85），\( B(v_i) \) 是指向节点 \( v_i \) 的所有节点集合，\( L(v_j) \) 是节点 \( v_j \) 的出度</p>
+                        </li>
                     </ul>
                     
                     <h4>节点其他属性</h4>
-                    <ul>
-                        <li><strong>聚类系数</strong>：节点的邻居节点之间实际存在的边数与可能存在的最大边数之比</li>
-                        <li><strong>核数(k-core)</strong>：节点所属的最大k核子图的k值，反映节点在网络核心区域的位置</li>
-                        <li><strong>邻居连接性</strong>：节点邻居的平均度，反映节点所处的网络环境</li>
+                    <ul class="space-y-3">
+                        <li><strong>聚类系数</strong>：
+                            <p class="mt-1">节点的邻居节点之间实际存在的边数与可能存在的最大边数之比</p>
+                            \[
+                            C_i = \frac{2e_i}{k_i(k_i - 1)}
+                            \]
+                            <p class="text-sm mt-1">其中 \( e_i \) 是节点 \( i \) 的邻居之间实际存在的边数，\( k_i \) 是节点 \( i \) 的度</p>
+                        </li>
+                        
+                        <li><strong>核数(k-core)</strong>：
+                            <p class="mt-1">节点所属的最大k核子图的k值，反映节点在网络核心区域的位置</p>
+                            <p class="text-sm mt-1">k核是指网络中一个最大的子图，其中每个节点至少有k个邻居也在该子图中。核数是满足这一条件的最大k值。</p>
+                        </li>
+                        
+                        <li><strong>邻居连接性</strong>：
+                            <p class="mt-1">节点邻居的平均度，反映节点所处的网络环境</p>
+                            \[
+                            NC(i) = \frac{1}{k_i} \sum_{j \in N(i)} k_j
+                            \]
+                            <p class="text-sm mt-1">其中 \( N(i) \) 是节点 \( i \) 的邻居集合，\( k_j \) 是邻居节点 \( j \) 的度，\( k_i \) 是节点 \( i \) 自身的度</p>
+                        </li>
                     </ul>
                 </div>
 
@@ -550,75 +737,362 @@
                     <p>全局网络指标描述整个网络的宏观特性，反映网络的整体结构和组织方式。</p>
                     
                     <h4>度分布</h4>
-                    <ul>
-                        <li><strong>定义</strong>：网络中节点度值的概率分布P(k)</li>
-                        <li><strong>类型</strong>：泊松分布（随机网络）、幂律分布（无标度网络）、指数分布等</li>
+                    <ul class="space-y-2">
+                        <li><strong>定义</strong>：网络中节点度值的概率分布P(k)
+                            \[
+                            P(k) = \frac{\text{度为} \, k \, \text{的节点数量}}{\text{网络中总节点数量}}
+                            \]
+                            <p class="text-sm mt-1">其中 \( k \) 表示节点的度值，\( P(k) \) 表示随机选择一个节点其度为 \( k \) 的概率</p>
+                        </li>
+                        <li><strong>类型</strong>：
+                            <ul class="ml-4 mt-1 space-y-1">
+                                <li>泊松分布（随机网络）：
+                                    \[
+                                    P(k) = \frac{e^{-\lambda} \lambda^k}{k!}
+                                    \]
+                                    其中 \( \lambda \) 是网络的平均度
+                                </li>
+                                <li>幂律分布（无标度网络）：
+                                    \[
+                                    P(k) \propto k^{-\gamma}
+                                    \]
+                                    其中 \( \gamma \) 是幂律指数（通常在2到3之间）
+                                </li>
+                                <li>指数分布等</li>
+                            </ul>
+                        </li>
                         <li><strong>意义</strong>：反映网络的异质性，度分布的尾部特征决定了网络对故障和攻击的鲁棒性</li>
                     </ul>
                     
                     <h4>路径与距离指标</h4>
-                    <ul>
-                        <li><strong>平均路径长度</strong>：所有节点对之间最短路径长度的平均值</li>
-                        <li><strong>直径</strong>：网络中任意两个节点之间的最长最短路径长度</li>
-                        <li><strong>效率</strong>：网络中信息传递效率的度量，与平均路径长度成反比</li>
+                    <ul class="space-y-3">
+                        <li><strong>平均路径长度</strong>：
+                            <p class="mt-1">所有节点对之间最短路径长度的平均值</p>
+                            \[
+                            L = \frac{2}{N(N-1)} \sum_{1 \leq i < j \leq N} d(i,j)
+                            \]
+                            <p class="text-sm mt-1">其中 \( N \) 是网络中的节点总数，\( d(i,j) \) 是节点 \( i \) 到节点 \( j \) 的最短路径长度</p>
+                        </li>
+                        
+                        <li><strong>直径</strong>：
+                            <p class="mt-1">网络中任意两个节点之间的最长最短路径长度</p>
+                            \[
+                            D = \max_{1 \leq i < j \leq N} d(i,j)
+                            \]
+                            <p class="text-sm mt-1">即所有节点对之间最短路径长度的最大值</p>
+                        </li>
+                        
+                        <li><strong>效率</strong>：
+                            <p class="mt-1">网络中信息传递效率的度量，与平均路径长度成反比</p>
+                            \[
+                            E = \frac{2}{N(N-1)} \sum_{1 \leq i \neq j \leq N} \frac{1}{d(i,j)}
+                            \]
+                            <p class="text-sm mt-1">其中 \( d(i,j) \) 是节点 \( i \) 到节点 \( j \) 的最短路径长度，当节点不连通时 \( d(i,j) = \infty \)</p>
+                        </li>
                     </ul>
                     
                     <h4>聚集特性指标</h4>
-                    <ul>
-                        <li><strong>平均聚类系数</strong>：所有节点聚类系数的平均值，反映网络的整体聚集程度</li>
-                        <li><strong>传递性</strong>：所有闭合三角形数量与所有可能三角形数量之比，是另一种衡量网络聚集性的指标</li>
+                    <ul class="space-y-3">
+                        <li><strong>平均聚类系数</strong>：
+                            <p class="mt-1">所有节点聚类系数的平均值，反映网络的整体聚集程度</p>
+                            \[
+                            C = \frac{1}{N} \sum_{i=1}^{N} C_i
+                            \]
+                            <p class="text-sm mt-1">其中 \( C_i \) 是节点 \( i \) 的聚类系数，\( N \) 是网络中的节点总数</p>
+                        </li>
+                        
+                        <li><strong>传递性</strong>：
+                            <p class="mt-1">所有闭合三角形数量与所有可能三角形数量之比，是另一种衡量网络聚集性的指标</p>
+                            \[
+                            T = \frac{3 \times \text{网络中三角形的数量}}{\text{网络中连通三元组的数量}}
+                            \]
+                            <p class="text-sm mt-1">连通三元组是指具有两个边的三个节点组成的子图，传递性取值范围为 [0, 1]</p>
+                        </li>
                     </ul>
                     
                     <h4>连通性指标</h4>
-                    <ul>
-                        <li><strong>连通分量</strong>：网络中最大连通子图的大小和数量</li>
-                        <li><strong>坚韧度</strong>：衡量网络在节点移除情况下保持连通的能力</li>
-                        <li><strong>顶点覆盖数与独立集</strong>：反映网络的结构脆弱性</li>
+                    <ul class="space-y-3">
+                        <li><strong>连通分量</strong>：
+                            <p class="mt-1">网络中最大连通子图的大小和数量</p>
+                            <p class="text-sm mt-1">对于包含 \( N \) 个节点的网络，如果最大连通分量包含 \( N_{\text{max}} \) 个节点，则相对大小为：
+                            \[
+                            S = \frac{N_{\text{max}}}{N}
+                            \]
+                            取值范围为 (0, 1]，当网络完全连通时 \( S = 1 \)</p>
+                        </li>
+                        
+                        <li><strong>坚韧度</strong>：
+                            <p class="mt-1">衡量网络在节点移除情况下保持连通的能力</p>
+                            \[
+                            t(G) = \min_{S \subset V, G-S \text{不连通}} \frac{|S|}{\omega(G-S)}
+                            \]
+                            <p class="text-sm mt-1">其中 \( S \) 是使网络不连通所需移除的最小节点集，\( |S| \) 是节点集大小，\( \omega(G-S) \) 是移除后网络的连通分量数量</p>
+                        </li>
+                        
+                        <li><strong>顶点覆盖数与独立集</strong>：
+                            <p class="mt-1">反映网络的结构脆弱性</p>
+                            <p class="text-sm mt-1">顶点覆盖是指网络中一个节点子集 \( C \subseteq V \)，使得每条边至少有一个端点在 \( C \) 中。最小顶点覆盖数 \( \beta(G) \) 是所有顶点覆盖中最小的大小。</p>
+                            <p class="text-sm mt-1">独立集是指网络中一个节点子集 \( I \subseteq V \)，使得子集中任何两个节点都不相邻。最大独立集大小 \( \alpha(G) \) 满足关系式：
+                            \[
+                            \alpha(G) + \beta(G) = N
+                            \]
+                            其中 \( N \) 是网络中的节点总数</p>
+                        </li>
                     </ul>
                 </div>
-
+    
                 <div id="community-metrics" class="card">
                     <h3><i class="fas fa-users"></i> 社区结构指标</h3>
                     <p>社区结构指标用于描述网络中节点的分组特性，衡量网络的模块化组织程度。</p>
                     
                     <h4>社区划分质量指标</h4>
-                    <ul>
-                        <li><strong>模块化Q值</strong>：衡量社区内部连接密度与社区之间连接密度的差异，取值范围[-1/2, 1)</li>
-                        <li><strong>归一化切割(Ncut)</strong>：基于图切割的社区质量度量，考虑社区大小的影响</li>
-                        <li><strong> conductance</strong>：社区与外部连接数与社区总连接数的比值，值越小表示社区结构越明显</li>
+                    <ul class="space-y-4">
+                        <li><strong>模块化Q值</strong>：
+                            <p class="mt-1">衡量社区内部连接密度与社区之间连接密度的差异，取值范围[-1/2, 1)</p>
+                            \[
+                            Q = \frac{1}{2m} \sum_{i,j} \left( A_{ij} - \frac{k_i k_j}{2m} \right) \delta(c_i, c_j)
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( A_{ij} \) 是邻接矩阵元素（1表示节点i和j相连，0表示不相连）</li>
+                                <li>\( k_i \) 和 \( k_j \) 分别是节点i和j的度</li>
+                                <li>\( m \) 是网络中边的总数（\( m = \frac{1}{2}\sum_{i}k_i \)）</li>
+                                <li>\( c_i \) 表示节点i所属的社区</li>
+                                <li>\( \delta(c_i, c_j) \) 是克罗内克函数，当 \( c_i = c_j \) 时为1，否则为0</li>
+                            </ul>
+                            </p>
+                            <p class="text-sm mt-1">Q值越大（接近1），表示社区结构越显著。</p>
+                        </li>
+                        
+                        <li><strong>归一化切割(Ncut)</strong>：
+                            <p class="mt-1">基于图切割的社区质量度量，考虑社区大小的影响</p>
+                            对于将网络划分为两个社区A和B：
+                            \[
+                            \text{Ncut}(A,B) = \frac{\text{cut}(A,B)}{\text{vol}(A)} + \frac{\text{cut}(A,B)}{\text{vol}(B)}
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( \text{cut}(A,B) = \sum_{i \in A, j \in B} A_{ij} \) 表示连接社区A和B的边的总数</li>
+                                <li>\( \text{vol}(A) = \sum_{i \in A} k_i \) 表示社区A中所有节点的度之和（体积）</li>
+                                <li>\( \text{vol}(B) \) 表示社区B的体积</li>
+                            </ul>
+                            </p>
+                            <p class="text-sm mt-1">Ncut值越小，说明社区划分质量越高。</p>
+                        </li>
+                        
+                        <li><strong>conductance</strong>：
+                            <p class="mt-1">社区与外部连接数与社区总连接数的比值，值越小表示社区结构越明显</p>
+                            对于社区C：
+                            \[
+                            \phi(C) = \frac{\text{cut}(C, \overline{C})}{\min(\text{vol}(C), \text{vol}(\overline{C}))}
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( \text{cut}(C, \overline{C}) \) 是社区C与其补集\( \overline{C} \)之间的边数</li>
+                                <li>\( \text{vol}(C) \) 是社区C的体积（所有节点的度之和）</li>
+                                <li>\( \text{vol}(\overline{C}) \) 是补集的体积</li>
+                            </ul>
+                            </p>
+                            <p class="text-sm mt-1">conductance取值范围为[0,1]，接近0表示社区内部连接紧密而外部连接稀疏。</p>
+                        </li>
                     </ul>
                     
                     <h4>社区属性指标</h4>
-                    <ul>
-                        <li><strong>社区大小分布</strong>：不同规模社区的数量分布</li>
-                        <li><strong>社区中心性</strong>：衡量整个社区在网络中的重要性</li>
-                        <li><strong>社区间连接密度</strong>：描述不同社区之间的连接强度</li>
-                        <li><strong>社区重叠度</strong>：节点同时属于多个社区的程度</li>
+                    <ul class="space-y-4">
+                        <li><strong>社区大小分布</strong>：
+                            <p class="mt-1">不同规模社区的数量分布</p>
+                            \[
+                            P(s) = \frac{\text{大小为} \, s \, \text{的社区数量}}{\text{社区总数量}}
+                            \]
+                            <p class="text-sm mt-1">其中\( s \)是社区包含的节点数量，\( P(s) \)表示随机选择一个社区其大小为\( s \)的概率。常见分布有指数分布、幂律分布等。</p>
+                        </li>
+                        
+                        <li><strong>社区中心性</strong>：
+                            <p class="mt-1">衡量整个社区在网络中的重要性</p>
+                            社区C的中心性可通过其内部节点中心性的加权平均计算：
+                            \[
+                            C_{\text{comm}}(C) = \frac{1}{|C|} \sum_{i \in C} C_{\text{node}}(i)
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( |C| \) 是社区C包含的节点数量</li>
+                                <li>\( C_{\text{node}}(i) \) 是节点i的某种中心性（如介数中心性、特征向量中心性等）</li>
+                            </ul>
+                            </p>
+                        </li>
+                        
+                        <li><strong>社区间连接密度</strong>：
+                            <p class="mt-1">描述不同社区之间的连接强度</p>
+                            社区A和社区B之间的连接密度：
+                            \[
+                            d(A,B) = \frac{e(A,B)}{\min(|A| \times |B|, |B| \times |A|)} = \frac{e(A,B)}{|A| \times |B|}
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( e(A,B) \) 是连接社区A和B的边的数量</li>
+                                <li>\( |A| \) 和 \( |B| \) 分别是社区A和B的节点数量</li>
+                            </ul>
+                            </p>
+                            <p class="text-sm mt-1">取值范围为[0,1]，值越大表示两个社区之间连接越紧密。</p>
+                        </li>
+                        
+                        <li><strong>社区重叠度</strong>：
+                            <p class="mt-1">节点同时属于多个社区的程度</p>
+                            网络整体重叠度可定义为：
+                            \[
+                            \Omega = \frac{1}{N} \sum_{i=1}^{N} (o_i - 1)
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( N \) 是网络中的节点总数</li>
+                                <li>\( o_i \) 是节点i所属的社区数量</li>
+                            </ul>
+                            </p>
+                            <p class="text-sm mt-1">Ω=0表示完全不重叠（每个节点只属于一个社区），值越大表示整体重叠程度越高。</p>
+                        </li>
                     </ul>
                 </div>
-
+    
                 <div id="dynamics-metrics" class="card">
                     <h3><i class="fas fa-running"></i> 动力学相关指标</h3>
                     <p>动力学相关指标用于评估网络对动力学过程的影响，预测网络上动力学行为的特性。</p>
                     
                     <h4>传播相关指标</h4>
-                    <ul>
-                        <li><strong>传播阈值</strong>：网络中信息或疾病能够持续传播的最小感染率</li>
-                        <li><strong>扩散效率</strong>：物质或信息在网络中扩散的速度和范围</li>
-                        <li><strong>影响范围</strong>：特定节点能够影响的网络范围</li>
+                    <ul class="space-y-4">
+                        <li><strong>传播阈值</strong>：
+                            <p class="mt-1">网络中信息或疾病能够持续传播的最小感染率</p>
+                            在无标度网络中，基于SIR模型的传播阈值为：
+                            \[
+                            \lambda_c = \frac{1}{\frac{\langle k^2 \rangle}{\langle k \rangle}}
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( \lambda_c \) 是传播阈值</li>
+                                <li>\( \langle k \rangle \) 表示网络的平均度</li>
+                                <li>\( \langle k^2 \rangle \) 表示网络中节点度平方的平均值</li>
+                            </ul>
+                            </p>
+                            <p class="text-sm mt-1">当感染率 \( \lambda > \lambda_c \) 时，疾病或信息可在网络中持续传播；当 \( \lambda < \lambda_c \) 时，传播将逐渐消亡。</p>
+                        </li>
+                        
+                        <li><strong>扩散效率</strong>：
+                            <p class="mt-1">物质或信息在网络中扩散的速度和范围</p>
+                            扩散效率可用扩散过程的特征时间表示：
+                            \[
+                            T \propto \frac{1}{\lambda_2}
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( T \) 是扩散特征时间（值越小表示扩散效率越高）</li>
+                                <li>\( \lambda_2 \) 是网络拉普拉斯矩阵的第二小特征值（也称为Fiedler值）</li>
+                            </ul>
+                            </p>
+                            <p class="text-sm mt-1">拉普拉斯矩阵的第二小特征值越大，扩散效率越高，信息或物质能更快地在整个网络中传播。</p>
+                        </li>
+                        
+                        <li><strong>影响范围</strong>：
+                            <p class="mt-1">特定节点能够影响的网络范围</p>
+                            节点 \( v \) 的影响范围可定义为：
+                            \[
+                            R(v) = \sum_{u \in V} p(v \rightarrow u)
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( R(v) \) 是节点 \( v \) 的影响范围</li>
+                                <li>\( p(v \rightarrow u) \) 是信息从节点 \( v \) 传播到节点 \( u \) 的概率</li>
+                                <li>\( V \) 是网络中所有节点的集合</li>
+                            </ul>
+                            </p>
+                            <p class="text-sm mt-1">该值越大，表示节点 \( v \) 的影响力覆盖范围越广。</p>
+                        </li>
                     </ul>
                     
                     <h4>同步相关指标</h4>
-                    <ul>
-                        <li><strong>同步能力</strong>：网络中节点动力学达到同步状态的难易程度</li>
-                        <li><strong>主稳定性函数</strong>：基于网络拉普拉斯矩阵特征值分析网络同步能力</li>
+                    <ul class="space-y-4">
+                        <li><strong>同步能力</strong>：
+                            <p class="mt-1">网络中节点动力学达到同步状态的难易程度</p>
+                            对于耦合动力系统，同步能力与耦合强度相关：
+                            \[
+                            \dot{x}_i = f(x_i) + \sigma \sum_{j=1}^N L_{ij} x_j
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( x_i \) 是节点 \( i \) 的状态变量</li>
+                                <li>\( f(\cdot) \) 是节点的动力学函数</li>
+                                <li>\( \sigma \) 是耦合强度（值越大越容易同步）</li>
+                                <li>\( L \) 是网络的拉普拉斯矩阵</li>
+                                <li>\( L_{ij} \) 是拉普拉斯矩阵的元素</li>
+                            </ul>
+                            </p>
+                        </li>
+                        
+                        <li><strong>主稳定性函数</strong>：
+                            <p class="mt-1">基于网络拉普拉斯矩阵特征值分析网络同步能力</p>
+                            主稳定性函数(MSF)定义为：
+                            \[
+                            \Lambda(\alpha) = \max \text{Re} \left( \text{spec}(Df(s) - \alpha I) \right)
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( \alpha \) 是拉普拉斯矩阵的特征值</li>
+                                <li>\( Df(s) \) 是同步状态 \( s \) 处的雅可比矩阵</li>
+                                <li>\( I \) 是单位矩阵</li>
+                                <li>\( \text{spec}(\cdot) \) 表示矩阵的谱（特征值集合）</li>
+                                <li>\( \text{Re}(\cdot) \) 表示复数的实部</li>
+                            </ul>
+                            </p>
+                            <p class="text-sm mt-1">当 \( \Lambda(\alpha) < 0 \) 对拉普拉斯矩阵的所有特征值 \( \alpha \) 成立时，网络可以实现完全同步。</p>
+                        </li>
                     </ul>
                     
                     <h4>鲁棒性指标</h4>
-                    <ul>
-                        <li><strong>容错性</strong>：网络在随机节点/边失效情况下保持功能的能力</li>
-                        <li><strong>抗毁性</strong>：网络在目标攻击下保持功能的能力</li>
-                        <li><strong>恢复力</strong>：网络在受到扰动后恢复到正常状态的能力</li>
+                    <ul class="space-y-4">
+                        <li><strong>容错性</strong>：
+                            <p class="mt-1">网络在随机节点/边失效情况下保持功能的能力</p>
+                            \[
+                            F(p) = \frac{N_{\text{max}}(p)}{N}
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( F(p) \) 是容错性指标（值越大容错性越强）</li>
+                                <li>\( p \) 是随机移除的节点比例</li>
+                                <li>\( N_{\text{max}}(p) \) 是移除比例为 \( p \) 的节点后最大连通分量的大小</li>
+                                <li>\( N \) 是原始网络的节点总数</li>
+                            </ul>
+                            </p>
+                        </li>
+                        
+                        <li><strong>抗毁性</strong>：
+                            <p class="mt-1">网络在目标攻击下保持功能的能力</p>
+                            抗毁性可通过攻击曲线的积分来衡量：
+                            \[
+                            R = \int_0^1 S(q) dq
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( R \) 是抗毁性指标（值越大抗毁性越强）</li>
+                                <li>\( q \) 是按节点重要性排序移除的节点比例</li>
+                                <li>\( S(q) \) 是移除比例为 \( q \) 的节点后最大连通分量的相对大小</li>
+                            </ul>
+                            </p>
+                        </li>
+                        
+                        <li><strong>恢复力</strong>：
+                            <p class="mt-1">网络在受到扰动后恢复到正常状态的能力</p>
+                            \[
+                            \Phi = \int_{t_0}^{t_r} \left(1 - \frac{P(t)}{P_0}\right) dt
+                            \]
+                            <p class="text-sm mt-1">其中：
+                            <ul class="text-sm mt-1 ml-4 list-disc">
+                                <li>\( \Phi \) 是恢复力指标（值越小恢复力越强）</li>
+                                <li>\( P(t) \) 是时间 \( t \) 时的网络性能</li>
+                                <li>\( P_0 \) 是初始网络性能</li>
+                                <li>\( t_0 \) 是扰动发生的时间</li>
+                                <li>\( t_r \) 是网络恢复到稳定状态的时间</li>
+                            </ul>
+                            </p>
+                            <p class="text-sm mt-1">该指标表示网络性能低于初始水平的累积程度和持续时间。</p>
+                        </li>
                     </ul>
                 </div>
 
