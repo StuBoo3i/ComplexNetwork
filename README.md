@@ -85,7 +85,7 @@
 ## 🚀 如何使用
 
 
-1.  直接访问网站：[ht](https://StuBoo3i.github.io/ComplexNetwork)[tps:](https://StuBoo3i.github.io/ComplexNetwork)[// 你的用](https://StuBoo3i.github.io/ComplexNetwork)[户名.g](https://StuBoo3i.github.io/ComplexNetwork)[ithu](https://StuBoo3i.github.io/ComplexNetwork)[b.io/](https://StuBoo3i.github.io/ComplexNetwork)[Comp](https://StuBoo3i.github.io/ComplexNetwork)[lexNe](https://StuBoo3i.github.io/ComplexNetwork)[twor](https://StuBoo3i.github.io/ComplexNetwork)[k](https://StuBoo3i.github.io/ComplexNetwork)
+1.  直接访问网站：[Home](https://StuBoo3i.github.io/ComplexNetwork)
 
 2.  浏览导航菜单，选择感兴趣的内容板块
 
