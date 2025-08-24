@@ -85,8 +85,7 @@
 ## 🚀 如何使用
 
 
-
-1.  直接访问网站：[ht](https://你的用户名.github.io/ComplexNetwork)[tps:](https://你的用户名.github.io/ComplexNetwork)[// 你的用](https://你的用户名.github.io/ComplexNetwork)[户名.g](https://你的用户名.github.io/ComplexNetwork)[ithu](https://你的用户名.github.io/ComplexNetwork)[b.io/](https://你的用户名.github.io/ComplexNetwork)[Comp](https://你的用户名.github.io/ComplexNetwork)[lexNe](https://你的用户名.github.io/ComplexNetwork)[twor](https://你的用户名.github.io/ComplexNetwork)[k](https://你的用户名.github.io/ComplexNetwork)
+1.  直接访问网站：[ht](https://StuBoo3i.github.io/ComplexNetwork)[tps:](https://StuBoo3i.github.io/ComplexNetwork)[// 你的用](https://StuBoo3i.github.io/ComplexNetwork)[户名.g](https://StuBoo3i.github.io/ComplexNetwork)[ithu](https://StuBoo3i.github.io/ComplexNetwork)[b.io/](https://StuBoo3i.github.io/ComplexNetwork)[Comp](https://StuBoo3i.github.io/ComplexNetwork)[lexNe](https://StuBoo3i.github.io/ComplexNetwork)[twor](https://StuBoo3i.github.io/ComplexNetwork)[k](https://StuBoo3i.github.io/ComplexNetwork)
 
 2.  浏览导航菜单，选择感兴趣的内容板块
 
@@ -118,22 +117,8 @@ open index.html  # 或在浏览器中直接打开
 
 4.  **代码优化**：改进网页交互体验或可视化效果
 
-贡献流程：
-
-
-
-*   Fork 本仓库
-
-*   创建分支（`git checkout -b feature/your-feature`）
-
-*   提交修改（`git commit -m 'Add some feature'`）
-
-*   推送分支（`git push origin feature/your-feature`）
-
-*   发起 Pull Request
 
 ## 📈 未来规划
-
 
 
 *   增加网络分析在线工具模块
@@ -150,9 +135,9 @@ open index.html  # 或在浏览器中直接打开
 
 
 
-*   GitHub Issues：[项目 Issues 页面](https://github.com/你的用户名/ComplexNetwork/issues)
+*   GitHub Issues：[项目 Issues 页面](https://github.com/StuBoo3i/ComplexNetwork/issues)
 
-*   邮箱：your@email.com
+*   邮箱：xjtuwangjiabo@163.com
 
 
 
@@ -160,4 +145,4 @@ open index.html  # 或在浏览器中直接打开
 
 *本项目持续更新中，欢迎关注与收藏！* 🔄
 
-> （注：文档部分内容可能由 AI 生成）
+> （注：文档部分内容由 AI 生成）
