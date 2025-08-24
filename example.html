@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复杂网络应用案例分析：蛋白质-蛋白质相互作用网络与社交推荐系统</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --light-gray: #ecf0f1;
+            --dark-gray: #7f8c8d;
+            --accent-color: #e74c3c;
+            --sidebar-width: 280px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-color);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.8rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-sub-item {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-sub-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .nav-sub-link:hover {
+            color: white;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1200px;
+            margin-right: auto;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Cards for sections */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Chart styles */
+        .chart-container {
+            margin: 2rem 0;
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        .chart-description {
+            text-align: center;
+            font-style: italic;
+            color: var(--dark-gray);
+            margin-top: -1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Table styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .comparison-table th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 2000;
+                background-color: var(--secondary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            .card {
+                padding: 1.2rem;
+            }
+
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+
+            .comparison-table th, .comparison-table td {
+                padding: 8px 10px;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>复杂网络应用案例</h2>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#intro" class="nav-link"><i class="fas fa-book-open"></i> 引言</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#ppi-network" class="nav-link"><i class="fas fa-dna"></i> 蛋白质-蛋白质相互作用网络</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#ppi-structure" class="nav-sub-link">网络结构特征</a></li>
+                        <li class="nav-sub-item"><a href="#ppi-analysis" class="nav-sub-link">网络分析方法</a></li>
+                        <li class="nav-sub-item"><a href="#ppi-applications" class="nav-sub-link">应用场景</a></li>
+                        <li class="nav-sub-item"><a href="#ppi-charts" class="nav-sub-link">网络图表分析</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#social-recommendation" class="nav-link"><i class="fas fa-users"></i> 社交推荐系统</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#social-network" class="nav-sub-link">社交网络结构</a></li>
+                        <li class="nav-sub-item"><a href="#recommendation-algorithms" class="nav-sub-link">推荐算法</a></li>
+                        <li class="nav-sub-item"><a href="#recommendation-applications" class="nav-sub-link">应用案例</a></li>
+                        <li class="nav-sub-item"><a href="#recommendation-charts" class="nav-sub-link">推荐效果图表</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#comparison" class="nav-link"><i class="fas fa-balance-scale"></i> 两类网络对比分析</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#challenges" class="nav-link"><i class="fas fa-exclamation-triangle"></i> 挑战与展望</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#conclusion" class="nav-link"><i class="fas fa-flag-checkered"></i> 结论</a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <section id="intro" class="section">
+                <h1>复杂网络应用案例分析：蛋白质-蛋白质相互作用网络与社交推荐系统</h1>
+                <div class="card">
+                    <p>复杂网络理论作为研究复杂系统的重要工具，已广泛应用于生物、社会、信息等多个领域。本报告聚焦两个典型应用案例：蛋白质-蛋白质相互作用（PPI）网络和基于社交网络的推荐系统，深入分析它们的网络结构特征、分析方法及实际应用价值。</p>
+                    <p>蛋白质-蛋白质相互作用网络揭示了生物体内分子间的相互作用关系，为理解生命活动机制和疾病发生原理提供了重要视角；而社交推荐系统则基于用户间的社交关系网络，实现个性化信息推荐，极大地提升了信息获取效率。通过对这两类网络的对比分析，不仅能展现复杂网络理论的广泛适用性，还能为跨领域研究提供借鉴。</p>
+                </div>
+            </section>
+
+            <section id="ppi-network" class="section">
+                <h2>蛋白质-蛋白质相互作用网络</h2>
+                <p>蛋白质-蛋白质相互作用（Protein-Protein Interaction, PPI）网络是生物信息学的重要研究对象，它通过节点表示蛋白质，边表示蛋白质之间的物理或功能相互作用，构建出细胞内分子相互作用的全局图景。</p>
+
+                <div id="ppi-structure" class="card">
+                    <h3><i class="fas fa-sitemap"></i> 网络结构特征</h3>
+                    
+                    <h4>基本拓扑特性</h4>
+                    <ul>
+                        <li><strong>无标度特性</strong>：度分布服从幂律分布 \( P(k) \sim k^{-\gamma} \)，γ值通常在2-3之间，存在少数高度连接的"枢纽"蛋白质</li>
+                        <li><strong>小世界特性</strong>：具有较短的平均路径长度和较高的聚类系数，体现局部聚集和全局高效连接的特性</li>
+                        <li><strong>模块化结构</strong>：网络由多个功能模块组成，每个模块对应特定的生物学功能</li>
+                        <li><strong>层次性</strong>：网络结构呈现层级组织，从基础功能模块到复杂生物学过程形成层级关系</li>
+                    </ul>
+                    
+                    <h4>网络组件特征</h4>
+                    <ul>
+                        <li><strong>节点（蛋白质）属性</strong>：包含结构域、表达模式、亚细胞定位等生物学特征</li>
+                        <li><strong>边（相互作用）类型</strong>：
+                            <ul>
+                                <li>物理相互作用：直接的物理结合</li>
+                                <li>功能相互作用：通过基因调控、代谢途径等间接关联</li>
+                                <li>瞬时相互作用与稳定相互作用</li>
+                            </ul>
+                        </li>
+                        <li><strong>连通分量</strong>：包含一个巨大连通分量和多个小连通分量，枢纽蛋白质多位于巨大连通分量中</li>
+                    </ul>
+                </div>
+
+                <div id="ppi-analysis" class="card">
+                    <h3><i class="fas fa-search"></i> 网络分析方法</h3>
+                    
+                    <h4>中心性分析</h4>
+                    <ul>
+                        <li><strong>度中心性</strong>：识别高度连接的枢纽蛋白质，这些蛋白质通常对细胞存活至关重要</li>
+                        <li><strong>介数中心性</strong>：发现位于多个最短路径上的"桥接"蛋白质，它们在不同功能模块间传递信号</li>
+                        <li><strong>紧密中心性</strong>：衡量蛋白质与网络中其他蛋白质的平均距离，反映其在信息传递中的效率</li>
+                        <li><strong>特征向量中心性</strong>：综合考虑蛋白质自身重要性及其邻居蛋白质的重要性</li>
+                    </ul>
+                    
+                    <h4>模块与社区检测</h4>
+                    <ul>
+                        <li><strong>聚类方法</strong>：
+                            <ul>
+                                <li>基于图分割的方法（如谱聚类、最小割算法）</li>
+                                <li>基于模块度优化的方法（如Louvain算法）</li>
+                                <li>层次聚类方法</li>
+                            </ul>
+                        </li>
+                        <li><strong>功能富集分析</strong>：通过基因本体（GO）分析确定模块的生物学功能
+                            \[
+                            p\text{-value} = 1 - \sum_{i=0}^{k-1} \frac{\binom{M}{i}\binom{N-M}{n-i}}{\binom{N}{n}}
+                            \]
+                            其中N为背景基因总数，M为背景中与特定GO术语相关的基因数，n为模块中的基因数，k为模块中与特定GO术语相关的基因数
+                        </li>
+                    </ul>
+                    
+                    <h4>动态分析</h4>
+                    <ul>
+                        <li><strong>网络演化模型</strong>：研究PPI网络随时间（如不同发育阶段）的结构变化</li>
+                        <li><strong>扰动分析</strong>：模拟基因突变或蛋白质缺失对网络结构和功能的影响</li>
+                        <li><strong>路径分析</strong>：识别信号传导路径和代谢通路中的关键节点和相互作用</li>
+                    </ul>
+                </div>
+
+                <div id="ppi-applications" class="card">
+                    <h3><i class="fas fa-flask"></i> 应用场景</h3>
+                    
+                    <h4>疾病机制研究</h4>
+                    <ul>
+                        <li><strong>疾病基因预测</strong>：通过网络中已知疾病基因的邻居节点分析，预测潜在疾病相关基因</li>
+                        <li><strong>疾病模块识别</strong>：识别网络中与特定疾病相关的功能模块，揭示疾病发生的分子机制</li>
+                        <li><strong>复杂疾病关联性分析</strong>：通过网络分析理解多基因疾病的遗传基础</li>
+                    </ul>
+                    
+                    <h4>药物研发</h4>
+                    <ul>
+                        <li><strong>药物靶点识别</strong>：基于网络中心性分析识别潜在药物靶点，优先选择网络中的枢纽节点</li>
+                        <li><strong>药物重定位</strong>：通过分析药物靶点在PPI网络中的连接关系，发现现有药物的新用途</li>
+                        <li><strong>副作用预测</strong>：基于药物靶点相互作用网络预测可能的药物副作用</li>
+                    </ul>
+                    
+                    <h4>蛋白质功能预测</h4>
+                    <ul>
+                        <li><strong> guilt-by-association 原理</strong>：网络中相邻的蛋白质倾向于具有相似功能</li>
+                        <li><strong>功能传播模型</strong>：将已知功能的蛋白质信息通过网络边传播到未知功能的蛋白质</li>
+                        <li><strong>多源信息融合</strong>：结合PPI网络与基因表达、序列特征等多维度数据提高预测准确性</li>
+                    </ul>
+                </div>
+
+                <div id="ppi-charts" class="card">
+                    <h3><i class="fas fa-chart-line"></i> 网络图表分析</h3>
+                    
+                    <div class="chart-container">
+                        <canvas id="ppiDegreeDistribution"></canvas>
+                    </div>
+                    <p class="chart-description">图1：蛋白质-蛋白质相互作用网络的度分布。呈现明显的幂律分布特征，表明网络具有无标度特性，存在少数连接度极高的枢纽蛋白质。</p>
+                    
+                    <div class="chart-container">
+                        <canvas id="ppiModuleStructure"></canvas>
+                    </div>
+                    <p class="chart-description">图2：PPI网络的模块结构可视化。不同颜色代表不同的功能模块，模块内部连接密集，模块间存在少量连接，体现网络的模块化组织特征。</p>
+                    
+                    <div class="chart-container">
+                        <canvas id="ppiCentralityComparison"></canvas>
+                    </div>
+                    <p class="chart-description">图3：不同类型蛋白质的中心性指标比较。疾病相关蛋白质（红色）相比非疾病蛋白质（蓝色）在各项中心性指标上均有显著差异，表明网络位置与生物学重要性的关联。</p>
+                </div>
+            </section>
+
+            <section id="social-recommendation" class="section">
+                <h2>社交推荐系统</h2>
+                <p>社交推荐系统是将社交网络分析与推荐算法相结合的智能系统，它利用用户间的社交关系、兴趣偏好和行为数据，为用户推荐可能感兴趣的物品（如商品、内容、好友等）。相比传统推荐系统，社交推荐系统能有效缓解数据稀疏性和冷启动问题。</p>
+
+                <div id="social-network" class="card">
+                    <h3><i class="fas fa-user-friends"></i> 社交网络结构</h3>
+                    
+                    <h4>网络拓扑特性</h4>
+                    <ul>
+                        <li><strong>无标度与小世界特性</strong>：与PPI网络类似，社交网络也具有幂律度分布和小世界特性</li>
+                        <li><strong>社区结构</strong>：用户倾向于形成兴趣相近的社区，社区内部连接紧密</li>
+                        <li><strong>同质性</strong>：连接的用户倾向于具有相似的属性和兴趣偏好</li>
+                        <li><strong>动态演化</strong>：网络结构随时间动态变化，新用户加入和关系建立遵循一定规律</li>
+                    </ul>
+                    
+                    <h4>网络组成要素</h4>
+                    <ul>
+                        <li><strong>节点</strong>：代表用户，包含人口统计学特征、兴趣标签、行为历史等属性</li>
+                        <li><strong>边</strong>：代表用户间的社交关系，可分为：
+                            <ul>
+                                <li>单向关系（如关注）和双向关系（如好友）</li>
+                                <li>强弱关系（基于互动频率和深度）</li>
+                            </ul>
+                        </li>
+                        <li><strong>内容层</strong>：用户与物品的交互关系（如评分、购买、浏览）</li>
+                    </ul>
+                </div>
+
+                <div id="recommendation-algorithms" class="card">
+                    <h3><i class="fas fa-cogs"></i> 推荐算法</h3>
+                    
+                    <h4>基于社交关系的推荐</h4>
+                    <ul>
+                        <li><strong>好友偏好融合</strong>：
+                            \[
+                            \hat{r}_{u,i} = \frac{1}{|N(u)|} \sum_{v \in N(u)} r_{v,i}
+                            \]
+                            其中\( \hat{r}_{u,i} \)是用户u对物品i的预测评分，\( N(u) \)是用户u的好友集合，\( r_{v,i} \)是好友v对物品i的评分
+                        </li>
+                        <li><strong>信任传播模型</strong>：考虑社交网络中的信任值传递，计算间接信任关系</li>
+                        <li><strong>影响力扩散</strong>：基于社交网络分析信息传播路径，预测用户可能感兴趣的内容</li>
+                    </ul>
+                    
+                    <h4>结合网络嵌入的推荐</h4>
+                    <ul>
+                        <li><strong>网络表示学习</strong>：将用户和物品映射到低维向量空间，如DeepWalk、Node2Vec等方法
+                            \[
+                            \text{Skip-gram: } \max_{\Phi} \sum_{u \in V} \sum_{v \in N(u)} \log P(v|\Phi(u))
+                            \]
+                            其中\( \Phi(u) \)是节点u的嵌入向量，\( N(u) \)是节点u的邻居集合
+                        </li>
+                        <li><strong>图神经网络(GNN)推荐</strong>：利用GNN捕获用户-物品交互网络和社交网络的结构特征</li>
+                        <li><strong>注意力机制</strong>：在聚合社交信息时，对不同好友赋予不同权重</li>
+                    </ul>
+                    
+                    <h4>混合推荐策略</h4>
+                    <ul>
+                        <li><strong>协同过滤与社交网络融合</strong>：结合用户行为数据和社交关系提高推荐准确性</li>
+                        <li><strong>内容特征与网络结构结合</strong>：将物品内容特征与用户社交网络特征联合建模</li>
+                        <li><strong>多目标优化</strong>：同时优化推荐准确性、多样性、新颖性等多个目标</li>
+                    </ul>
+                </div>
+
+                <div id="recommendation-applications" class="card">
+                    <h3><i class="fas fa-shopping-cart"></i> 应用案例</h3>
+                    
+                    <h4>电子商务推荐</h4>
+                    <ul>
+                        <li><strong>商品推荐</strong>：基于好友购买行为和评价推荐商品</li>
+                        <li><strong>社交化营销</strong>：识别社交网络中的意见领袖，进行精准营销</li>
+                        <li><strong>用户获取</strong>：通过社交网络分析发现潜在用户，实现用户增长</li>
+                    </ul>
+                    
+                    <h4>内容推荐</h4>
+                    <ul>
+                        <li><strong>社交媒体内容</strong>：如微博、Twitter的信息流推荐，结合社交关系和内容偏好</li>
+                        <li><strong>视频与音乐推荐</strong>：基于好友的观看/收听历史推荐内容</li>
+                        <li><strong>新闻推荐</strong>：利用社交网络传播模式预测新闻的相关性和传播力</li>
+                    </ul>
+                    
+                    <h4>社交关系推荐</h4>
+                    <ul>
+                        <li><strong>好友推荐</strong>：基于共同好友、兴趣相似度等推荐潜在好友</li>
+                        <li><strong>社区发现</strong>：推荐用户加入与其兴趣匹配的社区或群组</li>
+                        <li><strong>专业网络构建</strong>：如LinkedIn的职业关系推荐，促进专业交流</li>
+                    </ul>
+                </div>
+
+                <div id="recommendation-charts" class="card">
+                    <h3><i class="fas fa-chart-bar"></i> 推荐效果图表</h3>
+                    
+                    <div class="chart-container">
+                        <canvas id="recommendationAccuracy"></canvas>
+                    </div>
+                    <p class="chart-description">图4：不同推荐算法的准确率比较。社交增强的推荐算法（绿色）在准确率和召回率上均优于传统协同过滤（蓝色）和基于内容的推荐（红色），尤其在数据稀疏情况下优势明显。</p>
+                    
+                    <div class="chart-container">
+                        <canvas id="socialInfluence"></canvas>
+                    </div>
+                    <p class="chart-description">图5：社交关系强度与推荐接受率的关系。显示用户更倾向于接受强关系好友（如亲密朋友）推荐的物品，随着关系强度减弱，接受率逐渐下降。</p>
+                    
+                    <div class="chart-container">
+                        <canvas id="communityRecommendation"></canvas>
+                    </div>
+                    <p class="chart-description">图6：社区结构对推荐多样性的影响。基于社区的推荐策略（橙色）相比全局推荐（紫色）能提供更高的推荐多样性，同时保持较好的准确率。</p>
+                </div>
+            </section>
+
+            <section id="comparison" class="section">
+                <h2>两类网络对比分析</h2>
+                <div class="card">
+                    <p>蛋白质-蛋白质相互作用网络和社交推荐系统网络虽然应用领域迥异，但作为复杂网络的典型实例，它们在结构特征、分析方法和演化规律上存在一定的共性和差异。</p>
+                    
+                    <h3>结构特征对比</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>特征</th>
+                                <th>蛋白质-蛋白质相互作用网络</th>
+                                <th>社交推荐系统网络</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>节点含义</td>
+                                <td>生物分子（蛋白质）</td>
+                                <td>用户与物品</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="challenges" class="section">
+                <h2>挑战与展望</h2>
+                <div class="card">
+                    <h3>蛋白质-蛋白质相互作用网络研究的挑战</h3>
+                    <ul>
+                        <li><strong>数据质量问题</strong>：PPI数据存在较高的假阳性和假阴性，影响网络分析的准确性</li>
+                        <li><strong>动态网络建模</strong>：现有模型难以捕捉PPI网络的动态变化，如不同细胞状态下的相互作用差异</li>
+                        <li><strong>多尺度整合</strong>：如何将PPI网络与基因调控网络、代谢网络等多尺度生物网络整合分析</li>
+                    </ul>
+                    
+                    <h3>社交推荐系统面临的挑战</h3>
+                    <ul>
+                        <li><strong>数据隐私保护</strong>：在利用社交数据进行推荐时，如何平衡推荐效果与用户隐私保护</li>
+                        <li><strong>算法偏见</strong>：社交推荐可能导致"信息茧房"，限制用户获取多元化信息</li>
+                        <li><strong>动态适应性</strong>：如何快速适应社交网络和用户兴趣的动态变化</li>
+                    </ul>
+                    
+                    <h3>未来研究方向</h3>
+                    <ul>
+                        <li><strong>跨领域方法借鉴</strong>：将生物网络的模块检测方法应用于社交网络分析，反之亦然</li>
+                        <li><strong>深度学习融合</strong>：利用图神经网络等先进方法处理复杂网络数据</li>
+                        <li><strong>动态网络分析</strong>：发展更有效的动态网络建模和分析方法</li>
+                        <li><strong>多模态信息融合</strong>：整合网络结构数据与节点属性数据，提升分析能力</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>结论</h2>
+                <div class="card">
+                    <p>蛋白质-蛋白质相互作用网络和社交推荐系统网络作为复杂网络在生物医学和社会信息领域的典型应用，充分展示了复杂网络理论的普适性和强大解释力。尽管两者的应用场景差异显著，但都呈现出无标度、小世界和模块化等共同的拓扑特征，验证了复杂系统组织的某些普适规律。</p>
+                    <p>通过中心性分析、社区检测等网络分析方法，我们能够从PPI网络中识别关键蛋白质和功能模块，为疾病研究和药物开发提供指导；在社交推荐系统中，网络分析方法帮助我们理解用户行为模式和信息传播规律，提高推荐的准确性和多样性。</p>
+                    <p>未来，随着数据获取技术的进步和分析方法的发展，复杂网络理论在这两个领域的应用将更加深入。跨领域的方法借鉴和多学科融合，有望为解决各自领域的难题提供新的思路和方法，推动生物医学研究和智能推荐系统的进一步发展。</p>
+                </div>
+            </section>
+
+            <a href="#" class="back-to-top" id="backToTop">
+                <i class="fas fa-arrow-up"></i>
+            </a>
+        </main>
+    </div>
+
+    <script>
+        // 侧边栏切换
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // 回到顶部按钮
+        window.addEventListener('scroll', function() {
+            const backToTopButton = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    document.querySelector(targetId).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+                // 在移动设备上点击导航后关闭侧边栏
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+            });
+        });
+
+        // 图表初始化
+        window.addEventListener('load', function() {
+            // PPI网络度分布
+            const ppiDegreeCtx = document.getElementById('ppiDegreeDistribution').getContext('2d');
+            new Chart(ppiDegreeCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: '度分布',
+                        data: Array.from({length: 50}, (_, i) => ({
+                            x: i + 1,
+                            y: 100 * Math.pow(i + 1, -2.2) // 幂律分布模拟
+                        })),
+                        backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'logarithmic',
+                            title: {
+                                display: true,
+                                text: '度 (log scale)'
+                            }
+                        },
+                        y: {
+                            type: 'logarithmic',
+                            title: {
+                                display: true,
+                                text: '概率 (log scale)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'PPI网络度分布'
+                        }
+                    }
+                }
+            });
+
+            // PPI网络模块结构
+            const ppiModuleCtx = document.getElementById('ppiModuleStructure').getContext('2d');
+            new Chart(ppiModuleCtx, {
+                type: 'bubble',
+                data: {
+                    datasets: [
+                        // 模块1
+                        {
+                            label: '模块1 (代谢相关)',
+                            data: Array.from({length: 15}, () => ({
+                                x: Math.random() * 30 + 10,
+                                y: Math.random() * 30 + 10,
+                                r: Math.random() * 5 + 3
+                            })),
+                            backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                        },
+                        // 模块2
+                        {
+                            label: '模块2 (信号传导)',
+                            data: Array.from({length: 20}, () => ({
+                                x: Math.random() * 30 + 50,
+                                y: Math.random() * 30 + 20,
+                                r: Math.random() * 5 + 3
+                            })),
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                        },
+                        // 模块3
+                        {
+                            label: '模块3 (DNA修复)',
+                            data: Array.from({length: 12}, () => ({
+                                x: Math.random() * 30 + 30,
+                                y: Math.random() * 30 + 50,
+                                r: Math.random() * 5 + 3
+                            })),
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                        },
+                        // 枢纽节点
+                        {
+                            label: '枢纽蛋白质',
+                            data: [
+                                {x: 30, y: 30, r: 8},
+                                {x: 45, y: 35, r: 7},
+                                {x: 25, y: 45, r: 6}
+                            ],
+                            backgroundColor: 'rgba(255, 206, 86, 0.8)'
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            min: 0,
+                            max: 100,
+                            display: false
+                        },
+                        y: {
+                            min: 0,
+                            max: 100,
+                            display: false
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'PPI网络模块结构'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: 节点度 = ${Math.round(context.raw.r * 3)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // PPI中心性比较
+            const ppiCentralityCtx = document.getElementById('ppiCentralityComparison').getContext('2d');
+            new Chart(ppiCentralityCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['度中心性', '介数中心性', '紧密中心性', '特征向量中心性'],
+                    datasets: [
+                        {
+                            label: '疾病相关蛋白质',
+                            data: [0.85, 0.78, 0.65, 0.82],
+                            backgroundColor: 'rgba(231, 76, 60, 0.2)',
+                            borderColor: 'rgba(231, 76, 60, 1)',
+                            pointBackgroundColor: 'rgba(231, 76, 60, 1)'
+                        },
+                        {
+                            label: '非疾病蛋白质',
+                            data: [0.32, 0.25, 0.40, 0.30],
+                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                            borderColor: 'rgba(52, 152, 219, 1)',
+                            pointBackgroundColor: 'rgba(52, 152, 219, 1)'
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 1,
+                            ticks: {
+                                stepSize: 0.2
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '蛋白质中心性指标比较'
+                        }
+                    }
+                }
+            });
+
+            // 推荐准确率比较
+            const recommendationAccuracyCtx = document.getElementById('recommendationAccuracy').getContext('2d');
+            new Chart(recommendationAccuracyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['准确率', '召回率', 'F1值', '覆盖率'],
+                    datasets: [
+                        {
+                            label: '传统协同过滤',
+                            data: [0.62, 0.58, 0.60, 0.75],
+                            backgroundColor: 'rgba(52, 152, 219, 0.7)'
+                        },
+                        {
+                            label: '基于内容的推荐',
+                            data: [0.55, 0.48, 0.51, 0.82],
+                            backgroundColor: 'rgba(231, 76, 60, 0.7)'
+                        },
+                        {
+                            label: '社交增强推荐',
+                            data: [0.72, 0.68, 0.70, 0.78],
+                            backgroundColor: 'rgba(46, 204, 113, 0.7)'
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: '评价指标值'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '不同推荐算法性能比较'
+                        }
+                    }
+                }
+            });
+
+            // 社交影响力分析
+            const socialInfluenceCtx = document.getElementById('socialInfluence').getContext('2d');
+            new Chart(socialInfluenceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['亲密好友', '普通朋友', '熟人', '陌生人'],
+                    datasets: [
+                        {
+                            label: '推荐接受率',
+                            data: [0.78, 0.56, 0.32, 0.15],
+                            borderColor: 'rgba(155, 89, 182, 1)',
+                            backgroundColor: 'rgba(155, 89, 182, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 6
+                        },
+                        {
+                            label: '互动频率',
+                            data: [0.85, 0.62, 0.28, 0.05],
+                            borderColor: 'rgba(52, 73, 94, 1)',
+                            backgroundColor: 'rgba(52, 73, 94, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: '相对值'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '社交关系强度与推荐效果'
+                        }
+                    }
+                }
+            });
+
+            // 社区推荐效果
+            const communityRecommendationCtx = document.getElementById('communityRecommendation').getContext('2d');
+            new Chart(communityRecommendationCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: ['准确率', '多样性', '新颖性', '覆盖率'],
+                    datasets: [
+                        {
+                            label: '全局推荐',
+                            data: [0.65, 0.42, 0.38, 0.85],
+                            backgroundColor: [
+                                'rgba(155, 89, 182, 0.7)',
+                                'rgba(52, 152, 219, 0.7)',
+                                'rgba(46, 204, 113, 0.7)',
+                                'rgba(241, 196, 15, 0.7)'
+                            ]
+                        },
+                        {
+                            label: '基于社区的推荐',
+                            data: [0.62, 0.68, 0.65, 0.72],
+                            backgroundColor: [
+                                'rgba(155, 89, 182, 0.4)',
+                                'rgba(52, 152, 219, 0.4)',
+                                'rgba(46, 204, 113, 0.4)',
+                                'rgba(241, 196, 15, 0.4)'
+                            ]
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '社区推荐与全局推荐效果对比'
+                        }
+                    },
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 1
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
