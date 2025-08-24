@@ -76,16 +76,6 @@
 
 3. 部分工具与案例提供交互式演示，可直接在网页中操作
 
-4. 如需本地运行，可克隆仓库后直接打开`home.html`文件：
-
-```
-git clone https://github.com/StuBoo3i/ComplexNetwork.git
-
-cd ComplexNetwork
-
-open home.html
-```
-
 ## 🤝 贡献指南
 
 欢迎通过以下方式参与项目建设：
@@ -112,9 +102,9 @@ open home.html
 
 如有任何问题或建议，欢迎通过以下方式联系：
 
-* GitHub Issues：[ Issues ](https://github.com/StuBoo3i/ComplexNetwork/issues)
+* GitHub Issues：[Issues](https://github.com/StuBoo3i/ComplexNetwork/issues)
 
-* 邮箱:xjtuwangjiabo@163.com
+* 邮箱：[xjtuwangjiabo@163.com]
 
 ***
 
