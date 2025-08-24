@@ -91,16 +91,15 @@
 
 3.  部分工具与案例提供交互式演示，可直接在网页中操作
 
-4.  如需本地运行，可克隆仓库后直接打开`index.html`文件：
-
+4.  如需本地运行，可克隆仓库后直接打开`home.html`文件：
 
 
 ```
-git clone https://github.com/你的用户名/ComplexNetwork.git
+git clone https://github.com/StuBoo3i/ComplexNetwork.git
 
 cd ComplexNetwork
 
-open index.html  # 或在浏览器中直接打开
+open home.html
 ```
 
 ## 🤝 贡献指南
@@ -135,7 +134,7 @@ open index.html  # 或在浏览器中直接打开
 
 
 
-*   GitHub Issues：[项目 Issues 页面](https://github.com/StuBoo3i/ComplexNetwork/issues)
+*   GitHub Issues：[ Issues ](https://github.com/StuBoo3i/ComplexNetwork/issues)
 
 *   邮箱：xjtuwangjiabo@163.com
 
