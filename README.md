@@ -70,7 +70,7 @@
 
 ## 🚀 如何使用
 
-1. 直接访问网站：[Home](https://StuBoo3i.github.io/ComplexNetwork)
+1. 直接访问网站：[Home](https://StuBoo3i.github.io/ComplexNetwork/home.html)
 
 2. 浏览导航菜单，选择感兴趣的内容板块
 
