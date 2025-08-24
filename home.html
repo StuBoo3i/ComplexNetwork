@@ -433,13 +433,83 @@
             <section id="updates" class="section">
                 <h2 class="section-title">最新动态</h2>
                 <div class="card">
-                    <p>平台近期更新：</p>
-                    <ul>
-                        <li>新增「高阶网络模型」专题内容</li>
-                        <li>优化网络可视化工具性能</li>
-                        <li>更新2023年复杂网络领域最新研究进展</li>
-                        <li>增加3个生物网络分析案例</li>
-                    </ul>
+                    <div class="platform-updates">
+                        <h3 class="updates-title">
+                            <i class="fas fa-bell"></i> 平台近期更新
+                        </h3>
+                        <ul class="updates-list">
+                            <li class="update-item">
+                                <i class="fas fa-plus-circle text-success"></i>
+                                <span>新增「高阶网络模型」专题内容</span>
+                            </li>
+                            <li class="update-item">
+                                <i class="fas fa-bolt text-primary"></i>
+                                <span>优化网络可视化工具性能</span>
+                            </li>
+                            <li class="update-item">
+                                <i class="fas fa-newspaper text-info"></i>
+                                <span>更新2023年复杂网络领域最新研究进展</span>
+                            </li>
+                            <li class="update-item">
+                                <i class="fas fa-flask text-secondary"></i>
+                                <span>增加3个生物网络分析案例</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <style>
+                    .platform-updates {
+                        background-color: #f8f9fa;
+                        border-radius: 8px;
+                        padding: 1.5rem;
+                        margin: 1rem 0;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                        border-left: 4px solid #2c3e50;
+                    }
+
+                    .updates-title {
+                        margin-top: 0;
+                        margin-bottom: 1rem;
+                        color: #2c3e50;
+                        font-size: 1.25rem;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                    }
+
+                    .updates-list {
+                        list-style: none;
+                        padding: 0;
+                        margin: 0;
+                    }
+
+                    .update-item {
+                        padding: 0.75rem 0;
+                        border-bottom: 1px solid #eee;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75rem;
+                        transition: transform 0.2s;
+                    }
+
+                    .update-item:last-child {
+                        border-bottom: none;
+                    }
+
+                    .update-item:hover {
+                        transform: translateX(5px);
+                    }
+
+                    .update-item i {
+                        width: 20px;
+                        text-align: center;
+                    }
+
+                    .text-success { color: #28a745; }
+                    .text-primary { color: #007bff; }
+                    .text-info { color: #17a2b8; }
+                    .text-secondary { color: #6c757d; }
+                    </style>
                 </div>
             </section>
         </main>
