@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetworkX 复杂网络实战指南：从基础到进阶</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --light-gray: #ecf0f1;
+            --dark-gray: #7f8c8d;
+            --accent-color: #e74c3c;
+            --sidebar-width: 280px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-color);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.8rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-sub-item {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-sub-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .nav-sub-link:hover {
+            color: white;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1200px;
+            margin-right: auto;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Cards for sections */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Code block styles */
+        .code-block {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        /* Chart styles */
+        .chart-container {
+            margin: 2rem 0;
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 2000;
+                background-color: var(--secondary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            .card {
+                padding: 1.2rem;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>NetworkX 实战指南</h2>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#intro" class="nav-link"><i class="fas fa-book-open"></i> 引言</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#basics" class="nav-link"><i class="fas fa-code"></i> 基础操作</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#installation" class="nav-sub-link">安装与环境配置</a></li>
+                        <li class="nav-sub-item"><a href="#graph-creation" class="nav-sub-link">图的创建与表示</a></li>
+                        <li class="nav-sub-item"><a href="#node-edge" class="nav-sub-link">节点与边的操作</a></li>
+                        <li class="nav-sub-item"><a href="#attributes" class="nav-sub-link">属性管理</a></li>
+                        <li class="nav-sub-item"><a href="#io" class="nav-sub-link">输入与输出</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#analysis" class="nav-link"><i class="fas fa-chart-line"></i> 网络分析</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#basic-metrics" class="nav-sub-link">基本拓扑指标</a></li>
+                        <li class="nav-sub-item"><a href="#centrality" class="nav-sub-link">中心性分析</a></li>
+                        <li class="nav-sub-item"><a href="#paths" class="nav-sub-link">路径与连通性</a></li>
+                        <li class="nav-sub-item"><a href="#clusters" class="nav-sub-link">社区发现</a></li>
+                        <li class="nav-sub-item"><a href="#models" class="nav-sub-link">网络模型生成</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#visualization" class="nav-link"><i class="fas fa-chart-pie"></i> 网络可视化</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#basic-plot" class="nav-sub-link">基础绘图</a></li>
+                        <li class="nav-sub-item"><a href="#layout" class="nav-sub-link">布局算法</a></li>
+                        <li class="nav-sub-item"><a href="#customization" class="nav-sub-link">样式自定义</a></li>
+                        <li class="nav-sub-item"><a href="#advanced-viz" class="nav-sub-link">高级可视化</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#advanced" class="nav-link"><i class="fas fa-rocket"></i> 进阶应用</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#dynamics" class="nav-sub-link">网络动力学模拟</a></li>
+                        <li class="nav-sub-item"><a href="#large-networks" class="nav-sub-link">大规模网络处理</a></li>
+                        <li class="nav-sub-item"><a href="#integration" class="nav-sub-link">与其他库集成</a></li>
+                        <li class="nav-sub-item"><a href="#projects" class="nav-sub-link">实战项目案例</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#resources" class="nav-link"><i class="fas fa-book"></i> 学习资源</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#conclusion" class="nav-link"><i class="fas fa-flag-checkered"></i> 总结与展望</a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <section id="intro" class="section">
+                <h1>NetworkX 复杂网络实战指南：从基础到进阶</h1>
+                <div class="card">
+                    <p>NetworkX是一个用Python语言开发的复杂网络分析和建模工具包，它提供了创建、操作和研究复杂网络结构、动态和功能的工具。作为一个开源项目，NetworkX拥有丰富的API，能够轻松处理各种网络类型，从简单的无向图到复杂的有向图、多重图，甚至是带有节点和边属性的网络。</p>
+                    <p>本指南旨在为初学者和有经验的开发者提供一个全面的NetworkX实战参考，从基础操作到高级应用，涵盖网络创建、分析、可视化和动力学模拟等多个方面。通过实际代码示例和应用案例，帮助读者快速掌握NetworkX的核心功能，并能够将其应用于实际研究和项目中。</p>
+                </div>
+            </section>
+
+            <section id="basics" class="section">
+                <h2>NetworkX基础操作</h2>
+                <p>本节将介绍NetworkX的安装方法、图的基本创建方式、节点和边的操作，以及属性管理和数据输入输出等基础功能。</p>
+
+                <div id="installation" class="card">
+                    <h3><i class="fas fa-download"></i> 安装与环境配置</h3>
+                    <p>NetworkX可以通过多种方式安装，最常用的是使用pip包管理器。建议在虚拟环境中安装，以避免依赖冲突。</p>
+                    <div class="code-block">
+                        # 使用pip安装稳定版本
+                        pip install networkx
+
+                        # 安装最新开发版本
+                        pip install git+https://github.com/networkx/networkx.git
+
+                        # 安装带有额外功能的版本（如可视化所需的库）
+                        pip install networkx[all]
+                    </div>
+                    <p>安装完成后，可以通过以下代码验证是否安装成功：</p>
+                    <div class="code-block">
+                        import networkx as nx
+                        print("NetworkX版本:", nx.__version__)
+                    </div>
+                    <p>推荐的配套库：</p>
+                    <ul>
+                        <li><strong>matplotlib</strong>：用于基本的网络可视化</li>
+                        <li><strong>numpy & scipy</strong>：用于数值计算和高级算法</li>
+                        <li><strong>pandas</strong>：用于网络数据的处理和分析</li>
+                        <li><strong>pyvis</strong>：用于交互式网络可视化</li>
+                        <li><strong>graphviz & pydot</strong>：用于高级图形布局和渲染</li>
+                    </ul>
+                </div>
+
+                <div id="graph-creation" class="card">
+                    <h3><i class="fas fa-project-diagram"></i> 图的创建与表示</h3>
+                    <p>NetworkX支持多种类型的图，包括无向图、有向图、多重图等。最常用的是Graph（无向图）和DiGraph（有向图）。</p>
+                    <h4>创建基本图类型</h4>
+                    <div class="code-block">
+                        # 导入NetworkX库
+                        import networkx as nx
+
+                        # 创建无向图
+                        G = nx.Graph()
+
+                        # 创建有向图
+                        DG = nx.DiGraph()
+
+                        # 创建无向多重图（允许节点间存在多条边）
+                        MG = nx.MultiGraph()
+
+                        # 创建有向多重图
+                        MDG = nx.MultiDiGraph()
+                    </div>
+                    <h4>从已有数据创建图</h4>
+                    <div class="code-block">
+                        # 从边列表创建图
+                        edges = [(1, 2), (2, 3), (3, 1), (3, 4)]
+                        G_from_edges = nx.Graph(edges)
+
+                        # 从邻接列表创建图
+                        adjacency_list = {
+                            1: [2, 3],
+                            2: [1, 3],
+                            3: [1, 2, 4],
+                            4: [3]
+                        }
+                        G_from_adj = nx.Graph(adjacency_list)
+
+                        # 从邻接矩阵创建图
+                        import numpy as np
+                        adjacency_matrix = np.array([
+                            [0, 1, 1, 0],
+                            [1, 0, 1, 0],
+                            [1, 1, 0, 1],
+                            [0, 0, 1, 0]
+                        ])
+                        G_from_matrix = nx.from_numpy_array(adjacency_matrix)
+                    </div>
+                </div>
+
+                <div id="node-edge" class="card">
+                    <h3><i class="fas fa-link"></i> 节点与边的操作</h3>
+                    <p>NetworkX提供了丰富的方法来添加、删除和查询节点与边。</p>
+                    <h4>节点操作</h4>
+                    <div class="code-block">
+                        # 创建一个空图
+                        G = nx.Graph()
+
+                        # 添加单个节点
+                        G.add_node(1)
+
+                        # 添加多个节点
+                        G.add_nodes_from([2, 3, 4, 5])
+
+                        # 添加带属性的节点
+                        G.add_node(6, color='red', value=10)
+
+                        # 从另一个图中添加节点
+                        H = nx.path_graph(4)  # 创建一个包含4个节点的路径图
+                        G.add_nodes_from(H)
+
+                        # 查看图中的节点
+                        print("节点列表:", list(G.nodes()))
+                        print("节点数量:", G.number_of_nodes())
+
+                        # 删除节点
+                        G.remove_node(6)
+                        G.remove_nodes_from([4, 5])
+
+                        # 检查节点是否存在
+                        print("节点3是否存在:", 3 in G)
+                    </div>
+                    <h4>边操作</h4>
+                    <div class="code-block">
+                        # 继续使用上面的图G
+
+                        # 添加单条边
+                        G.add_edge(1, 2)
+
+                        # 添加多条边
+                        G.add_edges_from([(1, 3), (2, 3), (3, 0)])
+
+                        # 查看图中的边
+                        print("边列表:", list(G.edges()))
+                        print("边的数量:", G.number_of_edges())
+
+                        # 查看节点的邻居
+                        print("节点3的邻居:", list(G.neighbors(3)))
+
+                        # 删除边
+                        G.remove_edge(1, 2)
+                        G.remove_edges_from([(1, 3), (2, 3)])
+
+                        # 检查边是否存在
+                        print("边(3,0)是否存在:", (3, 0) in G.edges())
+                    </div>
+                </div>
+
+                <div id="attributes" class="card">
+                    <h3><i class="fas fa-tags"></i> 属性管理</h3>
+                    <p>NetworkX允许为图、节点和边添加属性，这对于存储额外信息非常有用。</p>
+                    <h4>图属性</h4>
+                    <div class="code-block">
+                        G = nx.Graph()
+
+                        # 在创建图时设置属性
+                        G = nx.Graph(name="示例图", creator="NetworkX用户")
+
+                        # 后期添加或修改属性
+                        G.graph['date'] = '2023-07-01'
+                        G.graph['version'] = 1.0
+
+                        # 查看图属性
+                        print("图属性:", G.graph)
+                    </div>
+                    <h4>节点属性</h4>
+                    <div class="code-block">
+                        # 添加带属性的节点
+                        G.add_node(1, name="节点A", weight=0.5)
+                        G.add_node(2, name="节点B", weight=0.8)
+
+                        # 批量添加节点属性
+                        G.add_nodes_from([3, 4], type="普通节点")
+
+                        # 单独设置节点属性
+                        G.nodes[1]['color'] = 'blue'
+                        G.nodes[2]['color'] = 'red'
+
+                        # 查看节点属性
+                        print("节点1的属性:", G.nodes[1])
+                        print("所有节点的属性:", G.nodes.data())
+                    </div>
+                    <h4>边属性</h4>
+                    <div class="code-block">
+                        # 添加带属性的边
+                        G.add_edge(1, 2, weight=2.5, label="连接")
+                        G.add_edges_from([(1, 3), (2, 3)], weight=1.0, status="活跃")
+
+                        # 修改边属性
+                        G.edges[1, 2]['weight'] = 3.0
+                        G.edges[1, 2]['label'] = "强连接"
+
+                        # 查看边属性
+                        print("边(1,2)的属性:", G.edges[1, 2])
+                        print("所有边的属性:", G.edges.data())
+                    </div>
+                </div>
+
+                <div id="io" class="card">
+                    <h3><i class="fas fa-file-import"></i> 输入与输出</h3>
+                    <p>NetworkX支持多种文件格式的输入输出操作，方便保存和加载网络数据。</p>
+                    <h4>常见文件格式</h4>
+                    <div class="code-block">
+                        # 创建一个示例图
+                        G = nx.karate_club_graph()  # 加载内置的空手道俱乐部网络
+
+                        # 保存为GML格式
+                        nx.write_gml(G, "karate_club.gml")
+
+                        # 保存为GraphML格式
+                        nx.write_graphml(G, "karate_club.graphml")
+
+                        # 保存为边列表格式
+                        nx.write_edgelist(G, "karate_club.edgelist", data=True)
+
+                        # 保存为邻接列表格式
+                        nx.write_adjlist(G, "karate_club.adjlist")
+
+                        # 从文件加载网络
+                        G_from_gml = nx.read_gml("karate_club.gml")
+                        G_from_graphml = nx.read_graphml("karate_club.graphml")
+                        G_from_edgelist = nx.read_edgelist("karate_club.edgelist", data=True)
+                        G_from_adjlist = nx.read_adjlist("karate_club.adjlist")
+                    </div>
+                    <h4>与Pandas集成</h4>
+                    <div class="code-block">
+                        import pandas as pd
+
+                        # 从Pandas DataFrame创建图
+                        edges_data = pd.DataFrame({
+                            'source': [1, 2, 3, 4, 1],
+                            'target': [2, 3, 4, 1, 3],
+                            'weight': [0.5, 0.8, 0.3, 0.9, 0.2]
+                        })
+
+                        # 从边列表DataFrame创建图
+                        G_from_df = nx.from_pandas_edgelist(
+                            edges_data, 
+                            source='source', 
+                            target='target', 
+                            edge_attr='weight'
+                        )
+
+                        # 将图转换为Pandas DataFrame
+                        edges_df = nx.to_pandas_edgelist(G_from_df)
+                        print(edges_df)
+                    </div>
+                </div>
+            </section>
+
+            <section id="analysis" class="section">
+                <h2>网络分析与算法</h2>
+                <p>NetworkX提供了丰富的网络分析功能，包括基本拓扑指标计算、中心性分析、路径查找、社区发现等。本节将详细介绍这些功能的使用方法。</p>
+
+                <div id="basic-metrics" class="card">
+                    <h3><i class="fas fa-calculator"></i> 基本拓扑指标</h3>
+                    <p>基本拓扑指标是描述网络结构的基础，包括节点度、平均路径长度、聚类系数等。</p>
+                    <div class="code-block">
+                        # 使用空手道俱乐部网络作为示例
+                        G = nx.karate_club_graph()
+
+                        # 计算每个节点的度
+                        degrees = dict(G.degree())
+                        print("节点度:", degrees)
+
+                        # 计算平均度
+                        avg_degree = sum(degrees.values()) / len(degrees)
+                        print("平均度:", avg_degree)
+
+                        # 计算网络密度
+                        density = nx.density(G)
+                        print("网络密度:", density)
+
+                        # 计算平均路径长度
+                        # 注意：只适用于连通图
+                        if nx.is_connected(G):
+                            avg_path_length = nx.average_shortest_path_length(G)
+                            print("平均路径长度:", avg_path_length)
+
+                        # 计算直径（最长最短路径）
+                        if nx.is_connected(G):
+                            diameter = nx.diameter(G)
+                            print("网络直径:", diameter)
+
+                        # 计算聚类系数
+                        # 每个节点的聚类系数
+                        clustering = nx.clustering(G)
+                        print("节点聚类系数:", clustering)
+
+                        # 平均聚类系数
+                        avg_clustering = nx.average_clustering(G)
+                        print("平均聚类系数:", avg_clustering)
+                    </div>
+                </div>
+
+                <div id="centrality" class="card">
+                    <h3><i class="fas fa-star"></i> 中心性分析</h3>
+                    <p>中心性指标用于衡量节点在网络中的重要性，NetworkX提供了多种中心性计算方法。</p>
+                    <div class="code-block">
+                        G = nx.karate_club_graph()
+
+                        # 度中心性
+                        degree_centrality = nx.degree_centrality(G)
+                        print("度中心性:", degree_centrality)
+
+                        # 介数中心性
+                        betweenness_centrality = nx.betweenness_centrality(G)
+                        print("介数中心性:", betweenness_centrality)
+
+                        # 紧密中心性
+                        closeness_centrality = nx.closeness_centrality(G)
+                        print("紧密中心性:", closeness_centrality)
+
+                        # 特征向量中心性
+                        eigenvector_centrality = nx.eigenvector_centrality(G)
+                        print("特征向量中心性:", eigenvector_centrality)
+
+                        # PageRank中心性
+                        pagerank_centrality = nx.pagerank(G)
+                        print("PageRank中心性:", pagerank_centrality)
+
+                        # 比较节点的中心性排名
+                        import pandas as pd
+                        centrality_df = pd.DataFrame({
+                            '度中心性': pd.Series(degree_centrality),
+                            '介数中心性': pd.Series(betweenness_centrality),
+                            '紧密中心性': pd.Series(closeness_centrality),
+                            '特征向量中心性': pd.Series(eigenvector_centrality),
+                            'PageRank': pd.Series(pagerank_centrality)
+                        })
+
+                        # 按度中心性排序
+                        print(centrality_df.sort_values('度中心性', ascending=False))
+                    </div>
+                </div>
+
+                <div id="paths" class="card">
+                    <h3><i class="fas fa-route"></i> 路径与连通性</h3>
+                    <p>NetworkX提供了多种路径查找算法和连通性分析工具。</p>
+                    <div class="code-block">
+                        G = nx.karate_club_graph()
+
+                        # 最短路径
+                        # 两个节点之间的最短路径
+                        shortest_path = nx.shortest_path(G, source=0, target=33)
+                        print("0到33的最短路径:", shortest_path)
+
+                        # 最短路径长度
+                        shortest_path_length = nx.shortest_path_length(G, source=0, target=33)
+                        print("0到33的最短路径长度:", shortest_path_length)
+
+                        # 所有节点对之间的最短路径
+                        all_pairs_shortest_path = dict(nx.all_pairs_shortest_path(G))
+                        print("0到所有节点的最短路径:", all_pairs_shortest_path[0])
+
+                        # 连通分量分析
+                        # 对于非连通图，找到所有连通分量
+                        if not nx.is_connected(G):
+                            connected_components = list(nx.connected_components(G))
+                            print("连通分量数量:", len(connected_components))
+                            print("最大连通分量大小:", max(len(c) for c in connected_components))
+
+                        # 寻找网络中的桥（删除会增加连通分量的边）
+                        bridges = list(nx.bridges(G))
+                        print("桥的数量:", len(bridges))
+                        print("桥:", bridges)
+
+                        # 寻找关节点（删除会增加连通分量的节点）
+                        articulation_points = list(nx.articulation_points(G))
+                        print("关节点数量:", len(articulation_points))
+                        print("关节点:", articulation_points)
+                    </div>
+                </div>
+
+                <div id="clusters" class="card">
+                    <h3><i class="fas fa-users"></i> 社区发现</h3>
+                    <p>社区发现是复杂网络分析的重要任务，NetworkX集成了多种社区检测算法。</p>
+                    <div class="code-block">
+                        G = nx.karate_club_graph()
+
+                        # 基于模块度的Louvain算法（需要安装python-louvain）
+                        # pip install python-louvain
+                        from community import community_louvain
+                        partition = community_louvain.best_partition(G)
+                        print("Louvain社区划分:", partition)
+
+                        # 计算模块度
+                        modularity = community_louvain.modularity(partition, G)
+                        print("模块度:", modularity)
+
+                        # Girvan-Newman算法
+                        from itertools import islice
+                        gn_generator = nx.algorithms.community.centrality.girvan_newman(G)
+                        # 获取前5个划分结果
+                        gn_communities = list(islice(gn_generator, 5))
+                        print("Girvan-Newman社区划分（前5个）:", gn_communities)
+
+                        # 基于标签传播的社区发现
+                        lp_communities = list(nx.algorithms.community.label_propagation.label_propagation_communities(G))
+                        print("标签传播社区划分:", [list(c) for c in lp_communities])
+
+                        # 基于派系的社区发现
+                        cliques = list(nx.find_cliques(G))
+                        print("最大派系数量:", len(cliques))
+                        print("最大派系大小:", max(len(c) for c in cliques))
+                        print("最大的几个派系:", sorted(cliques, key=lambda x: len(x), reverse=True)[:3])
+                    </div>
+                </div>
+
+                <div id="models" class="card">
+                    <h3><i class="fas fa-sitemap"></i> 网络模型生成</h3>
+                    <p>NetworkX提供了多种经典网络模型的生成函数，用于创建具有特定拓扑特性的网络。</p>
+                    <div class="code-block">
+                        # 随机图模型 - Erdős-Rényi模型
+                        er_graph = nx.erdos_renyi_graph(n=50, p=0.1, seed=42)
+
+                        # 小世界模型 - Watts-Strogatz模型
+                        ws_graph = nx.watts_strogatz_graph(n=50, k=4, p=0.1, seed=42)
+
+                        # 无标度模型 - Barabási-Albert模型
+                        ba_graph = nx.barabási_albert_graph(n=50, m=2, seed=42)
+
+                        # 规则图
+                        # 完全图
+                        complete_graph = nx.complete_graph(n=10)
+                        # 环形图
+                        cycle_graph = nx.cycle_graph(n=20)
+                        # 星型图
+                        star_graph = nx.star_graph(n=15)
+
+                        # 随机二分图
+                        bipartite_graph = nx.bipartite.random_graph(n=10, m=10, p=0.3, seed=42)
+
+                        # 比较不同模型的度分布
+                        import matplotlib.pyplot as plt
+
+                        def plot_degree_distribution(G, title):
+                            degrees = [d for n, d in G.degree()]
+                            plt.hist(degrees, bins=range(min(degrees), max(degrees) + 1), alpha=0.5)
+                            plt.title(title)
+                            plt.xlabel('节点度')
+                            plt.ylabel('频数')
+
+                        plt.figure(figsize=(15, 4))
+                        plt.subplot(131)
+                        plot_degree_distribution(er_graph, 'Erdős-Rényi模型')
+                        plt.subplot(132)
+                        plot_degree_distribution(ws_graph, 'Watts-Strogatz模型')
+                        plt.subplot(133)
+                        plot_degree_distribution(ba_graph, 'Barabási-Albert模型')
+                        plt.tight_layout()
+                        plt.show()
+                    </div>
+                </div>
+            </section>
+
+            <section id="visualization" class="section">
+                <h2>网络可视化</h2>
+                <p>网络可视化是理解和分析网络结构的重要手段。NetworkX提供了基本的可视化功能，并可以与其他可视化库集成，实现更丰富的可视化效果。</p>
+
+                <div id="basic-plot" class="card">
+                    <h3><i class="fas fa-chart-pie"></i> 基础绘图</h3>
+                    <p>NetworkX与matplotlib集成，提供了简单的网络可视化功能。</p>
+                    <div class="code-block">
+                        import networkx as nx
+                        import matplotlib.pyplot as plt
+
+                        # 创建一个示例图
+                        G = nx.karate_club_graph()
+
+                        # 基本绘图
+                        plt.figure(figsize=(8, 6))
+                        nx.draw(G)
+                        plt.title("基本网络图")
+                        plt.show()
+
+                        # 更详细的绘图
+                        plt.figure(figsize=(8, 6))
+                        # 绘制节点
+                        nx.draw_networkx_nodes(G, pos=nx.spring_layout(G), node_size=300, node_color='lightblue')
+                        # 绘制边
+                        nx.draw_networkx_edges(G, pos=nx.spring_layout(G), edgelist=G.edges(), width=1)
+                        # 绘制节点标签
+                        nx.draw_networkx_labels(G, pos=nx.spring_layout(G), font_size=10)
+                        plt.title("带标签的网络图")
+                        plt.axis('off')  # 关闭坐标轴
+                        plt.show()
+                    </div>
+                </div>
+
+                <div id="layout" class="card">
+                    <h3><i class="fas fa-th"></i> 布局算法</h3>
+                    <p>布局算法决定了节点在可视化中的位置，不同的布局算法适用于不同类型的网络。</p>
+                    <div class="code-block">
+                        G = nx.karate_club_graph()
+
+                        # 常用布局算法
+                        layouts = {
+                            "弹簧布局": nx.spring_layout(G, seed=42),
+                            "圆形布局": nx.circular_layout(G),
+                            "随机布局": nx.random_layout(G, seed=42),
+                            "壳布局": nx.shell_layout(G),
+                            " Kamada-Kawai布局": nx.kamada_kawai_layout(G)
+                        }
+
+                        # 绘制不同布局的图
+                        plt.figure(figsize=(15, 10))
+                        i = 1
+                        for name, pos in layouts.items():
+                            plt.subplot(2, 3, i)
+                            nx.draw(G, pos, with_labels=True, node_size=200, node_color='lightgreen')
+                            plt.title(name)
+                            plt.axis('off')
+                            i += 1
+                        plt.tight_layout()
+                        plt.show()
+                    </div>
+                </div>
+
+                <div id="customization" class="card">
+                    <h3><i class="fas fa-palette"></i> 样式自定义</h3>
+                    <p>通过自定义节点颜色、大小、边的样式等，可以突出显示网络的特定特征。</p>
+                    <div class="code-block">
+                        G = nx.karate_club_graph()
+                        pos = nx.spring_layout(G, seed=42)
+
+                        # 根据节点度设置节点大小
+                        degrees = [d * 20 for n, d in G.degree()]
+
+                        # 根据社区设置节点颜色（使用之前的Louvain社区划分）
+                        from community import community_louvain
+                        partition = community_louvain.best_partition(G)
+                        colors = [partition[n] for n in G.nodes()]
+
+                        # 绘制自定义样式的网络
+                        plt.figure(figsize=(10, 8))
+                        nx.draw_networkx_nodes(
+                            G, pos, 
+                            node_size=degrees,  # 节点大小由度决定
+                            cmap=plt.cm.Set3,   # 颜色映射
+                            node_color=colors,  # 节点颜色由社区决定
+                            alpha=0.8           # 透明度
+                        )
+
+                        # 绘制边，设置透明度和宽度
+                        nx.draw_networkx_edges(G, pos, width=0.5, alpha=0.5)
+
+                        # 只显示重要节点的标签（度大于5的节点）
+                        important_nodes = [n for n, d in G.degree() if d > 5]
+                        nx.draw_networkx_labels(
+                            G, pos, 
+                            labels={n: n for n in important_nodes},
+                            font_size=10
+                        )
+
+                        plt.title("自定义样式的空手道俱乐部网络")
+                        plt.axis('off')
+                        plt.show()
+                    </div>
+                </div>
+
+                <div id="advanced-viz" class="card">
+                    <h3><i class="fas fa-chart-line"></i> 高级可视化</h3>
+                    <p>对于大型网络或需要交互式探索的场景，可以使用更专业的可视化库，如pyvis、Gephi等。</p>
+                    <h4>使用pyvis进行交互式可视化</h4>
+                    <div class="code-block">
+                        # 需要安装pyvis：pip install pyvis
+                        from pyvis.network import Network
+
+                        # 创建一个交互式网络
+                        net = Network(notebook=True, height="600px", width="100%")
+
+                        # 加载空手道俱乐部网络
+                        G = nx.karate_club_graph()
+
+                        # 添加节点和边到pyvis网络
+                        for node in G.nodes():
+                            # 根据度设置节点大小
+                            size = G.degree(node) * 10
+                            net.add_node(node, size=size)
+
+                        for edge in G.edges():
+                            net.add_edge(edge[0], edge[1])
+
+                        # 使用ForceAtlas2Based布局
+                        net.force_atlas_2based()
+
+                        # 添加工具栏
+                        net.show_buttons(filter_=['physics'])
+
+                        # 保存为HTML文件
+                        net.show("karate_club.html")
+                    </div>
+                    <h4>导出到Gephi进行高级可视化</h4>
+                    <div class="code-block">
+                        # Gephi是一个强大的网络可视化和分析工具
+                        # 可以将NetworkX网络导出为Gephi支持的格式（如GraphML）
+                        G = nx.karate_club_graph()
+                        nx.write_graphml(G, "karate_club_for_gephi.graphml")
+                        print("网络已导出为GraphML格式，可在Gephi中打开")
+                    </div>
+                </div>
+            </section>
+
+            <section id="advanced" class="section">
+                <h2>进阶应用与实战</h2>
+                <p>本节将介绍NetworkX的一些高级应用，包括网络动力学模拟、大规模网络处理、与其他库的集成以及实际项目案例。</p>
+
+                <div id="dynamics" class="card">
+                    <h3><i class="fas fa-wave-square"></i> 网络动力学模拟</h3>
+                    <p>NetworkX可以与动力学模型结合，模拟网络上的传播、同步等动态过程。</p>
+                    <h4>疾病传播模拟（SIR模型）</h4>
+                    <div class="code-block">
+                        import networkx as nx
+                        import numpy as np
+                        import matplotlib.pyplot as plt
+                        from matplotlib.animation import FuncAnimation
+
+                        # 创建一个网络
+                        G = nx.connected_watts_strogatz_graph(n=100, k=4, p=0.1, seed=42)
+                        pos = nx.spring_layout(G, seed=42)
+
+                        # SIR模型参数
+                        beta = 0.3   # 感染率
+                        gamma = 0.1  # 恢复率
+                        steps = 30   # 模拟步数
+
+                        # 初始化节点状态：0-易感(S)，1-感染(I)，2-恢复(R)
+                        for node in G.nodes():
+                            G.nodes[node]['state'] = 0  # 初始都为易感状态
+                        # 随机选择一个初始感染节点
+                        initial_infected = np.random.choice(G.nodes())
+                        G.nodes[initial_infected]['state'] = 1
+
+                        # 存储每一步的状态计数
+                        S_count = [len(G.nodes()) - 1]
+                        I_count = [1]
+                        R_count = [0]
+
+                        # 模拟SIR传播过程
+                        for _ in range(steps):
+                            new_states = {}
+                            for node in G.nodes():
+                                current_state = G.nodes[node]['state']
+                                
+                                if current_state == 1:  # 感染状态
+                                    # 有一定概率恢复
+                                    if np.random.random() < gamma:
+                                        new_states[node] = 2
+                                elif current_state == 0:  # 易感状态
+                                    # 检查邻居是否有感染者
+                                    neighbors = list(G.neighbors(node))
+                                    infected_neighbors = [n for n in neighbors if G.nodes[n]['state'] == 1]
+                                    if infected_neighbors:
+                                        # 有一定概率被感染
+                                        if np.random.random() < beta:
+                                            new_states[node] = 1
+                            
+                            # 更新状态
+                            for node, state in new_states.items():
+                                G.nodes[node]['state'] = state
+                            
+                            # 计数
+                            states = [G.nodes[n]['state'] for n in G.nodes()]
+                            S_count.append(states.count(0))
+                            I_count.append(states.count(1))
+                            R_count.append(states.count(2))
+
+                        # 绘制传播曲线
+                        plt.figure(figsize=(10, 6))
+                        plt.plot(S_count, label='易感者(S)')
+                        plt.plot(I_count, label='感染者(I)')
+                        plt.plot(R_count, label='恢复者(R)')
+                        plt.xlabel('时间步')
+                        plt.ylabel('人数')
+                        plt.title('SIR模型在网络上的传播')
+                        plt.legend()
+                        plt.grid(True)
+                        plt.show()
+                    </div>
+                </div>
+
+                <div id="large-networks" class="card">
+                    <h3><i class="fas fa-server"></i> 大规模网络处理</h3>
+                    <p>对于大规模网络，需要采用一些优化策略来提高处理效率。</p>
+                    <div class="code-block">
+                        # 处理大规模网络的技巧
+
+                        # 1. 使用更高效的图类型
+                        # 对于简单网络，使用nx.Graph
+                        # 对于非常大的网络，考虑使用稀疏表示
+                        import networkx as nx
+                        import time
+
+                        # 创建一个大规模随机图（10,000节点）
+                        start_time = time.time()
+                        large_G = nx.erdos_renyi_graph(n=10000, p=0.001, seed=42)
+                        print(f"创建10,000节点的图耗时: {time.time() - start_time:.2f}秒")
+                        print(f"节点数: {large_G.number_of_nodes()}, 边数: {large_G.number_of_edges()}")
+
+                        # 2. 高效计算基本属性
+                        start_time = time.time()
+                        degrees = dict(large_G.degree())
+                        print(f"计算度耗时: {time.time() - start_time:.2f}秒")
+
+                        # 3. 采样分析（对于超大规模网络）
+                        def sample_network(G, sample_size):
+                            """从网络中随机采样节点并创建子图"""
+                            if sample_size > G.number_of_nodes():
+                                return G.copy()
+                            sampled_nodes = set(np.random.choice(G.nodes(), size=sample_size, replace=False))
+                            return G.subgraph(sampled_nodes)
+
+                        # 采样10%的节点进行分析
+                        sampled_G = sample_network(large_G, 1000)
+                        print(f"采样子图 - 节点数: {sampled_G.number_of_nodes()}, 边数: {sampled_G.number_of_edges()}")
+
+                        # 4. 使用并行计算（对于某些算法）
+                        # 注意：NetworkX本身不支持并行，但可以结合multiprocessing库
+                        from multiprocessing import Pool
+
+                        def compute_degree_centrality(subgraph):
+                            return nx.degree_centrality(subgraph)
+
+                        # 将网络分成多个子图并行计算
+                        # 这只是一个示例，实际应用中需要根据具体情况调整
+                        if __name__ == '__main__':
+                            nodes = list(large_G.nodes())
+                            chunks = [nodes[i::4] for i in range(4)]  # 分成4块
+                            subgraphs = [large_G.subgraph(chunk) for chunk in chunks]
+                            
+                            with Pool(processes=4) as pool:
+                                results = pool.map(compute_degree_centrality, subgraphs)
+                            
+                            # 合并结果...
+                            print("并行计算完成")
+                    </div>
+                </div>
+
+                <div id="integration" class="card">
+                    <h3><i class="fas fa-code-branch"></i> 与其他库集成</h3>
+                    <p>NetworkX可以与多种Python库集成，扩展其功能。</p>
+                    <h4>与NumPy和SciPy集成</h4>
+                    <div class="code-block">
+                        import networkx as nx
+                        import numpy as np
+                        from scipy.sparse.linalg import eigs
+
+                        G = nx.karate_club_graph()
+
+                        # 转换为邻接矩阵（NumPy数组）
+                        adj_matrix = nx.to_numpy_array(G)
+                        print("邻接矩阵形状:", adj_matrix.shape)
+
+                        # 转换为稀疏邻接矩阵（SciPy）
+                        sparse_adj_matrix = nx.to_scipy_sparse_array(G)
+                        print("稀疏邻接矩阵形状:", sparse_adj_matrix.shape)
+
+                        # 计算特征值和特征向量
+                        eigenvalues, eigenvectors = eigs(sparse_adj_matrix, k=5)
+                        print("前5个特征值:", eigenvalues)
+
+                        # 使用特征向量进行节点嵌入
+                        node_embeddings = eigenvectors.real[:, :2]  # 取前两个特征向量作为嵌入
+                        print("节点嵌入形状:", node_embeddings.shape)
+
+                        # 可视化节点嵌入
+                        import matplotlib.pyplot as plt
+                        plt.figure(figsize=(8, 6))
+                        plt.scatter(node_embeddings[:, 0], node_embeddings[:, 1])
+                        for i in range(len(node_embeddings)):
+                            plt.annotate(str(i), (node_embeddings[i, 0], node_embeddings[i, 1]))
+                        plt.title("基于特征向量的节点嵌入")
+                        plt.show()
+                    </div>
+                    <h4>与机器学习库集成（以scikit-learn为例）</h4>
+                    <div class="code-block">
+                        import networkx as nx
+                        from sklearn.cluster import KMeans
+                        from sklearn.decomposition import PCA
+                        from sklearn.preprocessing import StandardScaler
+
+                        G = nx.karate_club_graph()
+
+                        # 提取节点特征：多种中心性指标
+                        features = []
+                        nodes = list(G.nodes())
+                        
+                        # 计算多种中心性作为特征
+                        degree_cent = nx.degree_centrality(G)
+                        between_cent = nx.betweenness_centrality(G)
+                        close_cent = nx.closeness_centrality(G)
+                        eigen_cent = nx.eigenvector_centrality(G)
+                        
+                        for node in nodes:
+                            feature_vector = [
+                                degree_cent[node],
+                                between_cent[node],
+                                close_cent[node],
+                                eigen_cent[node]
+                            ]
+                            features.append(feature_vector)
+
+                        # 特征标准化
+                        scaler = StandardScaler()
+                        features_scaled = scaler.fit_transform(features)
+
+                        # 使用KMeans进行聚类
+                        kmeans = KMeans(n_clusters=2, random_state=42)
+                        clusters = kmeans.fit_predict(features_scaled)
+
+                        # 使用PCA降维可视化
+                        pca = PCA(n_components=2)
+                        features_2d = pca.fit_transform(features_scaled)
+
+                        # 可视化聚类结果
+                        plt.figure(figsize=(8, 6))
+                        plt.scatter(features_2d[:, 0], features_2d[:, 1], c=clusters, cmap='viridis')
+                        for i, node in enumerate(nodes):
+                            plt.annotate(str(node), (features_2d[i, 0], features_2d[i, 1]))
+                        plt.title("基于网络特征的KMeans聚类")
+                        plt.show()
+                    </div>
+                </div>
+
+                <div id="projects" class="card">
+                    <h3><i class="fas fa-project-diagram"></i> 实战项目案例</h3>
+                    <p>以下是几个使用NetworkX进行复杂网络分析的实战案例。</p>
+                    <h4>案例1：社交媒体网络分析</h4>
+                    <div class="code-block">
+                        """
+                        社交媒体网络分析案例：
+                        1. 构建用户关系网络
+                        2. 分析网络拓扑特征
+                        3. 识别关键用户（意见领袖）
+                        4. 发现社区结构
+                        """
+                        import networkx as nx
+                        import matplotlib.pyplot as plt
+                        from community import community_louvain
+
+                        # 1. 构建示例社交媒体网络
+                        # 这里使用随机网络模拟，实际应用中可以从数据中加载
+                        # 节点表示用户，边表示关注关系
+                        social_G = nx.connected_watts_strogatz_graph(n=50, k=5, p=0.2, seed=42)
+
+                        # 2. 分析网络拓扑特征
+                        print("社交媒体网络分析结果:")
+                        print(f"节点数: {social_G.number_of_nodes()}")
+                        print(f"边数: {social_G.number_of_edges()}")
+                        print(f"平均度: {sum(d for n, d in social_G.degree()) / social_G.number_of_nodes():.2f}")
+                        print(f"网络密度: {nx.density(social_G):.4f}")
+                        print(f"平均路径长度: {nx.average_shortest_path_length(social_G):.2f}")
+                        print(f"平均聚类系数: {nx.average_clustering(social_G):.4f}")
+
+                        # 3. 识别关键用户（意见领袖）
+                        # 使用介数中心性识别关键用户
+                        betweenness = nx.betweenness_centrality(social_G)
+                        # 排序并取前5位
+                        top_users = sorted(betweenness.items(), key=lambda x: x[1], reverse=True)[:5]
+                        print("关键用户（按介数中心性）:", [user for user, _ in top_users])
+
+                        # 4. 发现社区结构
+                        partition = community_louvain.best_partition(social_G)
+                        print("社区数量:", len(set(partition.values())))
+
+                        # 5. 可视化结果
+                        pos = nx.spring_layout(social_G, seed=42)
+                        plt.figure(figsize=(12, 10))
+
+                        # 绘制节点，颜色表示社区
+                        cmap = plt.cm.get_cmap('viridis', max(partition.values()) + 1)
+                        nx.draw_networkx_nodes(
+                            social_G, pos, 
+                            partition.keys(), 
+                            node_size=100,
+                            cmap=cmap, 
+                            node_color=list(partition.values())
+                        )
+
+                        # 绘制边
+                        nx.draw_networkx_edges(social_G, pos, alpha=0.5)
+
+                        # 标记关键用户
+                        nx.draw_networkx_nodes(
+                            social_G, pos, 
+                            [user for user, _ in top_users], 
+                            node_size=300,
+                            node_color='red'
+                        )
+
+                        # 为关键用户添加标签
+                        nx.draw_networkx_labels(
+                            social_G, pos, 
+                            {user: str(user) for user, _ in top_users},
+                            font_size=12, font_weight='bold'
+                        )
+
+                        plt.title("社交媒体网络分析：社区结构与关键用户")
+                        plt.axis('off')
+                        plt.show()
+                    </div>
+                    <h4>案例2：交通网络分析</h4>
+                    <div class="code-block">
+                        """
+                        交通网络分析案例：
+                        1. 构建城市交通网络
+                        2. 分析网络连通性和效率
+                        3. 识别关键节点和脆弱点
+                        4. 评估网络抗毁性
+                        """
+                        import networkx as nx
+                        import matplotlib.pyplot as plt
+                        import numpy as np
+
+                        # 1. 构建示例交通网络
+                        # 使用扩展的Barabási-Albert模型模拟
+                        transit_G = nx.barabási_albert_graph(n=30, m=3, seed=42)
+                        # 为边添加权重表示距离
+                        for u, v in transit_G.edges():
+                            transit_G.edges[u, v]['weight'] = np.random.uniform(1, 10)
+
+                        # 2. 分析网络连通性和效率
+                        print("交通网络分析结果:")
+                        print(f"节点数（城市）: {transit_G.number_of_nodes()}")
+                        print(f"边数（道路）: {transit_G.number_of_edges()}")
+                        print(f"网络是否连通: {nx.is_connected(transit_G)}")
+                        
+                        # 计算网络效率
+                        def network_efficiency(G):
+                            n = G.number_of_nodes()
+                            efficiency = 0
+                            for u in G.nodes():
+                                shortest_paths = nx.shortest_path_length(G, source=u, weight='weight')
+                                for v, d in shortest_paths.items():
+                                    if u != v:
+                                        efficiency += 1 / d
+                            return efficiency / (n * (n - 1))
+                        
+                        print(f"网络效率: {network_efficiency(transit_G):.4f}")
+
+                        # 3. 识别关键节点和脆弱点
+                        # 使用介数中心性识别交通枢纽
+                        betweenness = nx.betweenness_centrality(transit_G, weight='weight')
+                        top_hubs = sorted(betweenness.items(), key=lambda x: x[1], reverse=True)[:3]
+                        print("交通枢纽（按介数中心性）:", [hub for hub, _ in top_hubs])
+
+                        # 4. 评估网络抗毁性
+                        # 模拟关键节点失效后的网络效率变化
+                        def simulate_node_failure(G, node):
+                            G_failed = G.copy()
+                            G_failed.remove_node(node)
+                            if not nx.is_connected(G_failed):
+                                return 0  # 不连通网络效率为0
+                            return network_efficiency(G_failed)
+
+                        # 计算每个节点失效后的效率损失
+                        efficiency_loss = {}
+                        original_efficiency = network_efficiency(transit_G)
+                        for node in transit_G.nodes():
+                            failed_efficiency = simulate_node_failure(transit_G, node)
+                            loss = (original_efficiency - failed_efficiency) / original_efficiency
+                            efficiency_loss[node] = loss
+
+                        # 识别最脆弱的节点
+                        most_vulnerable = sorted(efficiency_loss.items(), key=lambda x: x[1], reverse=True)[:3]
+                        print("最脆弱的节点（效率损失最大）:", [node for node, _ in most_vulnerable])
+
+                        # 5. 可视化交通网络
+                        pos = nx.spring_layout(transit_G, seed=42)
+                        plt.figure(figsize=(12, 10))
+
+                        # 绘制边，宽度表示权重的倒数（距离越近线越粗）
+                        edge_weights = [1 / transit_G.edges[u, v]['weight'] for u, v in transit_G.edges()]
+                        nx.draw_networkx_edges(transit_G, pos, width=edge_weights, alpha=0.6)
+
+                        # 绘制节点，大小表示介数中心性
+                        node_sizes = [v * 5000 for v in betweenness.values()]
+                        nx.draw_networkx_nodes(transit_G, pos, node_size=node_sizes, node_color='lightblue', alpha=0.8)
+
+                        # 标记交通枢纽
+                        nx.draw_networkx_nodes(
+                            transit_G, pos, 
+                            [hub for hub, _ in top_hubs], 
+                            node_size=300, node_color='red'
+                        )
+
+                        # 添加节点标签
+                        nx.draw_networkx_labels(transit_G, pos, font_size=8)
+
+                        plt.title("交通网络分析：节点大小表示介数中心性，红色为交通枢纽")
+                        plt.axis('off')
+                        plt.show()
+                    </div>
+                </div>
+            </section>
+
+            <section id="resources" class="section">
+                <h2>学习资源与进一步探索</h2>
+                <div class="card">
+                    <h3><i class="fas fa-book"></i> 官方文档与教程</h3>
+                    <ul>
+                        <li><strong>NetworkX官方文档</strong>：<a href="https://networkx.org/documentation/stable/" target="_blank">https://networkx.org/documentation/stable/</a> - 包含完整的API参考和示例</li>
+                        <li><strong>NetworkX教程</strong>：<a href="https://networkx.org/documentation/stable/tutorial.html" target="_blank">https://networkx.org/documentation/stable/tutorial.html</a> - 官方入门教程</li>
+                        <li><strong>NetworkX示例库</strong>：<a href="https://networkx.org/documentation/stable/auto_examples/index.html" target="_blank">https://networkx.org/documentation/stable/auto_examples/index.html</a> - 丰富的示例代码</li>
+                    </ul>
+
+                    <h3><i class="fas fa-graduation-cap"></i> 推荐书籍</h3>
+                    <ul>
+                        <li><strong>《NetworkX编程实践指南》</strong> - 详细介绍NetworkX的使用方法和案例</li>
+                        <li><strong>《复杂网络导论》</strong> - 介绍复杂网络的基本理论和应用</li>
+                        <li><strong>《Python网络数据可视化》</strong> - 包含NetworkX可视化的高级技巧</li>
+                        <li><strong>《Graph Theory and Its Applications》</strong> - 图论理论基础</li>
+                    </ul>
+
+                    <h3><i class="fas fa-code"></i> 相关库与工具</h3>
+                    <ul>
+                        <li><strong>igraph</strong>：另一个强大的网络分析库，性能通常优于NetworkX</li>
+                        <li><strong>PyTorch Geometric/DGL</strong>：用于图神经网络的深度学习库</li>
+                        <li><strong>Gephi</strong>：强大的网络可视化和分析桌面工具</li>
+                        <li><strong>Graphviz</strong>：用于绘制结构化图表的工具</li>
+                        <li><strong>pyvis</strong>：交互式网络可视化库</li>
+                    </ul>
+
+                    <h3><i class="fas fa-globe"></i> 在线课程与资源</h3>
+                    <ul>
+                        <li><strong>Coursera - 复杂网络专项课程</strong> - 包含网络分析的理论和实践</li>
+                        <li><strong>edX - 图论与网络科学</strong> - 介绍图论基础和网络科学应用</li>
+                        <li><strong>Kaggle</strong> - 包含多个网络分析相关的数据集和竞赛</li>
+                        <li><strong>GitHub</strong> - 搜索"networkx"可以找到大量实战项目</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>总结与展望</h2>
+                <div class="card">
+                    <p>NetworkX作为一个强大的复杂网络分析工具，为研究者和开发者提供了丰富的功能和灵活的接口。通过本指南，我们介绍了NetworkX的基础操作、网络分析功能、可视化方法以及进阶应用，涵盖了从入门到实战的各个方面。</p>
+                    <p>随着复杂网络研究的深入和数据科学的发展，NetworkX也在不断进化，增加了更多高级算法和功能。未来，NetworkX可能会在以下几个方面得到进一步发展：</p>
+                    <ul>
+                        <li><strong>性能优化</strong>：提高处理大规模网络的效率，可能引入更多并行计算能力</li>
+                        <li><strong>深度学习集成</strong>：与图神经网络等深度学习框架更紧密的集成</li>
+                        <li><strong>动态网络支持</strong>：增强对时间网络和动态变化网络的处理能力</li>
+                        <li><strong>可视化增强</strong>：提供更丰富、更高效的可视化功能</li>
+                    </ul>
+                    <p>无论你是网络科学的研究者、数据科学家，还是对复杂系统感兴趣的开发者，掌握NetworkX都将为你的工作和研究带来巨大帮助。希望本指南能成为你学习和使用NetworkX的有益参考，祝你在复杂网络的探索之旅中取得更多成果！</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script>
+        // 侧边栏切换
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // 回到顶部按钮
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // 在移动设备上点击导航链接后关闭侧边栏
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
