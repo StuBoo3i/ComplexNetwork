@@ -1,4 +1,4 @@
-# ComplexNetwork - 复杂网络知识资源平台
+复杂网络知识资源平台
 
 ![复杂网络可视化示意图](https://picsum.photos/id/180/1200/400)
 
