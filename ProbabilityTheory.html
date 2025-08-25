@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>概率论与统计物理基础：理论基础与生物网络应用</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --light-gray: #ecf0f1;
+            --dark-gray: #7f8c8d;
+            --accent-color: #e74c3c;
+            --sidebar-width: 280px;
+            --transition: all 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            overflow-x: hidden;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-color);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .nav-list {
+            list-style: none;
+        }
+        .nav-item {
+            margin-bottom: 0.8rem;
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        .nav-link i {
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+        .nav-sub-item {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .nav-sub-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .nav-sub-link:hover {
+            color: white;
+        }
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1200px;
+            margin-right: auto;
+        }
+        .section {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.5s ease;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        /* Cards for sections */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        /* Formula Block */
+        .formula-block {
+            margin: 1.5rem 0;
+            padding: 0.5rem 1rem;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        /* Table styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        .comparison-table th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+        .comparison-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 2000;
+                background-color: var(--secondary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+            .card {
+                padding: 1.2rem;
+            }
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 8px 10px;
+            }
+        }
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+        /* Sub-list Style */
+        .sub-list {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>概率论与统计物理</h2>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#intro" class="nav-link"><i class="fas fa-book-open"></i> 引言</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#probability-theory" class="nav-link"><i class="fas fa-calculator"></i> 概率论基础</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#probability-space" class="nav-sub-link">概率空间</a></li>
+                        <li class="nav-sub-item"><a href="#random-variables" class="nav-sub-link">随机变量</a></li>
+                        <li class="nav-sub-item"><a href="#limit-theorems" class="nav-sub-link">极限定理</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#statistical-physics" class="nav-link"><i class="fas fa-atom"></i> 统计物理基础</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#ensemble-theory" class="nav-sub-link">系综理论</a></li>
+                        <li class="nav-sub-item"><a href="#thermodynamics" class="nav-sub-link">热力学关系</a></li>
+                        <li class="nav-sub-item"><a href="#phase-transitions" class="nav-sub-link">相变理论</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#bio-network-applications" class="nav-link"><i class="fas fa-dna"></i> 生物网络应用</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#protein-interaction" class="nav-sub-link">蛋白质相互作用网络</a></li>
+                        <li class="nav-sub-item"><a href="#gene-regulation" class="nav-sub-link">基因调控网络</a></li>
+                        <li class="nav-sub-item"><a href="#neural-networks" class="nav-sub-link">神经网络分析</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#case-studies" class="nav-link"><i class="fas fa-flask"></i> 案例研究</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#conclusion" class="nav-link"><i class="fas fa-flag-checkered"></i> 结论与展望</a>
+                </li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <section id="intro" class="section">
+                <h1>概率论与统计物理基础：理论基础与生物网络应用</h1>
+                <div class="card">
+                    <p>概率论与统计物理作为研究随机现象和多体系统的数学框架，为理解复杂系统的涌现行为提供了强大的理论工具。从微观粒子的热运动到宏观系统的相变，从基因网络的调控机制到神经网络的信息处理，概率统计方法贯穿于自然科学研究的多个领域。</p>
+                    <p>生物系统本质上是具有强随机性的复杂网络系统，其结构与功能的涌现规律难以通过传统还原论方法完全揭示。本文系统阐述概率论与统计物理的核心理论，重点分析其在生物网络研究中的应用范式，通过理论推导与案例分析相结合的方式，展示概率统计思维如何揭示生物系统的组织原则与动态特性。</p>
+                </div>
+            </section>
+
+            <section id="probability-theory" class="section">
+                <h2>概率论基础理论</h2>
+                <p>概率论是研究随机现象数量规律的数学分支，通过严格的公理体系构建了描述不确定性的理论框架。从柯尔莫哥洛夫公理体系到随机过程理论，概率论为分析各类随机系统提供了统一的数学语言，是统计物理与复杂网络研究的基础工具。</p>
+
+                <div id="probability-space" class="card">
+                    <h3><i class="fas fa-cubes"></i> 概率空间与公理体系</h3>
+                    
+                    <h4>定义2.1（概率空间）</h4>
+                    <p>一个概率空间是一个三元组 \( (\Omega, \mathcal{F}, P) \)，其中：</p>
+                    <ul>
+                        <li> \( \Omega \) 是样本空间，由所有可能的基本事件组成</li>
+                        <li> \( \mathcal{F} \) 是 \( \Omega \) 的子集组成的σ-代数，满足：
+                            <ol class="sub-list">
+                                <li> \( \Omega \in \mathcal{F} \)</li>
+                                <li> 若 \( A \in \mathcal{F} \)，则补集 \( A^c \in \mathcal{F} \)</li>
+                                <li> 若 \( A_1, A_2, \ldots \in \mathcal{F} \)，则可数并 \( \bigcup_{i=1}^\infty A_i \in \mathcal{F} \)</li>
+                            </ol>
+                        </li>
+                        <li> \( P: \mathcal{F} \to [0, 1] \) 是概率测度，满足：
+                            <ol class="sub-list">
+                                <li> 规范性：\( P(\Omega) = 1 \)</li>
+                                <li> 可数可加性：对互斥事件列 \( A_1, A_2, \ldots \)，有 \( P\left(\bigcup_{i=1}^\infty A_i\right) = \sum_{i=1}^\infty P(A_i) \)</li>
+                            </ol>
+                        </li>
+                    </ul>
+
+                    <h4>定理2.1（全概率公式）</h4>
+                    <p>设 \( A_1, A_2, \ldots, A_n \) 是样本空间 \( \Omega \) 的一个分割（互斥且并为 \( \Omega \)），则对任意事件 \( B \in \mathcal{F} \)，有：</p>
+                    <div class="formula-block">
+                        \[
+                        P(B) = \sum_{i=1}^n P(B|A_i)P(A_i)
+                        \]
+                    </div>
+
+                    <h4>定理2.2（贝叶斯公式）</h4>
+                    <p>在全概率公式条件下，对任意 \( 1 \leq i \leq n \)，有：</p>
+                    <div class="formula-block">
+                        \[
+                        P(A_i|B) = \frac{P(B|A_i)P(A_i)}{\sum_{j=1}^n P(B|A_j)P(A_j)}
+                        \]
+                    </div>
+
+                    <h4>定理2.3（概率的连续性）</h4>
+                    <p>设 \( \{A_n\} \) 是单调事件列：</p>
+                    <ul class="sub-list">
+                        <li> 若 \( A_1 \subseteq A_2 \subseteq \cdots \)，则 \( P\left(\bigcup_{n=1}^\infty A_n\right) = \lim_{n \to \infty} P(A_n) \)</li>
+                        <li> 若 \( A_1 \supseteq A_2 \supseteq \cdots \)，则 \( P\left(\bigcap_{n=1}^\infty A_n\right) = \lim_{n \to \infty} P(A_n) \)</li>
+                    </ul>
+                </div>
+
+                <div id="random-variables" class="card">
+                    <h3><i class="fas fa-random"></i> 随机变量与分布函数</h3>
+                    
+                    <h4>定义2.2（随机变量）</h4>
+                    <p>设 \( (\Omega, \mathcal{F}, P) \) 是概率空间，映射 \( X: \Omega \to \mathbb{R} \) 称为随机变量，若对任意实数 \( x \)，有 \( \{\omega \in \Omega | X(\omega) \leq x\} \in \mathcal{F} \)。</p>
+
+                    <h4>定义2.3（分布函数）</h4>
+                    <p>随机变量 \( X \) 的分布函数定义为：</p>
+                    <div class="formula-block">
+                        \[
+                        F_X(x) = P(X \leq x), \quad x \in \mathbb{R}
+                        \]
+                    </div>
+                    <p>分布函数具有单调性、右连续性和极限性质：\( \lim_{x \to -\infty} F_X(x) = 0 \)，\( \lim_{x \to +\infty} F_X(x) = 1 \)。</p>
+
+                    <h4>定义2.4（常见离散分布）</h4>
+                    <ul>
+                        <li>二项分布 \( B(n, p) \)：
+                            <div class="formula-block">
+                                \[
+                                P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}, \quad k = 0, 1, \ldots, n
+                                \]
+                            </div>
+                        </li>
+                        <li>泊松分布 \( P(\lambda) \)：
+                            <div class="formula-block">
+                                \[
+                                P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad k = 0, 1, \ldots
+                                \]
+                            </div>
+                        </li>
+                        <li>几何分布 \( Ge(p) \)：
+                            <div class="formula-block">
+                                \[
+                                P(X = k) = p(1-p)^{k-1}, \quad k = 1, 2, \ldots
+                                \]
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h4>定义2.5（常见连续分布）</h4>
+                    <ul>
+                        <li>正态分布 \( N(\mu, \sigma^2) \)：
+                            <div class="formula-block">
+                                \[
+                                f(x) = \frac{1}{\sqrt{2\pi}\sigma} e^{-\frac{(x-\mu)^2}{2\sigma^2}}, \quad x \in \mathbb{R}
+                                \]
+                            </div>
+                        </li>
+                        <li>指数分布 \( Exp(\lambda) \)：
+                            <div class="formula-block">
+                                \[
+                                f(x) = \lambda e^{-\lambda x}, \quad x \geq 0
+                                \]
+                            </div>
+                        </li>
+                        <li>均匀分布 \( U(a, b) \)：
+                            <div class="formula-block">
+                                \[
+                                f(x) = \begin{cases} 
+                                \frac{1}{b-a} & a \leq x \leq b \\
+                                0 & \text{其他}
+                                \end{cases}
+                                \]
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h4>定义2.6（多维随机变量）</h4>
+                    <p>n维随机变量 \( (X_1, X_2, \ldots, X_n) \) 的联合分布函数定义为：</p>
+                    <div class="formula-block">
+                        \[
+                        F(x_1, x_2, \ldots, x_n) = P(X_1 \leq x_1, X_2 \leq x_2, \ldots, X_n \leq x_n)
+                        \]
+                    </div>
+                    <p>若存在非负函数 \( f(x_1, \ldots, x_n) \) 使得：</p>
+                    <div class="formula-block">
+                        \[
+                        F(x_1, \ldots, x_n) = \int_{-\infty}^{x_1} \cdots \int_{-\infty}^{x_n} f(t_1, \ldots, t_n) dt_1 \cdots dt_n
+                        \]
+                    </div>
+                    <p>则称 \( f \) 为联合概率密度函数。</p>
+
+                    <h4>定义2.7（独立性）</h4>
+                    <p>随机变量 \( X_1, \ldots, X_n \) 相互独立，若对任意 \( x_1, \ldots, x_n \in \mathbb{R} \)，有：</p>
+                    <div class="formula-block">
+                        \[
+                        F(x_1, \ldots, x_n) = \prod_{i=1}^n F_i(x_i)
+                        \]
+                    </div>
+                    <p>其中 \( F_i \) 是 \( X_i \) 的边缘分布函数。</p>
+                </div>
+
+                <div id="limit-theorems" class="card">
+                    <h3><i class="fas fa-chart-line"></i> 大数定律与中心极限定理</h3>
+                    
+                    <h4>定理2.4（弱大数定律）</h4>
+                    <p>设 \( X_1, X_2, \ldots \) 是独立同分布随机变量序列，数学期望 \( E[X_i] = \mu \) 存在，则对任意 \( \epsilon > 0 \)：</p>
+                    <div class="formula-block">
+                        \[
+                        \lim_{n \to \infty} P\left(\left| \frac{1}{n} \sum_{i=1}^n X_i - \mu \right| \geq \epsilon\right) = 0
+                        \]
+                    </div>
+
+                    <h4>定理2.5（强大数定律）</h4>
+                    <p>设 \( X_1, X_2, \ldots \) 是独立同分布随机变量序列，数学期望 \( E[X_i] = \mu \) 存在，则：</p>
+                    <div class="formula-block">
+                        \[
+                        P\left(\lim_{n \to \infty} \frac{1}{n} \sum_{i=1}^n X_i = \mu\right) = 1
+                        \]
+                    </div>
+
+                    <h4>定理2.6（中心极限定理）</h4>
+                    <p>设 \( X_1, X_2, \ldots \) 是独立同分布随机变量序列，\( E[X_i] = \mu \)，\( Var(X_i) = \sigma^2 > 0 \)，则：</p>
+                    <div class="formula-block">
+                        \[
+                        \lim_{n \to \infty} P\left( \frac{\sum_{i=1}^n X_i - n\mu}{\sigma \sqrt{n}} \leq x \right) = \Phi(x)
+                        \]
+                    </div>
+                    <p>其中 \( \Phi(x) \) 是标准正态分布的分布函数：</p>
+                    <div class="formula-block">
+                        \[
+                        \Phi(x) = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^x e^{-t^2/2} dt
+                        \]
+                    </div>
+
+                    <h4>定理2.7（泊松极限定理）</h4>
+                    <p>设 \( X_n \sim B(n, p_n) \)，若 \( np_n \to \lambda > 0 \)（当 \( n \to \infty \) 时），则对任意非负整数 \( k \)：</p>
+                    <div class="formula-block">
+                        \[
+                        \lim_{n \to \infty} P(X_n = k) = \frac{\lambda^k e^{-\lambda}}{k!}
+                        \]
+                    </div>
+                </div>
+            </section>
+
+            <section id="statistical-physics" class="section">
+                <h2>统计物理基础理论</h2>
+                <p>统计物理通过统计方法研究由大量微观粒子组成的宏观系统的物理性质，建立了微观运动与宏观现象之间的桥梁。其核心思想是：宏观系统的观测性质是微观粒子所有可能状态的统计平均值，这一思想为分析生物网络等复杂系统提供了重要启示。</p>
+
+                <div id="ensemble-theory" class="card">
+                    <h3><i class="fas fa-cubes-stacked"></i> 系综理论与分布函数</h3>
+                    
+                    <h4>定义3.1（微正则系综）</h4>
+                    <p>微正则系综描述孤立系统（能量 \( E \)、体积 \( V \)、粒子数 \( N \) 固定）的统计行为，其分布函数为：</p>
+                    <div class="formula-block">
+                        \[
+                        \rho(E, V, N; \mathbf{q}, \mathbf{p}) = \begin{cases} 
+                        \frac{1}{\Omega(E, V, N)} & \text{若系统能量为} \, E \\
+                        0 & \text{其他}
+                        \end{cases}
+                        \]
+                    </div>
+                    <p>其中 \( \Omega(E, V, N) \) 是系统的微观状态数，满足归一化条件：</p>
+                    <div class="formula-block">
+                        \[
+                        \int \rho \, d\Gamma = 1, \quad d\Gamma = \frac{1}{h^{3N}N!} d\mathbf{q} d\mathbf{p}
+                        \]
+                    </div>
+                    <p> \( h \) 为普朗克常数，\( \mathbf{q}, \mathbf{p} \) 分别为粒子的坐标和动量。</p>
+
+                    <h4>定义3.2（正则系综）</h4>
+                    <p>正则系综描述与热源接触的系统（温度 \( T \)、体积 \( V \)、粒子数 \( N \) 固定），其分布函数（玻尔兹曼分布）为：</p>
+                    <div class="formula-block">
+                        \[
+                        \rho(T, V, N; \mathbf{q}, \mathbf{p}) = \frac{1}{Z(T, V, N)} e^{-\beta H(\mathbf{q}, \mathbf{p})}
+                        \]
+                    </div>
+                    <p>其中 \( \beta = 1/(k_B T) \)，\( k_B \) 为玻尔兹曼常数，\( H \) 为哈密顿量，配分函数 \( Z \) 定义为：</p>
+                    <div class="formula-block">
+                        \[
+                        Z = \int e^{-\beta H} d\Gamma
+                        \]
+                    </div>
+
+                    <h4>定理3.1（玻尔兹曼熵公式）</h4>
+                    <p>系统的熵与微观状态数的关系为：</p>
+                    <div class="formula-block">
+                        \[
+                        S = k_B \ln \Omega
+                        \]
+                    </div>
+
+                    <h4>定理3.2（热力学量与配分函数关系）</h4>
+                    <p>正则系综中，热力学量可通过配分函数表示：</p>
+                    <ul>
+                        <li>自由能：\( F = -k_B T \ln Z \)</li>
+                        <li>内能：\( U = -\frac{\partial \ln Z}{\partial \beta} \)</li>
+                        <li>熵：\( S = \frac{U - F}{T} = k_B \left( \ln Z + \beta \frac{\partial \ln Z}{\partial \beta} \right) \)</li>
+                    </ul>
+                </div>
+
+                <div id="thermodynamics" class="card">
+                    <h3><i class="fas fa-fire-flame-curved"></i> 热力学关系与涨落理论</h3>
+                    
+                    <h4>基本热力学关系式</h4>
+                    <p>对于封闭系统，热力学基本方程为：</p>
+                    <div class="formula-block">
+                        \[
+                        dU = T dS - P dV + \mu dN
+                        \]
+                    </div>
+                    <p>其中 \( U \) 为内能，\( T \) 为温度，\( S \) 为熵，\( P \) 为压强，\( V \) 为体积，\( \mu \) 为化学势，\( N \) 为粒子数。</p>
+
+                    <h4>麦克斯韦关系式</h4>
+                    <p>由热力学势的全微分性质，可得：</p>
+                    <div class="formula-block">
+                        \[
+                        \left( \frac{\partial T}{\partial V} \right)_S = -\left( \frac{\partial P}{\partial S} \right)_V, \quad \left( \frac{\partial T}{\partial N} \right)_S = \left( \frac{\partial \mu}{\partial S} \right)_N
+                        \]
+                        \[
+                        \left( \frac{\partial P}{\partial N} \right)_V = -\left( \frac{\partial \mu}{\partial V} \right)_N
+                        \]
+                    </div>
+
+                    <h4>定理3.3（涨落耗散定理）</h4>
+                    <p>系统某个宏观量 \( A \) 的涨落与响应函数存在如下关系：</p>
+                    <div class="formula-block">
+                        \[
+                        \langle (\Delta A)^2 \rangle = k_B T \chi_A
+                        \]
+                    </div>
+                    <p>其中 \( \Delta A = A - \langle A \rangle \)，\( \chi_A \) 是系统对外部场的响应系数。</p>
+
+                    <h4>定理3.4（玻尔兹曼因子）</h4>
+                    <p>在温度为 \( T \) 的平衡态下，系统处于能量为 \( E_i \) 的微观状态 \( i \) 的概率与玻尔兹曼因子成正比：</p>
+                    <div class="formula-block">
+                        \[
+                        P_i \propto e^{-E_i/(k_B T)}
+                        \]
+                    </div>
+                </div>
+
+                <div id="phase-transitions" class="card">
+                    <h3><i class="fas fa-temperature-three-quarters"></i> 相变理论与临界现象</h3>
+                    
+                    <h4>定义3.3（相变）</h4>
+                    <p>相变是指系统在外界条件（如温度、压强）连续变化时，宏观性质发生突变的现象。数学上表现为自由能函数的非解析性。</p>
+
+                    <h4>定义3.4（序参量）</h4>
+                    <p>序参量 \( \phi \) 是描述系统有序程度的物理量，在高温无序相 \( \phi = 0 \)，在低温有序相 \( \phi \neq 0 \)。</p>
+
+                    <h4>定理3.5（朗道理论）</h4>
+                    <p>相变附近的自由能可展开为序参量的幂级数：</p>
+                    <div class="formula-block">
+                        \[
+                        F(\phi, T) = F_0(T) + a(T) \phi^2 + b(T) \phi^4 + \cdots
+                        \]
+                    </div>
+                    <p>其中 \( a(T) = a_0 (T - T_c) \)，\( T_c \) 为临界温度。当 \( T > T_c \) 时，唯一极小值在 \( \phi = 0 \)；当 \( T < T_c \) 时，极小值在 \( \phi = \pm \sqrt{a_0 (T_c - T)/b} \)，表现为二级相变。</p>
+
+                    <h4>定理3.6（临界指数）</h4>
+                    <p>临界现象的标度行为可用临界指数描述，如：</p>
+                    <ul>
+                        <li>序参量：\( \phi \sim (T_c - T)^\beta \)</li>
+                        <li>比热容：\( C \sim |T - T_c|^{-\alpha} \)</li>
+                        <li>关联长度：\( \xi \sim |T - T_c|^{-\nu} \)</li>
+                    </ul>
+                    <p>不同系统在临界点附近表现出普适性，即具有相同的临界指数。</p>
+                </div>
+            </section>
+
+            <section id="bio-network-applications" class="section">
+                <h2>生物网络中的概率统计方法</h2>
+                <p>生物网络（如蛋白质相互作用网络、基因调控网络、神经网络）是典型的复杂系统，其结构演化与功能实现均存在显著的随机性。概率论与统计物理方法为揭示这些网络的组织原则、动态特性和功能涌现提供了定量分析工具。</p>
+
+                <div id="protein-interaction" class="card">
+                    <h3><i class="fas fa-microscope"></i> 蛋白质相互作用网络分析</h3>
+                    
+                    <h4>定义4.1（蛋白质相互作用网络）</h4>
+                    <p>蛋白质相互作用网络（PIN）是顶点为蛋白质、边为物理相互作用的无向图 \( G = (V, E) \)，其拓扑性质可通过度分布、聚类系数等统计量描述。</p>
+
+                    <h4>定理4.1（PIN的度分布特性）</h4>
+                    <p>大多数生物物种的蛋白质相互作用网络的度分布遵循幂律分布：</p>
+                    <div class="formula-block">
+                        \[
+                        P(k) \sim k^{-\gamma}, \quad 2 \leq \gamma \leq 3
+                        \]
+                    </div>
+                    <p>表明网络具有无标度特性，存在少量高连接度的" hub "蛋白质，对网络稳健性至关重要。</p>
+
+                    <h4>模型4.1（蛋白质网络演化模型）</h4>
+                    <p>基于优先连接的蛋白质网络生长模型：</p>
+                    <ol>
+                        <li>初始网络包含 \( m_0 \) 个蛋白质</li>
+                        <li>每次添加一个新蛋白质，与已有蛋白质 \( i \) 连接的概率为：
+                            <div class="formula-block">
+                                \[
+                                \Pi(k_i) = \frac{k_i + \alpha}{\sum_j (k_j + \alpha)}
+                                \]
+                            </div>
+                            其中 \( \alpha \) 为初始吸引力参数
+                        </li>
+                    </ol>
+
+                    <h4>定理4.2（网络稳健性）</h4>
+                    <p>无标度蛋白质网络对随机扰动具有稳健性，对靶向攻击（移除hub节点）具有脆弱性，表现为：</p>
+                    <div class="formula-block">
+                        \[
+                        P_{\text{rand}}(f) \sim e^{-f}, \quad P_{\text{target}}(f) \sim f^\gamma
+                        \]
+                    </div>
+                    <p>其中 \( f \) 为节点移除比例，\( P \) 为网络连通概率。</p>
+                </div>
+
+                <div id="gene-regulation" class="card">
+                    <h3><i class="fas fa-dna"></i> 基因调控网络的随机模型</h3>
+                    
+                    <h4>定义4.2（基因调控网络）</h4>
+                    <p>基因调控网络（GRN）是顶点为基因、边为调控关系的有向图，边权重表示调控强度，可通过随机微分方程描述其动态行为。</p>
+
+                    <h4>模型4.2（基因表达的化学主方程）</h4>
+                    <p>基因表达过程的随机动力学可由化学主方程描述：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{dP(n, t)}{dt} = \sum_{k} [W(n - k \mid n) P(n - k, t) - W(n + k \mid n) P(n, t)]
+                        \]
+                    </div>
+                    <p>其中 \( P(n, t) \) 是时刻 \( t \) 基因表达产物数量为 \( n \) 的概率，\( W(n' \mid n) \) 是从状态 \( n \) 到 \( n' \) 的跃迁率。</p>
+
+                    <h4>定理4.3（福克-普朗克方程）</h4>
+                    <p>当分子数较大时，化学主方程可近似为福克-普朗克方程：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{\partial P(x, t)}{\partial t} = -\frac{\partial}{\partial x} [A(x) P(x, t)] + \frac{1}{2} \frac{\partial^2}{\partial x^2} [B(x) P(x, t)]
+                        \]
+                    </div>
+                    <p>其中 \( x = n/\Omega \) 为浓度，\( A(x) \) 为漂移系数，\( B(x) \) 为扩散系数，\( \Omega \) 为系统体积。</p>
+
+                    <h4>模型4.3（布尔网络模型）</h4>
+                    <p>基因状态（表达/不表达）的离散时间模型：</p>
+                    <div class="formula-block">
+                        \[
+                        x_i(t+1) = f_i(x_{i1}(t), x_{i2}(t), \ldots, x_{ik}(t))
+                        \]
+                    </div>
+                    <p>其中 \( x_i \in \{0, 1\} \) 表示基因状态，\( f_i \) 为布尔函数，描述调控规则。</p>
+                </div>
+
+                <div id="neural-networks" class="card">
+                    <h3><i class="fas fa-brain"></i> 神经网络的统计物理分析</h3>
+                    
+                    <h4>模型4.4（随机神经网络模型）</h4>
+                    <p>Hopfield模型描述神经网络的记忆存储与提取：</p>
+                    <div class="formula-block">
+                        \[
+                        S_i(t+1) = \text{sign}\left( \sum_j J_{ij} S_j(t) \right)
+                        \]
+                    </div>
+                    <p>其中 \( S_i \in \{-1, 1\} \) 为神经元状态，突触权重 \( J_{ij} \) 由赫布规则确定：</p>
+                    <div class="formula-block">
+                        \[
+                        J_{ij} = \frac{1}{N} \sum_{\mu=1}^p \xi_i^\mu \xi_j^\mu, \quad J_{ii} = 0
+                        \]
+                    </div>
+                    <p> \( \xi^\mu \) 为记忆模式，\( N \) 为神经元数量。</p>
+
+                    <h4>定理4.4（记忆容量）</h4>
+                    <p>Hopfield模型的最大记忆容量为：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{p}{N} \approx 0.14
+                        \]
+                    </div>
+                    <p>超过此临界值，记忆会因干扰而无法正确提取。</p>
+
+                    <h4>模型4.5（神经元放电的统计模型）</h4>
+                    <p>神经元放电间隔（ISI）的概率密度函数通常满足：</p>
+                    <div class="formula-block">
+                        \[
+                        f(t) = \frac{(t/\tau)^m}{(m+1)! \tau} e^{-t/\tau}
+                        \]
+                    </div>
+                    <p>其中 \( \tau \) 为特征时间尺度，\( m \) 为形状参数，描述放电模式的规律性。</p>
+                </div>
+            </section>
+
+            <section id="case-studies" class="section">
+                <h2>案例研究：概率统计方法在生物网络中的应用</h2>
+                
+                <div class="card">
+                    <h3><i class="fas fa-flask"></i> 案例1：癌症蛋白质网络的稳健性分析</h3>
+                    <p>通过度分布分析发现，癌细胞蛋白质网络的度分布幂律指数 \( \gamma \) 从正常组织的2.3降至1.8，表明癌细胞网络更依赖少数关键hub蛋白。利用渗流理论计算得到：</p>
+                    <div class="formula-block">
+                        \[
+                        P_{\text{cancer}}(f) \sim f^{1.8}, \quad P_{\text{normal}}(f) \sim f^{2.3}
+                        \]
+                    </div>
+                    <p>表明靶向攻击hub蛋白对癌细胞网络的破坏效率更高，为癌症治疗提供了理论依据。</p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-flask"></i> 案例2：基因表达噪声的统计分析</h3>
+                    <p>对酵母基因表达数据的分析表明，基因表达噪声（变异系数）与平均表达水平遵循幂律关系：</p>
+                    <div class="formula-block">
+                        \[
+                        CV^2 \sim \langle n \rangle^{-\alpha}, \quad \alpha \approx 0.8
+                        \]
+                    </div>
+                    <p>通过福克-普朗克方程拟合得到漂移系数 \( A(x) = k_0 - k_1 x \)，扩散系数 \( B(x) = \sqrt{k_0 + k_1 x} \)，揭示了转录与翻译过程对噪声的贡献机制。</p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-flask"></i> 案例3：神经元网络的同步动力学</h3>
+                    <p>利用最大似然估计方法重构神经元网络连接，发现同步神经元群的连接概率满足：</p>
+                    <div class="formula-block">
+                        \[
+                        P_{ij} \propto e^{-\beta |\phi_i - \phi_j|^2}
+                        \]
+                    </div>
+                    <p>其中 \( \phi_i \) 为神经元相位，\( \beta \) 为耦合强度参数。统计分析表明，同步集群的大小分布遵循泊松分布，表明集群形成是随机过程。</p>
+                </div>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>结论与展望</h2>
+                <div class="card">
+                    <p>概率论与统计物理为生物网络研究提供了统一的理论框架和分析工具，从微观随机过程到宏观涌现行为，建立了生物系统结构与功能之间的定量联系。本文通过严格的理论推导，系统阐述了概率空间、系综理论等基础概念，深入分析了这些理论在蛋白质相互作用网络、基因调控网络和神经网络中的应用范式。</p>
+                    <p>未来研究方向主要包括：(1) 发展更精细的随机模型，整合生物网络的时空动态特性；(2) 建立多尺度统计理论，连接分子层面的随机事件与系统层面的功能涌现；(3) 开发基于统计学习的网络重构算法，提高从实验数据推断生物网络结构的精度。</p>
+                    <p>随着实验技术的进步和大数据时代的到来，概率论与统计物理方法将在揭示生命系统复杂性方面发挥越来越重要的作用，为理解生命本质和疾病机制提供新的视角和理论支撑。</p>
+                </div>
+            </section>
+
+            <a href="#" class="back-to-top" id="backToTop">
+                <i class="fas fa-arrow-up"></i>
+            </a>
+
+            <div class="card">
+                <a href="NonlinearDynamics.html" class="resource-link">下一篇: 非线性动力学基础</a>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // 侧边栏切换
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // 点击导航链接后在移动设备上关闭侧边栏
+        const navLinks = document.querySelectorAll('.nav-link, .nav-sub-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+
+        // 回到顶部按钮
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
