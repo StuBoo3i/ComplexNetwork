@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物理学基础</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- 引入Prism.js语法高亮库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --light-gray: #ecf0f1;
+            --dark-gray: #7f8c8d;
+            --accent-color: #e74c3c;
+            --sidebar-width: 280px;
+            --transition: all 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            overflow-x: hidden;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-color);
+            color: white;
+            position: fixed;
+            top: 0;          
+            bottom: 0;       
+            left: 0;         
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .nav-list {
+            list-style: none;
+        }
+        .nav-item {
+            margin-bottom: 0.8rem;
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        .nav-link i {
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+        .nav-sub-item {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .nav-sub-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .nav-sub-link:hover {
+            color: white;
+        }
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1200px;
+            margin-right: auto;
+        }
+        .section {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.5s ease;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        /* Cards for sections */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        /* Formula Block */
+        .formula-block {
+            margin: 1.5rem 0;
+            padding: 0.5rem 1rem;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        /* Table styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        .comparison-table th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+        .comparison-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        /* Code Block */
+        .code-block {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+        }
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 2000;
+                background-color: var(--secondary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+            .card {
+                padding: 1.2rem;
+            }
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 8px 10px;
+            }
+        }
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+        /* Sub-list Style */
+        .sub-list {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .card .resource-link {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin-right: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            display: inline-block;
+            transition: var(--transition);
+        }
+
+        .card .resource-link:hover {
+            color: var(--primary-color);
+            background-color: var(--light-gray);
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="home.html" class="resource-link">
+                    <i class="fas fa-home"></i> 首页
+                </a>
+                <div class="sidebar-title">
+                    <h2>物理学基础</h2>
+                </div>
+                <a href="Biology.html" class="resource-link">
+                    <i class="fas fa-book"></i> 下一篇：生物学基础
+                </a>
+            </div>
+
+            <style>
+            .sidebar-header {
+                margin-bottom: 2rem;
+                padding-bottom: 1.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: center;
+            }
+
+            .resource-link {
+                color: rgba(255, 255, 255, 0.8);
+                text-decoration: none;
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+                border-radius: 4px;
+                display: inline-block;
+                margin-bottom: 1rem;
+                transition: var(--transition);
+            }
+
+            .resource-link:hover {
+                color: white;
+                background-color: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .resource-link i {
+                margin-right: 6px;
+            }
+
+            .sidebar-title h2 {
+                font-size: 1.2rem;
+                font-weight: 600;
+                letter-spacing: 1px;
+                margin: 0 0 0.5rem 0;
+                position: relative;
+                display: inline-block;
+                color: white;
+            }
+
+            .title-divider {
+                width: 40px;
+                height: 2px;
+                background-color: var(--primary-color);
+                margin: 0 auto;
+                border-radius: 1px;
+            }
+            </style>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#intro" class="nav-link"><i class="fas fa-book-open"></i> 引言</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#physics-basics" class="nav-link"><i class="fas fa-atom"></i> 物理学基础理论</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#statistical-mechanics" class="nav-sub-link">统计力学基础</a></li>
+                        <li class="nav-sub-item"><a href="#dynamical-systems" class="nav-sub-link">动力学系统理论</a></li>
+                        <li class="nav-sub-item"><a href="#nonequilibrium" class="nav-sub-link">非平衡态热力学</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#network-basics" class="nav-link"><i class="fas fa-project-diagram"></i> 复杂网络基础</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#network-structures" class="nav-sub-link">网络结构特征</a></li>
+                        <li class="nav-sub-item"><a href="#network-models" class="nav-sub-link">网络模型构建</a></li>
+                        <li class="nav-sub-item"><a href="#dynamics-on-networks" class="nav-sub-link">网络上的动力学</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#applications" class="nav-link"><i class="fas fa-flask"></i> 交叉应用研究</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#phase-transitions" class="nav-sub-link">相变与临界现象</a></li>
+                        <li class="nav-sub-item"><a href="#synchronization" class="nav-sub-link">同步动力学</a></li>
+                        <li class="nav-sub-item"><a href="#percolation" class="nav-sub-link">渗流理论应用</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#case-studies" class="nav-link"><i class="fas fa-vial"></i> 案例研究</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#conclusion" class="nav-link"><i class="fas fa-flag-checkered"></i> 总结</a>
+                </li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <section id="intro" class="section">
+                <h1>物理学基础</h1>
+                <div class="card">
+                    <p>复杂网络作为描述复杂系统结构的通用语言，为理解自然界和人类社会中各种复杂现象提供了统一框架。物理学，作为研究物质、能量及其相互作用的基础学科，为分析复杂网络的动力学行为提供了深刻的理论工具和方法论指导。</p>
+                    <p>从统计力学对网络拓扑结构的解释，到动力学系统理论对网络上集体行为的刻画，再到非平衡态热力学对网络演化过程的描述，物理学与复杂网络的交叉融合产生了丰富的研究成果。本报告系统阐述物理学基础理论与复杂网络动力学的内在联系，分析物理概念在网络研究中的具体应用，并通过实例展示跨学科研究的创新价值。</p>
+                </div>
+            </section>
+
+            <section id="physics-basics" class="section">
+                <h2>物理学基础理论</h2>
+                <p>物理学的多个分支为复杂网络研究提供了理论基础，其中统计力学、动力学系统理论和非平衡态热力学尤为重要。这些理论不仅帮助我们理解网络结构的形成机制，还为分析网络上的动力学过程提供了数学工具和物理直觉。</p>
+
+                <div id="statistical-mechanics" class="card">
+                    <h3><i class="fas fa-chart-pie"></i> 统计力学基础</h3>
+                    
+                    <h4>定义2.1（系综与配分函数）</h4>
+                    <p>在统计力学中，系综是大量具有相同宏观性质的系统的集合。对于网络系统，配分函数 \( Z \) 定义为：</p>
+                    <div class="formula-block">
+                        \[
+                        Z = \sum_{\text{所有可能网络}} e^{-\beta H(G)}
+                        \]
+                    </div>
+                    <p>其中 \( H(G) \) 是网络 \( G \) 的哈密顿量，\( \beta = 1/(k_B T) \) 为逆温度（\( k_B \) 为玻尔兹曼常数，\( T \) 为温度）。配分函数包含了系统所有可能状态的信息，是计算其他热力学量的基础。</p>
+
+                    <h4>定义2.2（熵与信息）</h4>
+                    <p>网络的熵 \( S \) 可表示为：</p>
+                    <div class="formula-block">
+                        \[
+                        S = -k_B \sum_{G} P(G) \ln P(G)
+                        \]
+                    </div>
+                    <p>其中 \( P(G) = e^{-\beta H(G)}/Z \) 是网络状态的概率分布。熵度量了网络结构的不确定性或复杂性，与信息论中的香农熵具有相似的形式。</p>
+
+                    <h4>定理2.1（玻尔兹曼分布）</h4>
+                    <p>在平衡态下，网络处于状态 \( G \) 的概率遵循玻尔兹曼分布：</p>
+                    <div class="formula-block">
+                        \[
+                        P(G) = \frac{1}{Z} e^{-\beta H(G)}
+                        \]
+                    </div>
+                    <p>该分布在网络模型中广泛应用，如配置模型和指数随机图模型，用于描述具有特定拓扑特征的网络集合。</p>
+
+                    <h4>定义2.3（平均场近似）</h4>
+                    <p>平均场近似是统计力学中处理复杂系统的常用方法，假设每个节点的行为仅受网络平均性质的影响，而忽略个体差异。对于度分布为 \( p(k) \) 的网络，节点的平均度为：</p>
+                    <div class="formula-block">
+                        \[
+                        \langle k \rangle = \sum_{k} k p(k)
+                        \]
+                    </div>
+                    <p>平均场方法简化了网络动力学的分析，尤其适用于大规模稀疏网络。</p>
+                </div>
+
+                <div id="dynamical-systems" class="card">
+                    <h3><i class="fas fa-chart-line"></i> 动力学系统理论</h3>
+                    
+                    <h4>定义2.4（动力系统）</h4>
+                    <p>一个动力系统由状态空间 \( \Omega \) 和演化规则 \( f \) 组成，描述为：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{d\mathbf{x}}{dt} = f(\mathbf{x}, t)
+                        \]
+                    </div>
+                    <p>其中 \( \mathbf{x} \in \Omega \) 是系统状态向量。对于网络动力系统，\( x_i(t) \) 表示节点 \( i \) 在时刻 \( t \) 的状态，演化规则通常依赖于节点自身状态和其邻居的状态。</p>
+
+                    <h4>定义2.5（吸引子）</h4>
+                    <p>吸引子是动力系统长期演化所趋向的状态或状态集合，满足：</p>
+                    <div class="formula-block">
+                        \[
+                        \lim_{t \to \infty} \text{dist}(f^t(\mathbf{x}_0), A) = 0
+                        \]
+                    </div>
+                    <p>其中 \( A \) 是吸引子，\( \mathbf{x}_0 \) 是初始状态，\( f^t \) 是演化算子，\( \text{dist} \) 是距离函数。网络系统的吸引子可能是固定点、周期轨道或混沌吸引子。</p>
+
+                    <h4>定理2.2（李雅普诺夫稳定性）</h4>
+                    <p>对于动力系统 \( \dot{\mathbf{x}} = f(\mathbf{x}) \) 的平衡点 \( \mathbf{x}^* \)（满足 \( f(\mathbf{x}^*) = 0 \)），若存在李雅普诺夫函数 \( V(\mathbf{x}) \) 满足：
+                    <ul>
+                        <li> \( V(\mathbf{x}^*) = 0 \) 且 \( V(\mathbf{x}) > 0 \) 对所有 \( \mathbf{x} \neq \mathbf{x}^* \)</li>
+                        <li> \( \dot{V}(\mathbf{x}) = \nabla V \cdot f(\mathbf{x}) \leq 0 \) 对所有 \( \mathbf{x} \)</li>
+                    </ul>
+                    则平衡点是李雅普诺夫稳定的。若 \( \dot{V}(\mathbf{x}) < 0 \) 对所有 \( \mathbf{x} \neq \mathbf{x}^* \)，则平衡点是渐近稳定的。</p>
+
+                    <h4>定义2.6（分岔）</h4>
+                    <p>分岔是指当系统参数变化时，其动力学行为发生定性改变的现象。对于依赖参数 \( \lambda \) 的系统 \( \dot{\mathbf{x}} = f(\mathbf{x}, \lambda) \)，当 \( \lambda \) 穿过临界值 \( \lambda_c \) 时，系统的吸引子结构发生改变，这种现象称为分岔。常见的分岔类型包括鞍结分岔、霍普夫分岔和叉形分岔，在网络同步和相变研究中具有重要意义。</p>
+                </div>
+
+                <div id="nonequilibrium" class="card">
+                    <h3><i class="fas fa-bolt"></i> 非平衡态热力学</h3>
+                    
+                    <h4>定义2.7（熵产生）</h4>
+                    <p>对于非平衡系统，熵产生率 \( \sigma \) 是衡量系统偏离平衡态程度的物理量：</p>
+                    <div class="formula-block">
+                        \[
+                        \sigma = \frac{d_i S}{dt} \geq 0
+                        \]
+                    </div>
+                    <p>其中 \( d_i S \) 是系统内部产生的熵。根据热力学第二定律，熵产生率总是非负的，平衡态时熵产生率为零。对于演化的网络系统，熵产生率可用于描述网络结构组织程度的变化。</p>
+
+                    <h4>定理2.3（昂萨格倒易关系）</h4>
+                    <p>在接近平衡态的非平衡系统中，流 \( J_i \) 与力 \( X_j \) 之间存在线性关系 \( J_i = L_{ij} X_j \)，其中系数满足倒易关系：</p>
+                    <div class="formula-block">
+                        \[
+                        L_{ij} = L_{ji}
+                        \]
+                    </div>
+                    <p>该关系反映了系统的微观可逆性，在网络上的扩散和输运过程分析中具有应用价值。</p>
+
+                    <h4>定义2.8（自组织临界性）</h4>
+                    <p>自组织临界性（SOC）是指某些复杂系统无需外部调节即可自发演化到临界状态的现象，其特征是动力学行为具有幂律分布：</p>
+                    <div class="formula-block">
+                        \[
+                        P(s) \sim s^{-\alpha}
+                        \]
+                    </div>
+                    <p>其中 \( s \) 是某个物理量（如网络中的雪崩大小），\( \alpha \) 是临界指数。许多真实网络表现出自组织临界特性，如神经网络的活动模式和生态网络的物种灭绝事件。</p>
+                </div>
+            </section>
+
+            <section id="network-basics" class="section">
+                <h2>复杂网络基础理论</h2>
+                <p>复杂网络是由大量节点和节点间连接构成的系统，其结构和动力学行为具有超越简单规则网络的复杂性。网络的拓扑结构特征、构建模型以及其上的动力学过程是复杂网络研究的核心内容，而物理学方法为这些研究提供了关键的分析工具。</p>
+
+                <div id="network-structures" class="card">
+                    <h3><i class="fas fa-sitemap"></i> 网络结构特征</h3>
+                    
+                    <h4>定义3.1（网络基本参数）</h4>
+                    <p>对于具有 \( N \) 个节点和 \( M \) 条边的网络，基本结构参数包括：
+                    <ul>
+                        <li>节点度：\( k_i = \sum_j A_{ij} \)，其中 \( A \) 是邻接矩阵（\( A_{ij}=1 \) 表示节点 \( i \) 和 \( j \) 相连，否则为0）</li>
+                        <li>平均度：\( \langle k \rangle = \frac{1}{N} \sum_i k_i = \frac{2M}{N} \)</li>
+                        <li>聚类系数：\( C_i = \frac{2 e_i}{k_i(k_i-1)} \)，其中 \( e_i \) 是节点 \( i \) 邻居间实际存在的边数</li>
+                        <li>平均路径长度：\( L = \frac{1}{N(N-1)} \sum_{i \neq j} d_{ij} \)，其中 \( d_{ij} \) 是节点 \( i \) 到 \( j \) 的最短路径长度</li>
+                    </ul>
+                    </p>
+
+                    <h4>定义3.2（度分布）</h4>
+                    <p>度分布 \( p(k) \) 是节点度为 \( k \) 的概率：</p>
+                    <div class="formula-block">
+                        \[
+                        p(k) = \frac{1}{N} \sum_{i=1}^N \delta(k_i, k)
+                        \]
+                    </div>
+                    <p>其中 \( \delta \) 是克罗内克函数。不同类型的网络具有特征性的度分布：随机网络服从泊松分布，无标度网络服从幂律分布 \( p(k) \sim k^{-\gamma} \)，规则网络则具有 delta 函数形式的度分布。</p>
+
+                    <h4>定义3.3（介数中心性）</h4>
+                    <p>介数中心性衡量节点在网络路径中的重要性：</p>
+                    <div class="formula-block">
+                        \[
+                        B_i = \sum_{s \neq t \neq i} \frac{g_{st}(i)}{g_{st}}
+                        \]
+                    </div>
+                    <p>其中 \( g_{st} \) 是节点 \( s \) 到 \( t \) 的最短路径总数，\( g_{st}(i) \) 是经过节点 \( i \) 的最短路径数。介数中心性高的节点在网络信息传播和同步过程中通常起关键作用。</p>
+
+                    <h4>定理3.1（小世界网络特性）</h4>
+                    <p>小世界网络同时具有：
+                    <ul>
+                        <li>与规则网络相当的高聚类系数 \( C \approx C_{\text{reg}} \)</li>
+                        <li>与随机网络相当的短平均路径长度 \( L \approx L_{\text{rand}} \sim \log N \)</li>
+                    </ul>
+                    其中 \( C_{\text{reg}} \) 是规则网络的聚类系数，\( L_{\text{rand}} \) 是随机网络的平均路径长度。这种特性使得信息能够在网络中高效传播，同时保持局部结构的紧密连接。</p>
+                </div>
+
+                <div id="network-models" class="card">
+                    <h3><i class="fas fa-cogs"></i> 网络模型构建</h3>
+                    
+                    <h4>定义3.4（ Erdős-Rényi 模型）</h4>
+                    <p>Erdős-Rényi（ER）随机网络模型通过在 \( N \) 个节点间独立随机连接边构建，任意两节点相连的概率为 \( p \)。该模型的主要性质包括：
+                    <ul>
+                        <li>度分布服从泊松分布：\( p(k) \approx \frac{e^{-\lambda} \lambda^k}{k!} \)，其中 \( \lambda = p(N-1) \approx \langle k \rangle \)</li>
+                        <li>聚类系数 \( C = p \approx \langle k \rangle / N \)，随网络规模增大而减小</li>
+                        <li>平均路径长度 \( L \sim \log N / \log \langle k \rangle \)</li>
+                    </ul>
+                    </p>
+
+                    <h4>定义3.5（巴拉巴西-阿尔伯特模型）</h4>
+                    <p>巴拉巴西-阿尔伯特（BA）模型通过优先连接机制生成无标度网络：
+                    <ol>
+                        <li>初始有 \( m_0 \) 个节点的连通网络</li>
+                        <li>每次加入一个新节点，与 \( m \leq m_0 \) 个已有节点相连</li>
+                        <li>新节点与节点 \( i \) 相连的概率与节点 \( i \) 的度成正比：\( \Pi(k_i) = \frac{k_i}{\sum_j k_j} \)</li>
+                    </ol>
+                    该模型生成的网络度分布服从幂律 \( p(k) \sim k^{-3} \)。</p>
+
+                    <h4>定义3.6（配置模型）</h4>
+                    <p>配置模型是构建具有给定度分布的随机网络的通用方法：
+                    <ol>
+                        <li>指定每个节点的度 \( k_1, k_2, \ldots, k_N \)，要求总度数为偶数</li>
+                        <li>每个节点产生 \( k_i \) 个" stub"（半条边）</li>
+                        <li>随机配对所有 stub 形成完整的边</li>
+                    </ol>
+                    配置模型保持了指定的度分布，但忽略了度相关性等其他结构特征。</p>
+
+                    <h4>定理3.2（网络渗流阈值）</h4>
+                    <p>在配置模型中，当以概率 \( p \) 保留边时，网络出现巨连通分量的渗流阈值为：</p>
+                    <div class="formula-block">
+                        \[
+                        p_c = \frac{1}{\langle k^2 \rangle / \langle k \rangle - 1}
+                        \]
+                    </div>
+                    <p>其中 \( \langle k \rangle \) 和 \( \langle k^2 \rangle \) 分别是度的一阶矩和二阶矩。对于无标度网络（\( \gamma \leq 3 \)），\( \langle k^2 \rangle \) 发散，渗流阈值 \( p_c = 0 \)，表明这类网络对随机故障具有很强的鲁棒性。</p>
+                </div>
+
+                <div id="dynamics-on-networks" class="card">
+                    <h3><i class="fas fa-random"></i> 网络上的动力学过程</h3>
+                    
+                    <h4>定义3.7（网络上的扩散）</h4>
+                    <p>连续时间扩散过程可描述为：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{dx_i}{dt} = \sum_j L_{ij} x_j
+                        \]
+                    </div>
+                    <p>其中 \( L = D - A \) 是拉普拉斯矩阵（\( D \) 是度矩阵，对角元素 \( D_{ii} = k_i \)），\( x_i(t) \) 表示节点 \( i \) 上的某种物质浓度。扩散速度由拉普拉斯矩阵的特征值决定，最小非零特征值 \( \lambda_2 \)（代数连通度）越小，扩散越慢。</p>
+
+                    <h4>定义3.8（传染病模型）</h4>
+                    <p>SIS（易感-感染-易感）模型是描述网络上传染病传播的经典模型：
+                    <ul>
+                        <li>易感节点（S）以概率 \( \beta \) 被邻居感染</li>
+                        <li>感染节点（I）以概率 \( \gamma \) 恢复为易感状态</li>
+                        <li>动力学方程：\( \dot{\rho}_i = \beta (1 - \rho_i) \sum_j A_{ij} \rho_j - \gamma \rho_i \)</li>
+                    </ul>
+                    其中 \( \rho_i \) 是节点 \( i \) 被感染的概率。</p>
+
+                    <h4>定理3.3（传染病阈值）</h4>
+                    <p>在网络SIS模型中，当 \( R_0 = \beta / \gamma > 1/\lambda_1 \) 时，传染病能够在网络中持续流行，其中 \( \lambda_1 \) 是邻接矩阵的最大特征值（主特征值）。当 \( R_0 \leq 1/\lambda_1 \) 时，传染病将逐渐消失。</p>
+
+                    <h4>定义3.9（同步动力学）</h4>
+                    <p>网络上的耦合振子同步是指所有节点的状态随时间演化趋于一致的现象。对于耦合振子系统：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{\theta}_i = \omega_i + \frac{\sigma}{N} \sum_j A_{ij} \sin(\theta_j - \theta_i)
+                        \]
+                    </div>
+                    <p>其中 \( \theta_i \) 是振子 \( i \) 的相位，\( \omega_i \) 是固有频率，\( \sigma \) 是耦合强度。当耦合强度超过临界值时，系统达到完全同步状态 \( \theta_i(t) = \theta_j(t) \) 对所有 \( i,j \)。</p>
+                </div>
+            </section>
+
+            <section id="applications" class="section">
+                <h2>物理学在复杂网络中的应用</h2>
+                <p>物理学理论与复杂网络研究的交叉融合产生了丰富的研究成果，为理解网络的形成机制、结构特性和动力学行为提供了深刻的物理洞察。本节重点介绍物理学中的相变理论、同步理论和渗流理论在复杂网络研究中的具体应用。</p>
+
+                <div id="phase-transitions" class="card">
+                    <h3><i class="fas fa-temperature-high"></i> 相变与临界现象</h3>
+                    
+                    <h4>定义4.1（网络相变）</h4>
+                    <p>网络相变是指当系统参数（如连接概率、耦合强度）变化时，网络的宏观性质发生定性突变的现象。相变点处，系统表现出临界行为，如关联长度发散和标度不变性。网络相变可分为：
+                    <ul>
+                        <li>结构相变：网络拓扑结构的突变（如巨连通分量的形成）</li>
+                        <li>动力学相变：网络上动力学行为的定性改变（如同步相变、传播相变）</li>
+                    </ul>
+                    </p>
+
+                    <h4>定理4.1（Ising模型在网络上的相变）</h4>
+                    <p>网络上的Ising模型描述节点状态（自旋向上/向下）的集体行为，其哈密顿量为：</p>
+                    <div class="formula-block">
+                        \[
+                        H = -J \sum_{\langle i,j \rangle} \sigma_i \sigma_j - h \sum_i \sigma_i
+                        \]
+                    </div>
+                    <p>其中 \( \sigma_i = \pm 1 \) 是节点 \( i \) 的自旋状态，\( J \) 是耦合强度，\( h \) 是外场，\( \langle i,j \rangle \) 表示相邻节点对。该模型在临界温度 \( T_c \) 处发生相变，低温时系统呈现有序态（自旋一致），高温时呈现无序态（自旋随机）。</p>
+
+                    <h4>定义4.2（临界指数与标度律）</h4>
+                    <p>相变点附近，物理量遵循标度律：</p>
+                    <div class="formula-block">
+                        \[
+                        X(t) \sim t^\delta \quad \text{当} \quad t \to 0
+                        \]
+                    </div>
+                    <p>其中 \( t = |T - T_c| / T_c \) 是约化温度，\( \delta \) 是临界指数。对于网络渗流，巨连通分量大小 \( S \sim (p - p_c)^\beta \)，关联长度 \( \xi \sim (p - p_c)^\nu \)，其中 \( \beta \) 和 \( \nu \) 是临界指数，其值取决于网络的普适类。</p>
+
+                    <h4>案例：网络上的意见形成相变</h4>
+                    <p>在Deffuant模型中，节点通过与邻居交流更新意见，当相似度超过阈值 \( \epsilon \) 时才接受影响：</p>
+                    <div class="formula-block">
+                        \[
+                        x_i(t+1) = x_i(t) + \mu (x_j(t) - x_i(t)) \quad \text{若} \quad |x_i(t) - x_j(t)| \leq \epsilon
+                        \]
+                    </div>
+                    <p>该模型存在相变：当 \( \epsilon \) 大于临界值时，系统收敛到一致意见；当 \( \epsilon \) 小于临界值时，形成多个意见集群。</p>
+                </div>
+
+                <div id="synchronization" class="card">
+                    <h3><i class="fas fa-sync"></i> 同步动力学</h3>
+                    
+                    <h4>定理4.2（主稳定性函数方法）</h4>
+                    <p>对于耦合动力系统 \( \dot{\mathbf{x}}_i = f(\mathbf{x}_i) + \sigma \sum_j L_{ij} \mathbf{x}_j \)，同步状态 \( \mathbf{x}_i(t) = \mathbf{s}(t) \) 的稳定性由主稳定性函数（MSF）判断。当耦合强度 \( \sigma \) 满足：</p>
+                    <div class="formula-block">
+                        \[
+                        \sigma \in \bigcap_{i=2}^N \left( \frac{\alpha}{\lambda_i}, \frac{\beta}{\lambda_i} \right)
+                        \]
+                    </div>
+                    <p>时同步态稳定，其中 \( \lambda_i \) 是拉普拉斯矩阵的特征值，\( (\alpha, \beta) \) 是由孤立节点动力学 \( \dot{\mathbf{s}} = f(\mathbf{s}) \) 确定的稳定区间。</p>
+
+                    <h4>定义4.3（完全同步与相位同步）</h4>
+                    <p>复杂网络中的同步形式包括：
+                    <ul>
+                        <li>完全同步：\( \mathbf{x}_i(t) = \mathbf{x}_j(t) \) 对所有 \( i,j \) 和 \( t \geq t_0 \)</li>
+                        <li>相位同步：对于振子系统，\( |\theta_i(t) - \theta_j(t)| = \text{常数} \)，但振幅可能不同</li>
+                        <li>滞后同步：\( \mathbf{x}_i(t) = \mathbf{x}_j(t + \tau) \) 对某个时间延迟 \( \tau \)</li>
+                    </ul>
+                    同步的类型和稳定性取决于网络结构、耦合强度和节点动力学特性。</p>
+
+                    <h4>定理4.3（网络结构对同步的影响）</h4>
+                    <p>网络的同步能力与拉普拉斯矩阵的特征值分布密切相关：
+                    <ul>
+                        <li>最大特征值 \( \lambda_N \) 与最小非零特征值 \( \lambda_2 \) 的比值 \( \lambda_N / \lambda_2 \) 越小，网络同步能力越强</li>
+                        <li>规则网络的同步能力较差，随机网络的同步能力中等，而具有适度聚类的网络通常具有较强的同步能力</li>
+                        <li>度分布异质性过强（如无标度网络）会降低同步能力</li>
+                    </ul>
+                    </p>
+
+                    <h4>Python代码示例：网络同步模拟</h4>
+                    <div class="code-block">
+<pre><code class="language-python">
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
+from scipy.integrate import solve_ivp
+
+# 生成网络
+N = 50
+G = nx.watts_strogatz_graph(N, 4, 0.1)
+A = nx.adjacency_matrix(G).toarray()
+D = np.diag(np.sum(A, axis=1))
+L = D - A  # 拉普拉斯矩阵
+
+# 耦合强度
+sigma = 0.5
+
+# 节点动力学：Kuramoto振子
+def kuramoto(t, theta):
+    dtheta = np.ones(N)  # 固有频率为1
+    for i in range(N):
+        dtheta[i] += (sigma/N) * np.sum(A[i,:] * np.sin(theta - theta[i]))
+    return dtheta
+
+# 初始条件
+theta0 = np.random.uniform(0, 2*np.pi, N)
+
+# 数值积分
+t_span = (0, 50)
+t_eval = np.linspace(0, 50, 1000)
+sol = solve_ivp(kuramoto, t_span, theta0, t_eval=t_eval)
+
+# 计算同步序参量
+r = np.abs(np.mean(np.exp(1j * sol.y), axis=0))
+
+# 绘图
+plt.figure(figsize=(12, 5))
+plt.subplot(121)
+plt.plot(sol.t, sol.y.T)
+plt.xlabel('时间')
+plt.ylabel('相位')
+plt.title('振子相位演化')
+
+plt.subplot(122)
+plt.plot(sol.t, r)
+plt.xlabel('时间')
+plt.ylabel('同步序参量 r')
+plt.title('同步程度')
+plt.tight_layout()
+plt.show()</code></pre>
+                    </div>
+                </div>
+
+                <div id="percolation" class="card">
+                    <h3><i class="fas fa-filter"></i> 渗流理论应用</h3>
+                    
+                    <h4>定义4.4（网络渗流）</h4>
+                    <p>网络渗流研究节点或边被随机或有策略地移除时网络连通性的变化。主要类型包括：
+                    <ul>
+                        <li>边渗流：以概率 \( p \) 保留边，以概率 \( 1-p \) 移除边</li>
+                        <li>节点渗流：以概率 \( p \) 保留节点（及其关联边），以概率 \( 1-p \) 移除节点</li>
+                        <li>有向渗流：在有向网络中研究连通分量的形成</li>
+                    </ul>
+                    渗流理论用于分析网络的鲁棒性和脆弱性，如通信网络抗故障能力和病毒传播阈值。</p>
+
+                    <h4>定理4.4（随机网络渗流）</h4>
+                    <p>在ER随机网络中，边渗流的临界概率为：</p>
+                    <div class="formula-block">
+                        \[
+                        p_c = \frac{1}{N-1}
+                        \]
+                    </div>
+                    <p>当 \( p > p_c \) 时，网络中出现包含 \( O(N) \) 个节点的巨连通分量；当 \( p < p_c \) 时，所有连通分量的大小均为 \( O(\log N) \)。在临界值附近，巨连通分量大小满足 \( S \sim (p - p_c) \)。</p>
+
+                    <h4>定义4.5（网络韧性）</h4>
+                    <p>网络韧性是指网络在受到扰动（如节点/边移除）后保持其功能的能力，可通过渗流过程中最大连通分量相对大小 \( S(p) \) 衡量：</p>
+                    <div class="formula-block">
+                        \[
+                        S(p) = \frac{\text{最大连通分量中的节点数}}{N}
+                        \]
+                    </div>
+                    <p>无标度网络对随机节点移除具有高韧性（需移除大部分节点才会瓦解），但对枢纽节点的靶向攻击非常脆弱。</p>
+
+                    <h4>案例：互联网的抗毁性分析</h4>
+                    <p>互联网拓扑具有无标度特性，其抗毁性分析表明：
+                    <ul>
+                        <li>随机移除50%的节点后，最大连通分量仍保留约80%的节点</li>
+                        <li>移除5%的高介数节点后，最大连通分量即瓦解为小碎片</li>
+                        <li>这种鲁棒性与脆弱性并存的特性是无标度网络的典型特征</li>
+                    </ul>
+                    渗流理论为设计更稳健的网络拓扑提供了指导。</p>
+                </div>
+            </section>
+
+            <section id="case-studies" class="section">
+                <h2>案例研究</h2>
+                <p>物理学理论与复杂网络动力学的交叉研究已在多个领域产生了重要成果。本节通过几个典型案例，展示物理方法在网络研究中的具体应用，包括神经网络的同步动力学、生态网络的稳定性分析和社会网络的信息传播模型。</p>
+
+                <div class="card">
+                    <h3><i class="fas fa-brain"></i> 案例一：神经网络的同步与记忆</h3>
+                    
+                    <p>大脑神经网络的同步活动与记忆形成、信息处理密切相关。基于Kuramoto模型的研究表明，神经元群体的同步程度随耦合强度变化呈现相变特性。</p>
+                    
+                    <h4>模型构建</h4>
+                    <p>简化的神经元网络模型：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{\theta}_i = \omega_i + \frac{\sigma}{k_i} \sum_j A_{ij} \sin(\theta_j - \theta_i)
+                        \]
+                    </div>
+                    <p>其中 \( \omega_i \) 是神经元的固有频率，服从高斯分布，\( k_i \) 是神经元的度，确保节点接收的总输入强度一致。</p>
+                    
+                    <h4>研究发现</h4>
+                    <ul>
+                        <li>当耦合强度 \( \sigma \) 超过临界值时，神经元群体从异步状态转变为同步状态</li>
+                        <li>海马体网络的聚类结构增强了局部同步，同时保持全局信息整合能力</li>
+                        <li>记忆提取过程对应特定神经元群体的同步激活，其模式可通过特征向量分析识别</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-seedling"></i> 案例二：生态网络的稳定性与复杂性</h3>
+                    
+                    <p>生态网络（如食物链网络）的稳定性与其复杂性的关系是生态学的核心问题。基于统计力学方法的研究揭示了物种多样性与生态系统稳定性之间的微妙平衡。</p>
+                    
+                    <h4>模型构建</h4>
+                    <p>生态网络的Lotka-Volterra模型：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{dx_i}{dt} = x_i \left( r_i + \sum_j A_{ij} x_j \right)
+                        \]
+                    </div>
+                    <p>其中 \( x_i \) 是物种 \( i \) 的种群密度，\( r_i \) 是内禀增长率，\( A_{ij} \) 是相互作用矩阵（正为互利，负为捕食/竞争）。</p>
+                    
+                    <h4>研究发现</h4>
+                    <ul>
+                        <li>随机生态网络的稳定性随物种数增加而降低，但真实生态网络通过特定结构（如模块性）维持稳定性</li>
+                        <li>食物链长度存在上限，符合能量流动的热力学限制</li>
+                        <li>生态网络的稳健性与脆弱性取决于相互作用强度分布和网络拓扑的协同作用</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-share-alt"></i> 案例三：社会网络中的信息传播</h3>
+                    
+                    <p>社会网络中的信息、谣言和创新传播可通过物理中的渗流和相变理论分析。基于SIR模型的研究揭示了信息病毒式传播的条件和特征。</p>
+                    
+                    <h4>模型构建</h4>
+                    <p>社会网络信息传播的SIR模型：
+                    <ul>
+                        <li>易感者（S）：未接收信息，有概率被邻居感染</li>
+                        <li>感染者（I）：已接收信息，有概率传播给邻居</li>
+                        <li>恢复者（R）：不再传播信息</li>
+                        <li>转移概率：\( S \to I \) 概率为 \( \beta \)，\( I \to R \) 概率为 \( \gamma \)</li>
+                    </ul>
+                    </p>
+                    
+                    <h4>研究发现</h4>
+                    <ul>
+                        <li>存在传播阈值 \( R_0 = \beta / \gamma \)，当 \( R_0 > 1 \) 时信息可广泛传播</li>
+                        <li>社会网络的异质性（如存在枢纽节点）降低传播阈值，促进信息扩散</li>
+                        <li>信息传播的最终范围与网络的度分布和初始感染者位置密切相关</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>总结</h2>
+                <div class="card">
+                    <h3>主要结论</h3>
+                    <p>物理学基础理论与复杂网络动力学的交叉研究为理解复杂系统提供了强大的分析框架，主要结论包括：</p>
+                    <ul>
+                        <li>统计力学方法为描述网络结构的宏观特性提供了系综理论和熵的概念，帮助理解网络的形成机制和拓扑特征</li>
+                        <li>动力学系统理论揭示了网络上集体行为的涌现规律，包括同步、相变和模式形成等现象</li>
+                        <li>非平衡态热力学为分析网络的演化过程和自组织行为提供了理论基础，特别是在网络适应和学习方面</li>
+                        <li>渗流理论和相变理论成功应用于网络的鲁棒性分析和传播动力学研究，为网络设计和控制提供了指导</li>
+                    </ul>
+
+                    <h3>研究挑战</h3>
+                    <p>尽管取得了显著进展，该领域仍面临诸多挑战：</p>
+                    <ul>
+                        <li>真实网络的异质性和动态性使得许多简化模型的假设不再成立，需要发展更贴近实际的理论</li>
+                        <li>多层网络和时变网络的动力学行为远比单层静态网络复杂，现有理论框架需要扩展</li>
+                        <li>网络节点通常具有复杂的动力学特性，而非简单的线性响应，需要发展更精细的耦合动力学理论</li>
+                        <li>大数据时代为网络研究提供了丰富的实证数据，但如何从中提取有意义的物理规律仍是难题</li>
+                    </ul>
+
+                    <h3>未来展望</h3>
+                    <p>未来研究方向包括：</p>
+                    <ul>
+                        <li>发展融合统计力学和信息论的网络复杂性度量方法，更全面地刻画网络特性</li>
+                        <li>探索量子力学概念在复杂网络中的应用，如量子纠缠与网络关联性的类比</li>
+                        <li>结合机器学习方法，发展数据驱动的网络动力学模型，实现对复杂系统行为的精准预测</li>
+                        <li>加强跨学科合作，将网络物理理论应用于解决实际问题，如疾病传播控制、生态保护和网络安全等</li>
+                    </ul>
+                    <p>物理学与复杂网络的交叉研究不仅深化了我们对复杂系统的理解，也为解决现实世界中的复杂问题提供了新的思路和方法，具有广阔的理论意义和应用前景。</p>
+                </div>
+            </section>
+
+            <a href="#" class="back-to-top" id="backToTop">
+                <i class="fas fa-arrow-up"></i>
+            </a>
+
+            <div class="card">
+                <a href="home.html" class="resource-link">首页</a>
+                <a href="NonlinearDynamics.html" class="resource-link">上一篇: 非线性动力学基础</a>
+                <a href="Biology.html" class="resource-link">下一篇: 生物学基础</a>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // 侧边栏切换
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // 点击主内容区域关闭侧边栏（移动设备）
+        const mainContent = document.querySelector('.main-content');
+        mainContent.addEventListener('click', () => {
+            if (window.innerWidth <= 1024 && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // 回到顶部按钮
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // 在移动设备上点击导航后关闭侧边栏
+                    if (window.innerWidth <= 1024 && sidebar.classList.contains('active')) {
+                        sidebar.classList.remove('active');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
