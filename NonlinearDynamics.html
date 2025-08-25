@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>非线性动力学与混沌理论在社会网络中的应用研究综述</title>
+    <!-- 引入Prism.js语法高亮库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -528,46 +532,47 @@
 
                     <h4>示例代码：网络动力学模拟框架</h4>
                     <div class="code-block">
-                        import numpy as np
-                        import networkx as nx
-                        from scipy.integrate import solve_ivp
+                    <pre><code class="language-python"></code>
+import numpy as np
+import networkx as nx
+from scipy.integrate import solve_ivp
 
-                        class NetworkDynamics:
-                            def __init__(self, graph, node_dynamics, coupling_func, coupling_strength=1.0):
-                                self.graph = graph
-                                self.N = graph.number_of_nodes()
-                                self.node_dynamics = node_dynamics  # 节点内在动力学函数
-                                self.coupling_func = coupling_func  # 耦合函数
-                                self.coupling_strength = coupling_strength
-                                self.adj_matrix = nx.to_numpy_array(graph)
-                                
-                            def _derivatives(self, t, x):
-                                """计算系统状态的导数"""
-                                x = x.reshape(self.N, -1)  # 重塑为节点-状态矩阵
-                                dxdt = np.zeros_like(x)
-                                
-                                # 计算节点内在动力学
-                                for i in range(self.N):
-                                    dxdt[i] = self.node_dynamics(x[i], t)
-                                
-                                # 计算耦合项
-                                for i in range(self.N):
-                                    neighbors = np.where(self.adj_matrix[i] > 0)[0]
-                                    for j in neighbors:
-                                        dxdt[i] += self.coupling_strength * self.coupling_func(x[i], x[j])
-                                        
-                                return dxdt.flatten()
-                                
-                            def simulate(self, x0, t_span, t_eval=None):
-                                """模拟网络动力学演化"""
-                                sol = solve_ivp(
-                                    self._derivatives, 
-                                    t_span, 
-                                    x0.flatten(),
-                                    t_eval=t_eval,
-                                    method='RK45'
-                                )
-                                return sol.t, sol.y.reshape(self.N, -1, len(sol.t))
+class NetworkDynamics:
+    def __init__(self, graph, node_dynamics, coupling_func, coupling_strength=1.0):
+        self.graph = graph
+        self.N = graph.number_of_nodes()
+        self.node_dynamics = node_dynamics  # 节点内在动力学函数
+        self.coupling_func = coupling_func  # 耦合函数
+        self.coupling_strength = coupling_strength
+        self.adj_matrix = nx.to_numpy_array(graph)
+        
+    def _derivatives(self, t, x):
+        """计算系统状态的导数"""
+        x = x.reshape(self.N, -1)  # 重塑为节点-状态矩阵
+        dxdt = np.zeros_like(x)
+        
+        # 计算节点内在动力学
+        for i in range(self.N):
+            dxdt[i] = self.node_dynamics(x[i], t)
+        
+        # 计算耦合项
+        for i in range(self.N):
+            neighbors = np.where(self.adj_matrix[i] > 0)[0]
+            for j in neighbors:
+                dxdt[i] += self.coupling_strength * self.coupling_func(x[i], x[j])
+                
+        return dxdt.flatten()
+        
+    def simulate(self, x0, t_span, t_eval=None):
+        """模拟网络动力学演化"""
+        sol = solve_ivp(
+            self._derivatives, 
+            t_span, 
+            x0.flatten(),
+            t_eval=t_eval,
+            method='RK45'
+        )
+        return sol.t, sol.y.reshape(self.N, -1, len(sol.t))</code></pre>
                     </div>
                 </div>
             </section>
@@ -831,49 +836,50 @@
 
                     <h4>示例代码：社区活跃度混沌分析</h4>
                     <div class="code-block">
-                        import numpy as np
-                        from nolitsa import data, delay, dimension, lyapunov
-                        import matplotlib.pyplot as plt
+                    <pre><code class="language-python"></code>
+import numpy as np
+from nolitsa import data, delay, dimension, lyapunov
+import matplotlib.pyplot as plt
 
-                        # 加载社区活跃度数据
-                        activity_data = np.load('community_activity.npy')
+# 加载社区活跃度数据
+activity_data = np.load('community_activity.npy')
 
-                        # 1. 确定最优延迟时间
-                        lag = delay.acorr(activity_data, maxlag=100)
-                        print(f"最优延迟时间: {lag}")
+# 1. 确定最优延迟时间
+lag = delay.acorr(activity_data, maxlag=100)
+print(f"最优延迟时间: {lag}")
 
-                        # 2. 确定嵌入维数
-                        dims = np.arange(1, 10)
-                        f1, f2 = dimension.fnn(activity_data, dims, lag, 0.01, 100)
-                        embed_dim = dims[np.argwhere(f1 < 0.1)[0][0]]
-                        print(f"最优嵌入维数: {embed_dim}")
+# 2. 确定嵌入维数
+dims = np.arange(1, 10)
+f1, f2 = dimension.fnn(activity_data, dims, lag, 0.01, 100)
+embed_dim = dims[np.argwhere(f1 < 0.1)[0][0]]
+print(f"最优嵌入维数: {embed_dim}")
 
-                        # 3. 计算最大李雅普诺夫指数
-                        le = lyapunov.mle(
-                            data.embed(activity_data, embed_dim, lag),
-                            maxt=100
-                        )
-                        max_le = le[0]
-                        print(f"最大李雅普诺夫指数: {max_le:.3f}")
+# 3. 计算最大李雅普诺夫指数
+le = lyapunov.mle(
+    data.embed(activity_data, embed_dim, lag),
+    maxt=100
+)
+max_le = le[0]
+print(f"最大李雅普诺夫指数: {max_le:.3f}")
 
-                        # 4. 计算关联维数
-                        corr_dim = dimension.corr_dim(
-                            data.embed(activity_data, embed_dim, lag),
-                            rvals=np.logspace(-2, 0, 100)
-                        )
-                        print(f"关联维数: {corr_dim[0]:.3f}")
+# 4. 计算关联维数
+corr_dim = dimension.corr_dim(
+    data.embed(activity_data, embed_dim, lag),
+    rvals=np.logspace(-2, 0, 100)
+)
+print(f"关联维数: {corr_dim[0]:.3f}")
 
-                        # 可视化结果
-                        plt.figure(figsize=(12, 4))
-                        plt.subplot(121)
-                        plt.plot(activity_data[:500])
-                        plt.title('社区活跃度时间序列')
-                        plt.subplot(122)
-                        plt.scatter(activity_data[:-1], activity_data[1:], s=1)
-                        plt.title('二维相图')
-                        plt.tight_layout()
-                        plt.show()
-                    </div>
+# 可视化结果
+plt.figure(figsize=(12, 4))
+plt.subplot(121)
+plt.plot(activity_data[:500])
+plt.title('社区活跃度时间序列')
+plt.subplot(122)
+plt.scatter(activity_data[:-1], activity_data[1:], s=1)
+plt.title('二维相图')
+plt.tight_layout()
+plt.show()</code></pre>
+                        </div>
 
                     <h4>关键发现</h4>
                     <p>在线社区的动态行为具有显著的低维混沌特性，这为短期预测提供了可能；社区活跃度的混沌特性源于用户间的非线性互动和信息反馈机制；通过分析混沌吸引子的结构，可以识别社区发展的关键转折点，为社区管理提供决策支持。</p>
@@ -906,20 +912,22 @@
                     <ul>
                         <li><strong>数据驱动的动力学建模</strong>：结合机器学习与非线性动力学，发展从大规模社会网络数据中自动发现动力学方程的方法，如利用稀疏识别算法（SINDy）：
                             <div class="code-block">
-                                # 基于SINDy的动力学方程发现示例
-                                from scipy.integrate import solve_ivp
-                                from pysindy import SINDy
+                            <pre><code class="language-python"></code>
+# 基于SINDy的动力学方程发现示例
+from scipy.integrate import solve_ivp
+from pysindy import SINDy
+import numpy as np  # 补充缺失的numpy导入
 
-                                # 社会网络数据
-                                t = np.linspace(0, 10, 100)
-                                x = load_social_network_data()  # 加载社会网络状态数据
+# 社会网络数据
+t = np.linspace(0, 10, 100)
+x = load_social_network_data()  # 加载社会网络状态数据
 
-                                # 构建SINDy模型
-                                model = SINDy()
-                                model.fit(x, t=t)
+# 构建SINDy模型
+model = SINDy()
+model.fit(x, t=t)
 
-                                # 输出发现的动力学方程
-                                model.print()
+# 输出发现的动力学方程
+model.print()</code></pre>
                             </div>
                         </li>
                         <li><strong>复杂网络分岔分析方法</strong>：发展适用于大规模网络系统的分岔分析数值方法，克服高维系统计算复杂性问题。</li>
