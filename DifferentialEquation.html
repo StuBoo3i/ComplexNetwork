@@ -701,61 +701,61 @@
                     <h4>代码示例4.1（Kuramoto模型数值模拟）</h4>
                     <div class="code-block">
                     <pre><code class="language-python"></code>
-                        import numpy as np
-                        import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.pyplot as plt
 
-                        def kuramoto(t, theta, omega, A, K):
-                            """Kuramoto模型的导数函数"""
-                            N = len(theta)
-                            dtheta = np.zeros(N)
-                            for i in range(N):
-                                sum_couple = 0
-                                for j in range(N):
-                                    sum_couple += A[i,j] * np.sin(theta[j] - theta[i])
+def kuramoto(t, theta, omega, A, K):
+    """Kuramoto模型的导数函数"""
+    N = len(theta)
+    dtheta = np.zeros(N)
+    for i in range(N):
+        sum_couple = 0
+        for j in range(N):
+            sum_couple += A[i,j] * np.sin(theta[j] - theta[i])
                                 dtheta[i] = omega[i] + (K/N) * sum_couple
-                            return dtheta
+    return dtheta
 
-                        def rk4_step(f, t, x, h, *args):
-                            """单步RK4方法"""
-                            k1 = f(t, x, *args)
-                            k2 = f(t + h/2, x + h*k1/2, *args)
-                            k3 = f(t + h/2, x + h*k2/2, *args)
-                            k4 = f(t + h, x + h*k3, *args)
-                            return x + h*(k1 + 2*k2 + 2*k3 + k4)/6
+def rk4_step(f, t, x, h, *args):
+    """单步RK4方法"""
+    k1 = f(t, x, *args)
+    k2 = f(t + h/2, x + h*k1/2, *args)
+    k3 = f(t + h/2, x + h*k2/2, *args)
+    k4 = f(t + h, x + h*k3, *args)
+    return x + h*(k1 + 2*k2 + 2*k3 + k4)/6
 
-                        # 参数设置
-                        N = 50  # 节点数
-                        K = 4.0  # 耦合强度
-                        T = 100  # 总模拟时间
-                        h = 0.01  # 时间步长
-                        t = np.arange(0, T, h)
+    # 参数设置
+    N = 50  # 节点数
+    K = 4.0  # 耦合强度
+    T = 100  # 总模拟时间
+    h = 0.01  # 时间步长
+    t = np.arange(0, T, h)
 
-                        # 生成随机频率和邻接矩阵
-                        omega = np.random.normal(0, 1, N)
-                        A = np.random.rand(N, N) < 0.2  # 随机网络
-                        A = A.astype(float)
-                        np.fill_diagonal(A, 0)  # 无自环
+    # 生成随机频率和邻接矩阵
+    omega = np.random.normal(0, 1, N)
+    A = np.random.rand(N, N) < 0.2  # 随机网络
+    A = A.astype(float)
+    np.fill_diagonal(A, 0)  # 无自环
 
-                        # 初始相位
-                        theta0 = np.random.uniform(0, 2*np.pi, N)
-                        theta = np.zeros((len(t), N))
-                        theta[0] = theta0
+    # 初始相位
+    theta0 = np.random.uniform(0, 2*np.pi, N)
+    theta = np.zeros((len(t), N))
+    theta[0] = theta0
 
-                        # 数值积分
-                        for i in range(len(t)-1):
-                            theta[i+1] = rk4_step(kuramoto, t[i], theta[i], h, omega, A, K)
+    # 数值积分
+    for i in range(len(t)-1):
+        theta[i+1] = rk4_step(kuramoto, t[i], theta[i], h, omega, A, K)
 
-                        # 计算序参量
-                        r = np.abs(np.mean(np.exp(1j*theta), axis=1))
+    # 计算序参量
+    r = np.abs(np.mean(np.exp(1j*theta), axis=1))
 
-                        # 绘图
-                        plt.figure(figsize=(12, 4))
-                        plt.plot(t, r)
-                        plt.xlabel('时间')
-                        plt.ylabel('序参量 r')
-                        plt.title('Kuramoto模型同步过程')
-                        plt.grid(True)
-                        plt.show()</code></pre>
+    # 绘图
+    plt.figure(figsize=(12, 4))
+    plt.plot(t, r)
+    plt.xlabel('时间')
+    plt.ylabel('序参量 r')
+    plt.title('Kuramoto模型同步过程')
+    plt.grid(True)
+    plt.show()</code></pre>
                     </div>
                     
                     <h4>算法4.3（网络分岔分析方法）</h4>
@@ -915,7 +915,7 @@
             <div class="card">
                 <a href="DifferentialEquation.html" class="resource-link">下一篇: 微分方程基础</a>
             </div>
-            
+
         </main>
     </div>
 
