@@ -341,6 +341,21 @@
             background-color: var(--secondary-color);
             transform: translateY(-5px);
         }
+        .card .resource-link {
+            color: var(--secondary-color); /* 使用主题深色，与白色背景对比 */
+            text-decoration: none;
+            margin-right: 1rem; /* 增加链接间距 */
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            display: inline-block;
+            transition: var(--transition);
+        }
+
+        /*  hover效果增强可见性 */
+        .card .resource-link:hover {
+            color: var(--primary-color); /*  hover时变为主题主色 */
+            background-color: var(--light-gray);
+        }
     </style>
 </head>
 <body>
