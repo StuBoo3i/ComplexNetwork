@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>微分方程与动力系统：复杂网络动力学建模</title>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- 引入Prism.js语法高亮库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -696,6 +700,7 @@
                     
                     <h4>代码示例4.1（Kuramoto模型数值模拟）</h4>
                     <div class="code-block">
+                    <pre><code class="language-python"></code>
                         import numpy as np
                         import matplotlib.pyplot as plt
 
@@ -750,7 +755,7 @@
                         plt.ylabel('序参量 r')
                         plt.title('Kuramoto模型同步过程')
                         plt.grid(True)
-                        plt.show()
+                        plt.show()</code></pre>
                     </div>
                     
                     <h4>算法4.3（网络分岔分析方法）</h4>
