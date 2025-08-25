@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图论基础：理论与应用</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --light-gray: #ecf0f1;
+            --dark-gray: #7f8c8d;
+            --accent-color: #e74c3c;
+            --sidebar-width: 280px;
+            --transition: all 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            overflow-x: hidden;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-color);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .nav-list {
+            list-style: none;
+        }
+        .nav-item {
+            margin-bottom: 0.8rem;
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        .nav-link i {
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+        .nav-sub-item {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .nav-sub-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .nav-sub-link:hover {
+            color: white;
+        }
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1200px;
+            margin-right: auto;
+        }
+        .section {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.5s ease;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        /* Cards for sections */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        /* Formula Block */
+        .formula-block {
+            margin: 1.5rem 0;
+            padding: 0.5rem 1rem;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        /* Table styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        .comparison-table th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+        .comparison-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 2000;
+                background-color: var(--secondary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+            .card {
+                padding: 1.2rem;
+            }
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 8px 10px;
+            }
+        }
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+        /* Sub-list Style */
+        .sub-list {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>图论基础理论</h2>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#intro" class="nav-link"><i class="fas fa-book-open"></i> 引言</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#basic-concepts" class="nav-link"><i class="fas fa-shapes"></i> 图的基本概念</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#undirected-graph" class="nav-sub-link">无向图</a></li>
+                        <li class="nav-sub-item"><a href="#directed-graph" class="nav-sub-link">有向图</a></li>
+                        <li class="nav-sub-item"><a href="#weighted-graph" class="nav-sub-link">加权图</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#classic-theorems" class="nav-link"><i class="fas fa-gavel"></i> 经典定理</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#handshaking-theorem" class="nav-sub-link">握手定理</a></li>
+                        <li class="nav-sub-item"><a href="#euler-theorem" class="nav-sub-link">欧拉定理</a></li>
+                        <li class="nav-sub-item"><a href="#hamilton-theorem" class="nav-sub-link">哈密顿定理</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#network-topology" class="nav-link"><i class="fas fa-project-diagram"></i> 网络拓扑性质</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#small-world-model" class="nav-sub-link">小世界模型</a></li>
+                        <li class="nav-sub-item"><a href="#scale-free-model" class="nav-sub-link">无标度模型</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#dynamics-connection" class="nav-link"><i class="fas fa-running"></i> 动力学联系</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#sync-dynamics" class="nav-sub-link">同步动力学</a></li>
+                        <li class="nav-sub-item"><a href="#consensus-dynamics" class="nav-sub-link">共识动力学</a></li>
+                        <li class="nav-sub-item"><a href="#adaptive-network" class="nav-sub-link">自适应网络</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#conclusion" class="nav-link"><i class="fas fa-flag-checkered"></i> 结论与展望</a>
+                </li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <section id="intro" class="section">
+                <h1>图论基础：理论与应用</h1>
+                <div class="card">
+                    <p>图论作为离散数学的重要分支，研究由顶点和边构成的抽象结构，为建模复杂系统中的关系提供了强大的数学工具。从18世纪欧拉解决哥尼斯堡七桥问题开始，图论已发展成为一个丰富的数学领域，其应用广泛渗透到计算机科学、物理学、生物学、社会科学等多个学科。</p>
+                    <p>随着大数据时代的到来，图论在分析复杂网络结构与动态过程中发挥着越来越重要的作用，成为理解复杂系统行为的关键理论基础。本文旨在为研究人员提供一份全面而严谨的图论基础报告，系统阐述图论的核心概念、经典定理及其证明，并深入探讨网络拓扑性质与动力学行为之间的联系。</p>
+                </div>
+            </section>
+
+            <section id="basic-concepts" class="section">
+                <h2>图的基本概念与分类</h2>
+                <p>图论中的"图"是对现实系统中元素与关系的抽象，通过顶点（节点）和边（连接）的组合，构建出可量化分析的数学结构。根据边的方向性、权重属性，图可分为无向图、有向图和加权图三大类，各类图具有独特的数学定义和性质。</p>
+
+                <div id="undirected-graph" class="card">
+                    <h3><i class="fas fa-circle-nodes"></i> 无向图的定义与基本性质</h3>
+                    
+                    <h4>定义2.1（无向图）</h4>
+                    <p>一个无向图 \( G \) 是一个有序对 \( (V, E) \)，其中 \( V \) 是顶点（或节点）的非空集合，\( E \) 是边的集合，每条边连接两个不同的顶点且无序。形式化表示为：</p>
+                    <div class="formula-block">
+                        \[
+                        G = (V, E) \quad \text{其中} \quad E \subseteq \{\{u, v\} \mid u, v \in V, u \neq v\}
+                        \]
+                    </div>
+                    <p>这里，\( V \) 称为顶点集，\( E \) 称为边集。顶点 \( u \) 和 \( v \) 被称为边 \( \{u, v\} \) 的端点，且称 \( u \) 和 \( v \) 是相邻的。</p>
+
+                    <h4>定义2.2（顶点的度）</h4>
+                    <p>在无向图 \( G = (V, E) \) 中，顶点 \( v \) 的度 \( d(v) \) 是与 \( v \) 相关联的边的数量。形式化表示为：</p>
+                    <div class="formula-block">
+                        \[
+                        d(v) = |\{e \in E \mid v \text{ 是 } e \text{ 的端点}\}|
+                        \]
+                    </div>
+                    <p>特别地，在简单图（无自环和多重边）中，顶点的度等于其相邻顶点的数量。</p>
+
+                    <h4>定义2.3（子图）</h4>
+                    <p>设 \( G = (V, E) \) 是一个无向图，若存在另一个图 \( G' = (V', E') \) 满足 \( V' \subseteq V \) 且 \( E' \subseteq E \)，则称 \( G' \) 是 \( G \) 的子图，记作 \( G' \subseteq G \)。特别地，若 \( V' = V \)，则称 \( G' \) 为生成子图。</p>
+
+                    <h4>定义2.4（连通图）</h4>
+                    <p>无向图 \( G \) 称为连通图，当且仅当图中任意两个不同的顶点之间至少存在一条路径。路径是顶点的序列 \( v_1, v_2, \ldots, v_k \)，使得对于每个 \( 1 \leq i < k \)，都有 \( \{v_i, v_{i+1}\} \in E \)。</p>
+                </div>
+
+                <div id="directed-graph" class="card">
+                    <h3><i class="fas fa-arrows-turn-to-dots"></i> 有向图的定义与基本性质</h3>
+                    
+                    <h4>定义2.5（有向图）</h4>
+                    <p>一个有向图（或称为digraph）\( D \) 是一个有序对 \( (V, A) \)，其中 \( V \) 是顶点的非空集合，\( A \) 是有向边（或称为弧）的集合，每条有向边由一个有序顶点对表示。形式化表示为：</p>
+                    <div class="formula-block">
+                        \[
+                        D = (V, A) \quad \text{其中} \quad A \subseteq \{(u, v) \mid u, v \in V, u \neq v\}
+                        \]
+                    </div>
+                    <p>这里，\( (u, v) \) 表示从顶点 \( u \) 指向顶点 \( v \) 的有向边，称 \( u \) 为起点，\( v \) 为终点。</p>
+
+                    <h4>定义2.6（入度与出度）</h4>
+                    <p>在有向图 \( D = (V, A) \) 中，顶点 \( v \) 的入度 \( d^-(v) \) 是指向 \( v \) 的有向边的数量，出度 \( d^+(v) \) 是从 \( v \) 出发的有向边的数量。形式化表示为：</p>
+                    <div class="formula-block">
+                        \[
+                        d^-(v) = |\{(u, v) \in A \mid u \in V\}|
+                        \]
+                        \[
+                        d^+(v) = |\{(v, u) \in A \mid u \in V\}|
+                        \]
+                    </div>
+                    <p>顶点的总度数定义为入度与出度之和：\( d(v) = d^-(v) + d^+(v) \)。</p>
+
+                    <h4>定义2.7（强连通图）</h4>
+                    <p>有向图 \( D \) 称为强连通图，当且仅当对于图中任意两个不同的顶点 \( u \) 和 \( v \)，都存在从 \( u \) 到 \( v \) 的路径和从 \( v \) 到 \( u \) 的路径。这里的路径是指有向路径，即序列中的每条边都按照箭头方向连接。</p>
+
+                    <h4>定义2.8（弱连通图）</h4>
+                    <p>有向图 \( D \) 称为弱连通图，当且仅当将其所有有向边视为无向边后得到的无向图是连通的。</p>
+                </div>
+
+                <div id="weighted-graph" class="card">
+                    <h3><i class="fas fa-weight-hanging"></i> 加权图的定义与基本性质</h3>
+                    
+                    <h4>定义2.9（加权图）</h4>
+                    <p>一个加权图 \( G = (V, E, w) \) 是一个无向图或有向图，其中每条边都被赋予一个实数权重。形式化表示为：</p>
+                    <div class="formula-block">
+                        \[
+                        G = (V, E, w) \quad \text{其中} \quad w: E \to \mathbb{R}
+                        \]
+                    </div>
+                    <p>这里，\( w(e) \) 表示边 \( e \) 的权重，可以表示距离、成本、容量等物理量。</p>
+
+                    <h4>定义2.10（加权路径长度）</h4>
+                    <p>在加权图中，路径的长度是路径上所有边的权重之和。对于路径 \( P = (v_1, v_2, \ldots, v_k) \)，其长度 \( L(P) \) 定义为：</p>
+                    <div class="formula-block">
+                        \[
+                        L(P) = \sum_{i=1}^{k-1} w(\{v_i, v_{i+1}\})
+                        \]
+                    </div>
+                    <p>（对于无向加权图）或</p>
+                    <div class="formula-block">
+                        \[
+                        L(P) = \sum_{i=1}^{k-1} w((v_i, v_{i+1}))
+                        \]
+                    </div>
+                    <p>（对于有向加权图）。</p>
+
+                    <h4>定义2.11（最短路径）</h4>
+                    <p>在加权图中，两个顶点 \( u \) 和 \( v \) 之间的最短路径是所有从 \( u \) 到 \( v \) 的路径中长度最小的路径。最短路径的长度称为 \( u \) 和 \( v \) 之间的距离，记作 \( d(u, v) \)。</p>
+
+                    <h4>定义2.12（最小生成树）</h4>
+                    <p>在无向连通加权图 \( G = (V, E, w) \) 中，最小生成树 \( T = (V, E') \) 是一个生成子图，满足 \( T \) 是树（无环连通图）且边权重之和最小。形式化表示为：</p>
+                    <div class="formula-block">
+                        \[
+                        w(T) = \min_{T' \in \mathcal{T}} \sum_{e \in T'} w(e)
+                        \]
+                    </div>
+                    <p>其中 \( \mathcal{T} \) 是 \( G \) 的所有生成树的集合。</p>
+                </div>
+            </section>
+
+            <section id="classic-theorems" class="section">
+                <h2>经典定理及其证明</h2>
+                <p>图论中的经典定理是支撑图论理论体系的核心，这些定理通过严格的数学推导，揭示了图的结构与性质之间的内在联系，为图论的应用提供了理论依据。本节将重点阐述握手定理、欧拉定理和哈密顿相关定理，并给出详细证明过程。</p>
+
+                <div id="handshaking-theorem" class="card">
+                    <h3><i class="fas fa-handshake-angle"></i> 握手定理</h3>
+                    
+                    <h4>定理2.1（握手定理）</h4>
+                    <p>对于任意无向图 \( G = (V, E) \)，所有顶点的度之和等于边数的两倍：</p>
+                    <div class="formula-block">
+                        \[
+                        \sum_{v \in V} d(v) = 2|E|
+                        \]
+                    </div>
+
+                    <h4>证明</h4>
+                    <p>每条边连接两个顶点，因此每条边对总度数的贡献为2。假设有 \( m \) 条边，则总度数为 \( 2m \)，即：</p>
+                    <div class="formula-block">
+                        \[
+                        \sum_{v \in V} d(v) = 2m = 2|E|
+                        \]
+                    </div>
+
+                    <h4>推论2.1</h4>
+                    <p>在任何无向图中，度数为奇数的顶点数目必为偶数。</p>
+
+                    <h4>推论证明</h4>
+                    <p>假设度数为奇数的顶点数目为 \( k \)，度数为偶数的顶点数目为 \( n - k \)。总度数 \( \sum_{v \in V} d(v) \) 必须为偶数。由于偶数的和仍为偶数，奇数的和为奇数当且仅当奇数的个数为奇数。因此，为了使总和为偶数，奇数的个数 \( k \) 必须为偶数。</p>
+
+                    <h4>定理2.2（有向图的握手定理）</h4>
+                    <p>对于任意有向图 \( D = (V, A) \)，所有顶点的入度之和等于所有顶点的出度之和，且都等于边数：</p>
+                    <div class="formula-block">
+                        \[
+                        \sum_{v \in V} d^-(v) = \sum_{v \in V} d^+(v) = |A|
+                        \]
+                    </div>
+
+                    <h4>有向图握手定理证明</h4>
+                    <p>每条有向边 \( (u, v) \) 对出度 \( d^+(u) \) 和入度 \( d^-(v) \) 各贡献1。因此，所有出度的和与所有入度的和都等于边数 \( |A| \)。</p>
+                </div>
+
+                <div id="euler-theorem" class="card">
+                    <h3><i class="fas fa-route"></i> 欧拉定理及其证明</h3>
+                    
+                    <h4>定理3.1（欧拉定理）</h4>
+                    <p>设 \( G \) 是一个连通平面图，其顶点数为 \( v \)，边数为 \( e \)，面数为 \( f \)（包括外部面），则有：</p>
+                    <div class="formula-block">
+                        \[
+                        v - e + f = 2
+                        \]
+                    </div>
+
+                    <h4>证明</h4>
+                    <p>使用数学归纳法证明：</p>
+                    <ol>
+                        <li><strong>基础步骤</strong>：当 \( e = 0 \) 时，图 \( G \) 由一个孤立顶点组成，此时 \( v = 1 \)，\( e = 0 \)，面数 \( f = 1 \)（外部面）。代入公式得 \( 1 - 0 + 1 = 2 \)，成立。</li>
+                        <li><strong>归纳步骤</strong>：假设对于所有边数小于 \( e \) 的连通平面图，欧拉公式成立。考虑边数为 \( e \) 的连通平面图 \( G \)：
+                            <ul class="sub-list">
+                                <li>若 \( G \) 是树（无环连通图），则 \( e = v - 1 \)，且面数 \( f = 1 \)（只有外部面）。代入公式得 \( v - (v - 1) + 1 = 2 \)，成立。</li>
+                                <li>若 \( G \) 包含环，选择环上的一条边 \( e \)，将其移除得到图 \( G' = (V, E \setminus \{e\}) \)。由于移除环上的一条边不影响连通性，\( G' \) 仍是连通的，且边数减少1，面数也减少1（两个面合并为一个）。根据归纳假设，对于 \( G' \) 有 \( v - (e - 1) + (f - 1) = 2 \)，整理得 \( v - e + f = 2 \)，成立。</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <p>由数学归纳法，定理得证。</p>
+
+                    <h4>推论3.1</h4>
+                    <p>对于任意连通平面图 \( G \)，若 \( v \geq 3 \)，则 \( e \leq 3v - 6 \)。</p>
+
+                    <h4>推论3.1证明</h4>
+                    <p>每个面至少由3条边围成，每条边被两个面共享。因此有 \( 2e \geq 3f \)，即 \( f \leq \frac{2e}{3} \)。代入欧拉公式：</p>
+                    <div class="formula-block">
+                        \[
+                        v - e + \frac{2e}{3} \geq 2 \implies v - \frac{e}{3} \geq 2 \implies e \leq 3v - 6
+                        \]
+                    </div>
+
+                    <h4>推论3.2</h4>
+                    <p>每个连通平面图至少有一个顶点的度数不超过5。</p>
+
+                    <h4>推论3.2证明</h4>
+                    <p>假设所有顶点的度数都至少为6，则由握手定理 \( 2e \geq 6v \implies e \geq 3v \)。但由推论3.1，\( e \leq 3v - 6 \)，矛盾。因此，至少有一个顶点的度数不超过5。</p>
+
+                    <h4>定理3.2（欧拉回路存在条件）</h4>
+                    <p>一个连通无向图 \( G \) 存在欧拉回路（经过每条边恰好一次的闭合路径）当且仅当所有顶点的度数都是偶数。</p>
+
+                    <h4>欧拉回路存在条件证明</h4>
+                    <ul>
+                        <li><strong>必要性</strong>：假设 \( G \) 存在欧拉回路。每个顶点被进入和离开的次数相同，因此每个顶点的度数必为偶数。</li>
+                        <li><strong>充分性</strong>：设 \( G \) 是连通且所有顶点度数均为偶数的图。构造最长路径 \( T = e_1e_2\cdots e_\ell \)（其中 \( e_i = (v_{i-1}, v_i) \)）。根据引理，\( T \) 是闭合的，即 \( v_0 = v_\ell \)。若 \( T \) 不包含所有边，由于 \( G \) 连通，存在不在 \( T \) 中的边 \( e = (u, v_i) \)，其中 \( v_i \) 在 \( T \) 中。则 \( T' = ee_{i+1}\cdots e_\ell e_1e_2\cdots e_i \) 是更长的路径，矛盾。因此 \( T \) 包含所有边，是欧拉回路。</li>
+                    </ul>
+
+                    <h4>引理3.1</h4>
+                    <p>在偶图（所有顶点度数均为偶数的图）中，最长路径必是闭合的。</p>
+
+                    <h4>引理3.1证明</h4>
+                    <p>设 \( T \) 是最长路径。若 \( T \) 不闭合，则最后一个顶点 \( v \) 有奇数条边关联。但 \( v \) 的度数为偶数，存在不在 \( T \) 中的边 \( e \) 与 \( v \) 关联，可将 \( T \) 延长，矛盾。故 \( T \) 必闭合。</p>
+
+                    <h4>定理3.3（欧拉路径存在条件）</h4>
+                    <p>一个连通无向图 \( G \) 存在欧拉路径（经过每条边恰好一次的非闭合路径）当且仅当恰好有两个顶点的度数为奇数。</p>
+
+                    <h4>欧拉路径存在条件证明</h4>
+                    <p>在两个奇数度顶点间添加一条边，得到所有顶点度数均为偶数的图。由定理3.2，存在欧拉回路。移除添加的边，得到欧拉路径。</p>
+                </div>
+
+                <div id="hamilton-theorem" class="card">
+                    <h3><i class="fas fa-circle-check"></i> 哈密顿路径与哈密顿回路</h3>
+                    
+                    <h4>定义3.1（哈密顿路径）</h4>
+                    <p>图 \( G \) 中的哈密顿路径是经过每个顶点恰好一次的路径。</p>
+
+                    <h4>定义3.2（哈密顿回路）</h4>
+                    <p>图 \( G \) 中的哈密顿回路是经过每个顶点恰好一次的闭合路径。</p>
+
+                    <h4>定理3.4（Dirac定理）</h4>
+                    <p>设 \( G \) 是一个有 \( n \) 个顶点（\( n \geq 3 \)）的简单无向图。若每个顶点的度数至少为 \( n/2 \)，则 \( G \) 包含哈密顿回路。</p>
+
+                    <h4>Dirac定理证明</h4>
+                    <p>假设 \( G \) 是满足条件但不含哈密顿回路的极大图（添加任何边都会产生哈密顿回路）。设 \( u \) 和 \( v \) 是不相邻的顶点。由于 \( G \) 是极大的，\( u \) 和 \( v \) 的所有邻居必须相邻。设 \( d(u) = k \geq n/2 \)，\( d(v) = m \geq n/2 \)。则 \( u \) 和 \( v \) 的共同邻居数至少为 \( k + m - (n - 2) \geq n/2 + n/2 - n + 2 = 2 \)。因此，存在两个共同邻居，可构造哈密顿回路，矛盾。</p>
+                </div>
+            </section>
+
+            <section id="network-topology" class="section">
+                <h2>网络拓扑性质分析</h2>
+                <p>复杂网络的拓扑性质是区分不同类型网络的核心特征，其中小世界特性和无标度特性是现实网络中最常见的两类拓扑模式。本节将深入分析小世界模型和无标度模型的数学构造、拓扑特征及演化机制，揭示其背后的数学规律。</p>
+
+                <div id="small-world-model" class="card">
+                    <h3><i class="fas fa-globe-americas"></i> 小世界模型分析</h3>
+                    
+                    <h4>定义4.1（小世界网络）</h4>
+                    <p>小世界网络是具有高聚类系数和短平均路径长度的网络，兼具规则网络和随机网络的特性。形式化地，一个网络被称为小世界网络，当满足：</p>
+                    <ol>
+                        <li>聚类系数 \( C \) 远大于随机网络的聚类系数 \( C_{rand} \)</li>
+                        <li>平均路径长度 \( L \) 与随机网络的平均路径长度 \( L_{rand} \) 同阶，即 \( L \approx L_{rand} \approx \log(n) \)</li>
+                    </ol>
+                    <p>其中，聚类系数 \( C \) 定义为所有顶点的局部聚类系数的平均值，顶点 \( v \) 的局部聚类系数是其邻居之间实际存在的边数与可能的最大边数之比：</p>
+                    <div class="formula-block">
+                        \[
+                        C_v = \frac{2E_v}{k_v(k_v - 1)}
+                        \]
+                    </div>
+                    <p>平均路径长度 \( L \) 定义为所有顶点对之间最短路径长度的平均值：</p>
+                    <div class="formula-block">
+                        \[
+                        L = \frac{2}{n(n - 1)} \sum_{1 \leq i < j \leq n} d(i, j)
+                        \]
+                    </div>
+                    <p>这里，\( E_v \) 是顶点 \( v \) 的邻居之间的边数，\( k_v \) 是顶点 \( v \) 的度数，\( d(i, j) \) 是顶点 \( i \) 和 \( j \) 之间的最短路径长度。</p>
+
+                    <h4>定理4.1（Watts-Strogatz模型聚类系数）</h4>
+                    <p>在Watts-Strogatz小世界模型中，当重连概率为 \( p \) 时，聚类系数近似为：</p>
+                    <div class="formula-block">
+                        \[
+                        C(p) \approx \frac{3(k-2)}{4(k-1)}(1-p)^3 + \cdots
+                        \]
+                    </div>
+
+                    <h4>定理4.1证明</h4>
+                    <p>初始规则环上每个顶点连接 \( k \) 个最近邻。当重连概率为 \( p \) 时，保留的局部连接形成三角形的概率为 \( (1-p)^3 \)。计算所有可能的三角形数目，得到聚类系数近似表达式。</p>
+
+                    <h4>定理4.2（Newman-Watts模型平均路径长度）</h4>
+                    <p>在Newman-Watts小世界模型中，平均路径长度 \( L(p) \) 满足：</p>
+                    <div class="formula-block">
+                        \[
+                        L(p) \approx \frac{L_0}{2} \left[1 + \frac{2}{\pi} \arcsin\left(\sqrt{\frac{p}{2}}\right)\right]
+                    \]
+                    </div>
+                    <p>其中 \( L_0 \) 是初始规则网络的平均路径长度。</p>
+
+                    <h4>定理4.2证明</h4>
+                    <p>通过分析重连边对路径长度的影响，利用概率积分和对称性，得到平均路径长度的近似表达式。</p>
+
+                    <h4>定理4.3（小世界网络的存在性）</h4>
+                    <p>对于任意大的 \( n \)，存在小世界网络，其聚类系数 \( C \) 与规则网络同阶，平均路径长度 \( L \) 与随机网络同阶。</p>
+
+                    <h4>定理4.3证明</h4>
+                    <p>通过Watts-Strogatz模型构造。当重连概率 \( p \) 较小时，聚类系数近似保持规则网络的高聚类特性，而平均路径长度迅速下降至随机网络水平。</p>
+                </div>
+
+                <div id="scale-free-model" class="card">
+                    <h3><i class="fas fa-arrows-alt-h"></i> 无标度（Scale-free）模型分析</h3>
+                    
+                    <h4>定义4.2（Scale-free网络）</h4>
+                    <p>Scale-free网络是指节点度数分布遵循幂律分布的网络，即：</p>
+                    <div class="formula-block">
+                        \[
+                        P(k) \sim k^{-\gamma}
+                        \]
+                    </div>
+                    <p>其中 \( P(k) \) 是节点度数为 \( k \) 的概率，\( \gamma \) 是幂律指数，通常在2到3之间。</p>
+
+                    <h4>定理4.4（Barabási-Albert模型）</h4>
+                    <p>在Barabási-Albert模型中，网络通过增长和优先连接机制演化，最终形成Scale-free网络，其度数分布为：</p>
+                    <div class="formula-block">
+                        \[
+                        P(k) = \frac{2m^2}{k^3}
+                        \]
+                    </div>
+                    <p>其中 \( m \) 是每个新节点连接的边数，幂律指数 \( \gamma = 3 \)。</p>
+
+                    <h4>定理4.4证明</h4>
+                    <ol>
+                        <li><strong>增长机制</strong>：从少量节点开始，每次添加一个新节点，连接到 \( m \) 个已有节点。</li>
+                        <li><strong>优先连接</strong>：新节点连接到节点 \( i \) 的概率与其度数成正比：
+                            <div class="formula-block">
+                                \[
+                                \Pi(k_i) = \frac{k_i}{\sum_j k_j}
+                                \]
+                            </div>
+                        </li>
+                        <li><strong>主方程分析</strong>：节点 \( i \) 的度数增长速率为：
+                            <div class="formula-block">
+                                \[
+                                \frac{\partial k_i}{\partial t} = \frac{k_i}{2t}
+                                \]
+                            </div>
+                            解得：
+                            <div class="formula-block">
+                                \[
+                                k_i(t) = m \left(\frac{t}{t_i}\right)^{1/2}
+                                \]
+                            </div>
+                            其中 \( t_i \) 是节点 \( i \) 加入的时间。
+                        </li>
+                        <li><strong>概率密度函数</strong>：节点 \( i \) 的度数小于 \( k \) 的概率为：
+                            <div class="formula-block">
+                                \[
+                                P(k_i(t) < k) = 1 - \frac{m^2 t}{k^2 (t + m_0)}
+                                \]
+                            </div>
+                            求导得：
+                            <div class="formula-block">
+                                \[
+                                P(k) = \frac{2m^2}{k^3}
+                                \]
+                            </div>
+                            即幂律分布，指数 \( \gamma = 3 \)。
+                        </li>
+                    </ol>
+
+                    <h4>定理4.5（广义Scale-free网络）</h4>
+                    <p>若优先连接概率为 \( \Pi(k) = \frac{k^\alpha}{\sum_j k_j^\alpha} \)，则度数分布为：</p>
+                    <div class="formula-block">
+                        \[
+                        P(k) \sim k^{-(1 + \frac{1}{\alpha})}
+                        \]
+                    </div>
+
+                    <h4>定理4.5证明</h4>
+                    <p>通过调整主方程中的优先连接指数，求解得到广义幂律分布。</p>
+
+                    <h4>定理4.6（Scale-free网络的鲁棒性与脆弱性）</h4>
+                    <p>Scale-free网络对随机故障具有鲁棒性，但对蓄意攻击高度连接的节点（枢纽节点）非常脆弱。</p>
+
+                    <h4>定理4.6证明</h4>
+                    <p>随机移除节点时，由于大多数节点度数较低，网络连通性基本保持。但若移除枢纽节点，网络可能迅速分裂为多个小连通分量。</p>
+                </div>
+            </section>
+
+            <section id="dynamics-connection" class="section">
+                <h2>复杂网络的分析与动力学联系</h2>
+                <p>网络结构与动力学行为之间存在深刻的内在联系：网络拓扑决定了动力学过程的传播效率、同步能力和稳定性，而动力学行为也会反作用于网络结构，形成自适应演化。本节将从动力系统的基本定义出发，系统阐述网络结构对同步、共识等动力学过程的影响，以及自适应网络的演化机制。</p>
+
+                <div class="card">
+                    <h3><i class="fas fa-cogs"></i> 网络结构与动力学行为的基本联系</h3>
+                    
+                    <h4>定义5.1（动力系统）</h4>
+                    <p>一个动力系统可以表示为：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{x}_i = f_i(x_1, x_2, \ldots, x_N)
+                        \]
+                    </div>
+                    <p>其中 \( x_i \) 是节点 \( i \) 的状态变量，\( f_i \) 是描述状态演化的函数。</p>
+
+                    <h4>定义5.2（耦合动力系统）</h4>
+                    <p>在网络耦合的动力系统中，节点的演化依赖于其邻居的状态：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{x}_i = f(x_i) + \sigma \sum_{j=1}^N A_{ij} \Gamma(x_j - x_i)
+                        \]
+                    </div>
+                    <p>其中 \( A_{ij} \) 是网络邻接矩阵，\( \sigma \) 是耦合强度，\( \Gamma \) 是耦合函数。</p>
+                </div>
+
+                <div id="sync-dynamics" class="card">
+                    <h3><i class="fas fa-sync-alt"></i> 同步动力学</h3>
+                    
+                    <h4>定理5.1（同步条件）</h4>
+                    <p>在耦合振子系统中，所有振子达到同步的充分条件是耦合矩阵 \( \sigma A \) 的所有非零特征值的实部均为负数。</p>
+
+                    <h4>定理5.1证明</h4>
+                    <p>通过将系统线性化，分析同步流形的稳定性，得到同步条件。设同步状态为 \( s(t) \)，令 \( \delta x_i = x_i - s(t) \) 为偏差变量，则线性化后的偏差方程为：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{\delta x}_i = Df(s(t))\delta x_i + \sigma \sum_{j=1}^N A_{ij} \Gamma(\delta x_j - \delta x_i)
+                        \]
+                    </div>
+                    <p>当耦合矩阵的非零特征值实部均为负时，偏差变量收敛于零，系统达到同步。</p>
+
+                    <h4>定理5.3（小世界网络的同步能力）</h4>
+                    <p>小世界网络比规则网络更容易达到同步，但比随机网络更难同步。</p>
+
+                    <h4>定理5.3证明</h4>
+                    <p>通过计算同步裕度（最大Lyapunov指数与最小Lyapunov指数的比值），发现小世界网络的同步裕度介于规则网络和随机网络之间。规则网络聚类系数高但路径长，同步裕度小；随机网络路径短但聚类系数低，同步裕度大；小世界网络兼具两者特性，同步裕度居中。</p>
+
+                    <h4>定理5.4（Scale-free网络的同步特性）</h4>
+                    <p>Scale-free网络的同步能力随着异质性增加而降低，即枢纽节点的存在阻碍同步。</p>
+
+                    <h4>定理5.4证明</h4>
+                    <p>Scale-free网络的拉普拉斯矩阵特征值分布更广，导致同步裕度降低。枢纽节点的高度数使得其状态演化受邻居影响更大，与其他节点的状态差异难以消除，从而阻碍整个网络的同步进程。</p>
+                </div>
+
+                <div id="consensus-dynamics" class="card">
+                    <h3><i class="fas fa-users-viewfinder"></i> 共识动力学</h3>
+                    
+                    <h4>定理5.2（复杂网络上的共识动力学）</h4>
+                    <p>在网络上的共识问题中，节点状态收敛到平均值的条件是网络是强连通的。</p>
+
+                    <h4>定理5.2证明</h4>
+                    <p>共识算法通常形式为：</p>
+                    <div class="formula-block">
+                        \[
+                        x_i(t+1) = \sum_{j=1}^N W_{ij} x_j(t)
+                        \]
+                    </div>
+                    <p>其中 \( W \) 是行随机矩阵（每行元素和为1）。当且仅当网络是强连通的，矩阵 \( W \) 是本原的（Perron-Frobenius矩阵）。根据Perron-Frobenius定理，本原矩阵存在唯一的最大特征值1，且对应的特征向量为全1向量。因此，当 \( t \to \infty \) 时，\( x_i(t) \to \frac{1}{N} \sum_{j=1}^N x_j(0) \)，即收敛到初始状态的平均值。</p>
+
+                    <h4>定理5.8（信息级联与网络结构）</h4>
+                    <p>在信息级联模型中，网络结构影响信息传播的速度和范围。</p>
+
+                    <h4>定理5.8证明</h4>
+                    <p>在Scale-free网络中，信息级联更容易形成，但也更容易被少数枢纽节点主导。枢纽节点的高连接度使得信息能够快速扩散到大量节点，形成级联效应；但同时，枢纽节点的信息偏好也会决定整个网络的信息传播方向，导致信息单一化。在小世界网络中，信息传播速度较快且范围较广，但受枢纽节点的影响较小，传播路径更具多样性。</p>
+                </div>
+
+                <div id="adaptive-network" class="card">
+                    <h3><i class="fas fa-exchange-alt"></i> 自适应网络与动力学反作用</h3>
+                    
+                    <h4>定义5.3（自适应网络）</h4>
+                    <p>自适应网络是指网络结构随节点状态变化而演化的网络：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{x}_i = f(x_i, \mathbf{A})
+                        \]
+                        \[
+                        \dot{A}_{ij} = g(x_i, x_j, \mathbf{A})
+                        \]
+                    </div>
+                    <p>其中 \( \mathbf{A} \) 是网络邻接矩阵，\( g \) 是结构更新函数。</p>
+
+                    <h4>定理5.6（演化博弈中的合作涌现）</h4>
+                    <p>在演化囚徒困境博弈中，网络结构的演化可以促进合作行为的涌现。</p>
+
+                    <h4>定理5.6证明</h4>
+                    <p>通过模拟网络上的博弈动力学，发现当节点可以选择连接对象时，合作策略能够在网络中自发形成聚类。合作节点倾向于与其他合作节点建立连接，形成"合作社区"，而背叛节点则被孤立。这种结构演化使得合作策略的收益高于背叛策略，从而促进合作行为在整个网络中的扩散和稳定。</p>
+
+                    <h4>定理5.7（观点动力学中的共识形成）</h4>
+                    <p>在观点动力学模型中，网络结构显著影响共识的形成。</p>
+
+                    <h4>定理5.7证明</h4>
+                    <p>在有界置信模型（Hegselmann-Krause模型）中，节点仅与观点差异小于阈值的邻居进行交互。当网络具有小世界特性时，短路径长度使得观点能够快速传播，而高聚类系数则促进局部观点的统一，两者共同作用加速共识形成。结构洞（网络中连接不同社区的节点）的存在会导致不同社区的观点差异难以消除，从而阻碍共识的形成。</p>
+
+                    <h4>定理5.9（O-信息测度）</h4>
+                    <p>O-信息是一种量化动态网络中高阶交互作用的信息论测度：</p>
+                    <div class="formula-block">
+                        \[
+                        O = I(X_1; X_2; \ldots; X_N) = H(X_1) + \cdots + H(X_N) - H(X_1, \ldots, X_N)
+                        \]
+                    </div>
+                    <p>其中 \( H(\cdot) \) 是香农熵，\( I(\cdot) \) 是互信息。</p>
+
+                    <h4>定理5.11（高阶网络的动力学）</h4>
+                    <p>在高阶网络中，动力学行为不能仅通过成对交互来解释，必须考虑协同或冗余效应。</p>
+
+                    <h4>定理5.11证明</h4>
+                    <p>通过分析高阶交互作用对系统熵的贡献，发现高阶协同（O-信息为正）可以增强系统的稳定性：多个节点的联合作用能够抵消个体节点的随机波动，使系统状态更稳定。而高阶冗余（O-信息为负）则可能导致系统的脆弱性：多个节点的信息高度重叠，一旦这些节点受到扰动，整个系统的信息传递将受到严重影响。</p>
+                </div>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>总结</h2>
+                
+                <div class="card">
+                    <h3>主要结论</h3>
+                    <p>本报告系统阐述了图论的基础理论，重点分析了无向图、有向图和加权图的基本概念与性质，证明了握手定理、欧拉定理等经典定理，深入探讨了小世界模型和Scale-free模型的数学特性，并建立了复杂网络结构与动力学行为之间的联系。主要结论如下：</p>
+                    <ol>
+                        <li><strong>图的基本理论</strong>：
+                            <ul class="sub-list">
+                                <li>无向图、有向图和加权图的严格数学定义为分析复杂网络提供了基础。</li>
+                                <li>握手定理揭示了图中顶点度数与边数的基本关系，是图论中最基本的定理之一。</li>
+                                <li>欧拉定理建立了平面图顶点数、边数和面数之间的关系，为平面图分析提供了重要工具。</li>
+                            </ul>
+                        </li>
+                        <li><strong>经典定理及其证明</strong>：
+                            <ul class="sub-list">
+                                <li>欧拉定理的证明展示了数学归纳法在图论中的应用，其推论为平面图的结构分析提供了约束条件。</li>
+                                <li>欧拉路径和回路定理给出了图中存在欧拉路径和回路的充要条件，在路径规划和网络遍历问题中具有重要应用。</li>
+                                <li>Dirac定理提供了哈密顿回路存在的充分条件，为哈密顿问题的研究奠定了基础。</li>
+                            </ul>
+                        </li>
+                        <li><strong>网络拓扑性质分析</strong>：
+                            <ul class="sub-list">
+                                <li>小世界模型通过结合规则网络和随机网络的特性，解释了现实世界中"六度分离"现象的数学原理。</li>
+                                <li>Barabási-Albert模型通过增长和优先连接机制，成功解释了Scale-free网络的形成过程，其幂律分布特性在许多现实网络中得到验证。</li>
+                                <li>Scale-free网络的鲁棒性与脆弱性并存的特性，为网络设计和保护提供了重要启示。</li>
+                            </ul>
+                        </li>
+                        <li><strong>复杂网络的分析与动力学联系</strong>：
+                            <ul class="sub-list">
+                                <li>网络结构对动力学行为有显著影响，包括同步、共识、合作等重要动力学过程。</li>
+                                <li>动力学行为也会反作用于网络结构，形成自适应网络，促进合作等复杂行为的涌现。</li>
+                                <li>高阶交互作用的引入为理解复杂系统提供了新的视角，高阶网络理论正成为网络科学的前沿领域。</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <div class="card">
+        <a href="datasets.html" class="resource-link">下一篇:</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // 侧边栏切换
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+        // 点击导航链接后在移动设备上关闭侧边栏
+        document.querySelectorAll('.nav-link, .nav-sub-link').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+            });
+        });
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        // 回到顶部按钮
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        // 网络模型拓扑特性对比图表
+        const topologyCtx = document.getElementById('topologyChart').getContext('2d');
+        new Chart(topologyCtx, {
+            type: 'radar',
+            data: {
+                labels: ['平均路径长度（短→长）', '聚类系数（高→低）', '度异质性（高→低）', '鲁棒性（强→弱）', '社区结构（明显→模糊）'],
+                datasets: [
+                    {
+                        label: '规则网络',
+                        data: [1, 10, 1, 3, 8],
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)'
+                    },
+                    {
+                        label: '随机网络',
+                        data: [10, 2, 3, 6, 2],
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+                    },
+                    {
+                        label: '小世界网络',
+                        data: [9, 9, 4, 5, 7],
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        pointBackgroundColor: 'rgba(255, 206, 86, 1)'
+                    },
+                    {
+                        label: '无标度网络',
+                        data: [9, 5, 10, 8, 4],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        pointBackgroundColor: 'rgba(75, 192, 192, 1)'
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 10,
+                        ticks: {
+                            stepSize: 2
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '主要网络模型拓扑特性对比',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            bottom: 20
+                        }
+                    }
+                }
+            }
+        });
+        // 动力学指标关系图表
+        const dynamicsCtx = document.getElementById('dynamicsChart').getContext('2d');
+        new Chart(dynamicsCtx, {
+            type: 'bubble',
+            data: {
+                datasets: [
+                    {
+                        label: '同步能力',
+                        data: [
+                            { x: 3, y: 8, r: 12 },  // 规则网络
+                            { x: 8, y: 9, r: 15 },  // 随机网络
+                            { x: 6, y: 7, r: 13 },  // 小世界网络
+                            { x: 4, y: 5, r: 10 }   // 无标度网络
+                        ],
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    },
+                    {
+                        label: '信息传播效率',
+                        data: [
+                            { x: 2, y: 3, r: 8 },   // 规则网络
+                            { x: 9, y: 8, r: 16 },  // 随机网络
+                            { x: 8, y: 9, r: 17 },  // 小世界网络
+                            { x: 9, y: 7, r: 15 }   // 无标度网络
+                        ],
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                    },
+                    {
+                        label: '鲁棒性（抗攻击）',
+                        data: [
+                            { x: 2, y: 2, r: 7 },   // 规则网络
+                            { x: 3, y: 3, r: 9 },   // 随机网络
+                            { x: 4, y: 4, r: 10 },  // 小世界网络
+                            { x: 8, y: 3, r: 14 }   // 无标度网络（随机故障）
+                        ],
+                        backgroundColor: 'rgba(255, 206, 86, 0.7)'
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '网络结构异质性（低→高）'
+                        },
+                        min: 0,
+                        max: 10
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: '动力学性能（差→好）'
+                        },
+                        min: 0,
+                        max: 10
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '网络结构与动力学性能关系',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            bottom: 20
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    <!-- 补充图表容器 -->
+    <div class="chart-container" style="display: none;">
+        <canvas id="topologyChart"></canvas>
+        <canvas id="dynamicsChart"></canvas>
+    </div>
+</body>
+</html>
