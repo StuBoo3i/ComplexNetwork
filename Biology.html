@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生物学基础</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- 引入Prism.js语法高亮库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --light-gray: #ecf0f1;
+            --dark-gray: #7f8c8d;
+            --accent-color: #e74c3c;
+            --sidebar-width: 280px;
+            --transition: all 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            overflow-x: hidden;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-color);
+            color: white;
+            position: fixed;
+            top: 0;          /* 从顶部开始 */
+            bottom: 0;       /* 到底部结束 */
+            left: 0;         /* 固定在左侧 */            
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .nav-list {
+            list-style: none;
+        }
+        .nav-item {
+            margin-bottom: 0.8rem;
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        .nav-link i {
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+        .nav-sub-item {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .nav-sub-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .nav-sub-link:hover {
+            color: white;
+        }
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1200px;
+            margin-right: auto;
+        }
+        .section {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.5s ease;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        /* Cards for sections */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        /* Formula Block */
+        .formula-block {
+            margin: 1.5rem 0;
+            padding: 0.5rem 1rem;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        /* Table styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        .comparison-table th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+        .comparison-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        /* Code Block */
+        .code-block {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+        }
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 2000;
+                background-color: var(--secondary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+            .card {
+                padding: 1.2rem;
+            }
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 8px 10px;
+            }
+        }
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+        /* Sub-list Style */
+        .sub-list {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .card .resource-link {
+            color: var(--secondary-color); /* 使用主题深色，与白色背景对比 */
+            text-decoration: none;
+            margin-right: 1rem; /* 增加链接间距 */
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            display: inline-block;
+            transition: var(--transition);
+        }
+
+        /*  hover效果增强可见性 */
+        .card .resource-link:hover {
+            color: var(--primary-color); /*  hover时变为主题主色 */
+            background-color: var(--light-gray);
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="home.html" class="resource-link">
+                    <i class="fas fa-home"></i> 首页
+                </a>
+                <div class="sidebar-title">
+                    <h2>生物学基础</h2>
+                </div>
+                <a href="ComputerScience.html" class="resource-link">
+                    <i class="fas fa-book"></i> 下一篇：计算机科学基础
+                </a>
+            </div>
+
+            <style>
+            .sidebar-header {
+                margin-bottom: 2rem;
+                padding-bottom: 1.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: center;
+            }
+
+            .resource-link {
+                color: rgba(255, 255, 255, 0.8);
+                text-decoration: none;
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+                border-radius: 4px;
+                display: inline-block;
+                margin-bottom: 1rem;
+                transition: var(--transition);
+            }
+
+            .resource-link:hover {
+                color: white;
+                background-color: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .resource-link i {
+                margin-right: 6px;
+            }
+
+            .sidebar-title h2 {
+                font-size: 1.2rem;
+                font-weight: 600;
+                letter-spacing: 1px;
+                margin: 0 0 0.5rem 0;
+                position: relative;
+                display: inline-block;
+                color: white;
+            }
+
+            .title-divider {
+                width: 40px;
+                height: 2px;
+                background-color: var(--primary-color);
+                margin: 0 auto;
+                border-radius: 1px;
+            }
+            </style>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#intro" class="nav-link"><i class="fas fa-book-open"></i> 引言</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#protein-networks" class="nav-link"><i class="fas fa-microscope"></i> 蛋白质相互作用网络</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#ppi-structure" class="nav-sub-link">网络结构特征</a></li>
+                        <li class="nav-sub-item"><a href="#ppi-dynamics" class="nav-sub-link">动力学建模</a></li>
+                        <li class="nav-sub-item"><a href="#ppi-analysis" class="nav-sub-link">分析方法</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#neural-networks" class="nav-link"><i class="fas fa-brain"></i> 神经网络模型</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#biological-nn" class="nav-sub-link">生物神经网络</a></li>
+                        <li class="nav-sub-item"><a href="#artificial-nn" class="nav-sub-link">人工神经网络</a></li>
+                        <li class="nav-sub-item"><a href="#nn-dynamics" class="nav-sub-link">动力学特性</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#comparative-analysis" class="nav-link"><i class="fas fa-exchange-alt"></i> 比较与关联分析</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#structural-comparison" class="nav-sub-link">结构比较</a></li>
+                        <li class="nav-sub-item"><a href="#dynamic-comparison" class="nav-sub-link">动力学比较</a></li>
+                        <li class="nav-sub-item"><a href="#cross-applications" class="nav-sub-link">交叉应用</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#case-studies" class="nav-link"><i class="fas fa-flask"></i> 案例研究</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#future-directions" class="nav-link"><i class="fas fa-road"></i> 未来展望</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#conclusion" class="nav-link"><i class="fas fa-flag-checkered"></i> 总结</a>
+                </li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <section id="intro" class="section">
+                <h1>蛋白质相互作用网络与神经网络的研究进展</h1>
+                <div class="card">
+                    <p>复杂网络动力学是研究生物系统和人工智能系统的核心领域。蛋白质相互作用网络（Protein-Protein Interaction networks, PPIs）和神经网络（Neural Networks, NNs）作为两类典型的复杂网络，分别在生命系统信息处理和人工智能信息处理中扮演关键角色。</p>
+                    <p>蛋白质相互作用网络通过蛋白质间的物理结合与生化反应实现细胞内的信号传递和功能调控，是细胞生命活动的基础。神经网络则通过神经元之间的突触连接实现信息的接收、处理和传递，是神经系统和人工智能系统的核心结构。尽管这两类网络的组成物质、尺度范围和演化路径截然不同，但它们在网络拓扑结构、动力学行为和信息处理机制上存在惊人的相似性与可比性。</p>
+                    <p>本报告系统梳理蛋白质相互作用网络与神经网络的研究进展，从网络结构特征、动力学建模方法、功能分析手段等多个维度进行比较研究，探讨两类网络的内在联系与借鉴意义，为交叉学科研究提供理论参考。</p>
+                </div>
+            </section>
+
+            <section id="protein-networks" class="section">
+                <h2>蛋白质相互作用网络</h2>
+                <p>蛋白质相互作用网络是细胞内蛋白质分子通过物理或化学作用形成的复杂网络系统，是细胞实现各种生物学功能的结构基础。这类网络通过动态变化的相互作用模式，调控基因表达、信号传导、代谢调控等关键生命过程，其结构与动力学特性的研究是系统生物学的核心内容。</p>
+
+                <div id="ppi-structure" class="card">
+                    <h3><i class="fas fa-project-diagram"></i> 网络结构特征</h3>
+                    
+                    <h4>定义2.1（蛋白质相互作用网络）</h4>
+                    <p>蛋白质相互作用网络可表示为一个无向图 \( G = (V, E) \)，其中：
+                    <ul>
+                        <li>顶点集 \( V = \{v_1, v_2, \ldots, v_n\} \) 表示蛋白质集合</li>
+                        <li>边集 \( E \subseteq V \times V \) 表示蛋白质间的相互作用</li>
+                    </ul>
+                    网络可通过邻接矩阵 \( A \in \mathbb{R}^{n \times n} \) 定量描述：
+                    </p>
+                    <div class="formula-block">
+                        \[
+                        A_{ij} = \begin{cases} 
+                        w_{ij} & \text{若蛋白质 } i \text{ 与蛋白质 } j \text{ 存在相互作用} \\
+                        0 & \text{否则}
+                        \end{cases}
+                        \]
+                    </div>
+                    <p>其中 \( w_{ij} \) 为相互作用强度权重，对于加权网络可取连续值，对于非加权网络取1。</p>
+
+                    <h4>关键拓扑参数</h4>
+                    <p>蛋白质相互作用网络的主要拓扑特征参数包括：</p>
+                    <ul>
+                        <li><strong>度分布</strong>：节点的度 \( k_i = \sum_j A_{ij} \) 表示与蛋白质 \( i \) 相互作用的蛋白质数量，PPIs通常呈现幂律分布 \( P(k) \sim k^{-\gamma} \)，表明网络具有无标度特性</li>
+                        <li><strong>聚类系数</strong>：节点 \( i \) 的聚类系数 \( C_i = \frac{2e_i}{k_i(k_i-1)} \)，其中 \( e_i \) 是节点 \( i \) 邻居间实际存在的边数，反映网络的局部聚集程度</li>
+                        <li><strong>平均路径长度</strong>：任意两节点间最短路径的平均值，PPIs通常具有小世界特性，即较短的平均路径长度和较高的聚类系数</li>
+                        <li><strong>介数中心性</strong>：衡量节点在网络路径中的中介作用，\( B_i = \sum_{s \neq t \neq i} \frac{\sigma_{st}(i)}{\sigma_{st}} \)，其中 \( \sigma_{st} \) 是 \( s \) 到 \( t \) 的最短路径数，\( \sigma_{st}(i) \) 是经过 \( i \) 的最短路径数</li>
+                    </ul>
+
+                    <h4>模块化结构</h4>
+                    <p>蛋白质相互作用网络具有显著的模块化特征，功能相关的蛋白质倾向于形成紧密连接的子网模块。模块性指数 \( Q \) 用于量化网络的模块划分质量：</p>
+                    <div class="formula-block">
+                        \[
+                        Q = \frac{1}{2m} \sum_{i,j} \left( A_{ij} - \frac{k_i k_j}{2m} \right) \delta(c_i, c_j)
+                        \]
+                    </div>
+                    <p>其中 \( m = \frac{1}{2}\sum_{i,j} A_{ij} \) 是网络中边的总数，\( c_i \) 是节点 \( i \) 所属的模块，\( \delta(c_i, c_j) \) 为克罗内克函数（模块相同时为1，否则为0）。</p>
+                </div>
+
+                <div id="ppi-dynamics" class="card">
+                    <h3><i class="fas fa-chart-line"></i> 动力学建模</h3>
+                    
+                    <h4>布尔网络模型</h4>
+                    <p>布尔网络模型将蛋白质状态简化为激活（1）或抑制（0）两种状态，其动力学行为由布尔函数描述：</p>
+                    <div class="formula-block">
+                        \[
+                        x_i(t+1) = f_i(x_1(t), x_2(t), \ldots, x_k(t))
+                        \]
+                    </div>
+                    <p>其中 \( x_i(t) \) 表示蛋白质 \( i \) 在时间 \( t \) 的状态，\( f_i \) 是描述调控关系的布尔函数。该模型适用于分析网络的稳态和吸引子特性。</p>
+
+                    <h4>连续动力学模型</h4>
+                    <p>基于质量作用定律的连续模型可更精确地描述蛋白质浓度的动态变化：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{dx_i}{dt} = \sum_j k_{ij} x_j + \sum_{j < l} k_{ijl} x_j x_l - \gamma_i x_i + b_i
+                        \]
+                    </div>
+                    <p>其中：
+                    <ul>
+                        <li> \( x_i \) 是蛋白质 \( i \) 的浓度</li>
+                        <li> \( k_{ij} \) 和 \( k_{ijl} \) 分别是线性和非线性相互作用系数</li>
+                        <li> \( \gamma_i \) 是降解率常数</li>
+                        <li> \( b_i \) 是基础合成率</li>
+                    </ul>
+                    </p>
+
+                    <h4>混合模型：布尔-连续耦合模型</h4>
+                    <p>结合离散和连续特性的混合模型：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{dx_i}{dt} = f_i(\mathbf{s}(t)) - \gamma_i x_i, \quad s_i(t) = \Theta(x_i(t) - \theta_i)
+                        \]
+                    </div>
+                    <p>其中 \( \Theta(\cdot) \) 是阶跃函数，\( \theta_i \) 是阈值，\( s_i(t) \) 是离散状态变量，\( x_i(t) \) 是连续浓度变量。</p>
+                </div>
+
+                <div id="ppi-analysis" class="card">
+                    <h3><i class="fas fa-search-plus"></i> 分析方法</h3>
+                    
+                    <h4>网络比对方法</h4>
+                    <p>网络比对用于识别不同物种或不同条件下蛋白质网络的保守模块，常用的基于矩阵的比对方法通过最大化以下得分函数实现：</p>
+                    <div class="formula-block">
+                        \[
+                        S(A, B, M) = \text{tr}(M^T A M B) + \alpha \text{sim}(M)
+                        \]
+                    </div>
+                    <p>其中 \( A \) 和 \( B \) 是两个网络的邻接矩阵，\( M \) 是比对矩阵，\( \text{sim}(M) \) 是序列相似性得分，\( \alpha \) 是平衡参数。</p>
+
+                    <h4>社区检测算法</h4>
+                    <p>基于谱聚类的社区检测方法利用拉普拉斯矩阵的特征向量进行模块划分：</p>
+                    <div class="formula-block">
+                        \[
+                        L = D - A
+                        \]
+                    </div>
+                    <p>其中 \( D \) 是度矩阵（对角矩阵，\( D_{ii} = k_i \)）。拉普拉斯矩阵的前 \( c \) 个最小特征值对应的特征向量构成特征空间，通过K-means聚类可将网络划分为 \( c \) 个社区。</p>
+
+                    <h4>动态稳定性分析</h4>
+                    <p>蛋白质网络的局部稳定性可通过雅可比矩阵的特征值分析确定。对于连续模型 \( \dot{\mathbf{x}} = \mathbf{f}(\mathbf{x}) \)，雅可比矩阵为：</p>
+                    <div class="formula-block">
+                        \[
+                        J_{ij} = \frac{\partial f_i}{\partial x_j}
+                        \]
+                    </div>
+                    <p>当所有特征值的实部均为负时，系统在该平衡点附近是局部稳定的。</p>
+                </div>
+            </section>
+
+            <section id="neural-networks" class="section">
+                <h2>神经网络模型</h2>
+                <p>神经网络是由大量互连的节点（神经元）组成的复杂网络系统，能够通过节点间的连接强度（权重）调整实现信息处理和学习功能。从生物神经系统到人工神经网络，这一概念已发展成为横跨神经科学、计算机科学、数学和工程学的交叉研究领域，其动力学特性研究对于理解大脑功能和改进人工智能算法具有重要意义。</p>
+
+                <div id="biological-nn" class="card">
+                    <h3><i class="fas fa-brain"></i> 生物神经网络</h3>
+                    
+                    <h4>神经元模型</h4>
+                    <p>生物神经元的电活动可通过 Hodgkin-Huxley 模型描述：</p>
+                    <div class="formula-block">
+                        \[
+                        C_m \frac{dV}{dt} = -g_{\text{Na}} m^3 h (V - E_{\text{Na}}) - g_{\text{K}} n^4 (V - E_{\text{K}}) - g_l (V - E_l) + I_{\text{ext}}
+                        \]
+                    </div>
+                    <p>其中：
+                    <ul>
+                        <li> \( V \) 是膜电位，\( C_m \) 是膜电容</li>
+                        <li> \( g_{\text{Na}}, g_{\text{K}}, g_l \) 分别是钠离子、钾离子和泄漏电流的电导</li>
+                        <li> \( m, h, n \) 是门控变量，描述离子通道的开放概率</li>
+                        <li> \( E_{\text{Na}}, E_{\text{K}}, E_l \) 是反转电位</li>
+                        <li> \( I_{\text{ext}} \) 是外部注入电流</li>
+                    </ul>
+                    </p>
+
+                    <h4>简化神经元模型</h4>
+                    <p>为降低计算复杂度，常用简化模型如 leaky integrate-and-fire (LIF) 模型：</p>
+                    <div class="formula-block">
+                        \[
+                        \tau_m \frac{dV}{dt} = -(V - V_{\text{rest}}) + R_m I(t)
+                        \]
+                    </div>
+                    <p>当膜电位 \( V \) 达到阈值 \( V_{\text{th}} \) 时，神经元产生动作电位并重置为 \( V_{\text{reset}} \)，其中 \( \tau_m = R_m C_m \) 是膜时间常数。</p>
+
+                    <h4>神经环路结构</h4>
+                    <p>生物神经网络具有多层次结构，从微观的突触连接到宏观的脑区网络：
+                    <ul>
+                        <li>微环路：局部神经元群形成的功能单元，如皮层柱</li>
+                        <li>介观环路：区域内的神经元连接模式</li>
+                        <li>宏观网络：脑区之间的功能连接，可通过 fMRI 等技术构建功能连接矩阵</li>
+                    </ul>
+                    </p>
+                </div>
+
+                <div id="artificial-nn" class="card">
+                    <h3><i class="fas fa-microchip"></i> 人工神经网络</h3>
+                    
+                    <h4>多层感知器</h4>
+                    <p>多层感知器由输入层、隐藏层和输出层组成，其数学描述为：</p>
+                    <div class="formula-block">
+                        \[
+                        \mathbf{h}_k = \sigma(W_k \mathbf{h}_{k-1} + \mathbf{b}_k)
+                        \]
+                    </div>
+                    <p>其中：
+                    <ul>
+                        <li> \( \mathbf{h}_k \) 是第 \( k \) 层的输出</li>
+                        <li> \( W_k \) 是权重矩阵，\( \mathbf{b}_k \) 是偏置向量</li>
+                        <li> \( \sigma(\cdot) \) 是激活函数（如 ReLU、sigmoid 等）</li>
+                    </ul>
+                    </p>
+
+                    <h4>循环神经网络</h4>
+                    <p>循环神经网络引入时间维度，能够处理序列数据：</p>
+                    <div class="formula-block">
+                        \[
+                        \mathbf{h}_t = \sigma(W_h \mathbf{h}_{t-1} + W_x \mathbf{x}_t + \mathbf{b})
+                        \]
+                    </div>
+                    <p>其中 \( \mathbf{h}_t \) 是时间 \( t \) 的隐藏状态，\( \mathbf{x}_t \) 是输入序列在时间 \( t \) 的值，\( W_h \) 是状态转移矩阵。</p>
+
+                    <h4>卷积神经网络</h4>
+                    <p>卷积神经网络通过局部感受野和权值共享提取空间特征：</p>
+                    <div class="formula-block">
+                        \[
+                        \mathbf{y}_{i,j} = \sigma\left( \sum_{m=1}^M \sum_{p=1}^P \sum_{q=1}^Q W_{m,p,q} \mathbf{x}_{m,i+p-1,j+q-1} + b \right)
+                        \]
+                    </div>
+                    <p>其中 \( W \) 是卷积核权重，\( M \) 是输入通道数，\( P \times Q \) 是卷积核大小。</p>
+                </div>
+
+                <div id="nn-dynamics" class="card">
+                    <h3><i class="fas fa-wave-square"></i> 动力学特性</h3>
+                    
+                    <h4>同步与振荡</h4>
+                    <p>神经网络的同步行为可通过耦合振子模型描述：</p>
+                    <div class="formula-block">
+                        \[
+                        \tau_i \frac{d\theta_i}{dt} = \omega_i + \sum_j K_{ij} \sin(\theta_j - \theta_i)
+                        \]
+                    </div>
+                    <p>其中 \( \theta_i \) 是神经元 \( i \) 的相位，\( \omega_i \) 是固有频率，\( K_{ij} \) 是耦合强度。同步状态对应 \( \theta_i = \theta_j \) 对所有 \( i,j \) 成立。</p>
+
+                    <h4>吸引子动力学</h4>
+                    <p>神经网络的信息存储与检索可通过吸引子动力学解释。Hopfield 网络的能量函数为：</p>
+                    <div class="formula-block">
+                        \[
+                        E = -\frac{1}{2} \sum_{i \neq j} W_{ij} s_i s_j + \sum_i \theta_i s_i
+                        \]
+                    </div>
+                    <p>其中 \( s_i \in \{-1, 1\} \) 是神经元状态，权重 \( W_{ij} = \frac{1}{N} \sum_{\mu=1}^P \xi_i^\mu \xi_j^\mu \) 由 Hebb 规则确定，网络会收敛到能量较低的吸引子状态。</p>
+
+                    <h4>混沌与复杂性</h4>
+                    <p>神经网络可表现出混沌动力学特性，Lorenz 型神经网络模型：</p>
+                    <div class="formula-block">
+                        \[
+                        \begin{cases}
+                        \dot{x} = \sigma(y - x) \\
+                        \dot{y} = x(\rho - z) - y \\
+                        \dot{z} = xy - \beta z
+                        \end{cases}
+                        \]
+                    </div>
+                    <p>当参数 \( \sigma=10, \rho=28, \beta=8/3 \) 时表现出混沌行为，具有对初始条件的敏感依赖性。</p>
+
+                    <h4>Python代码示例：简单神经网络动力学模拟</h4>
+                    <div class="code-block">
+<pre><code class="language-python">
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 定义LIF神经元模型
+def lif_neuron(I, T, dt=0.1, tau_m=20, R_m=10, V_rest=-70, V_th=-55, V_reset=-80):
+    t = np.arange(0, T, dt)
+    V = np.ones_like(t) * V_rest
+    spikes = []
+    
+    for i in range(1, len(t)):
+        dV = (-(V[i-1] - V_rest) + R_m * I) / tau_m
+        V[i] = V[i-1] + dV * dt
+        
+        if V[i] >= V_th:
+            V[i] = V_reset
+            spikes.append(t[i])
+    
+    return t, V, spikes
+
+# 模拟不同输入电流下的神经元响应
+I_values = [1.0, 1.5, 2.0]
+plt.figure(figsize=(12, 8))
+
+for i, I in enumerate(I_values):
+    t, V, spikes = lif_neuron(I, T=200)
+    plt.subplot(len(I_values), 1, i+1)
+    plt.plot(t, V)
+    plt.scatter(spikes, np.ones_like(spikes)*(-45), color='red', s=10)
+    plt.ylabel('膜电位 (mV)')
+    plt.title(f'输入电流 = {I} nA')
+
+plt.xlabel('时间 (ms)')
+plt.tight_layout()
+plt.show()</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="comparative-analysis" class="section">
+                <h2>比较与关联分析</h2>
+                <p>蛋白质相互作用网络与神经网络尽管在物质基础和功能目标上存在显著差异，但作为复杂网络系统，它们在拓扑结构、动力学行为和信息处理机制等方面存在深刻的相似性和可比较性。通过系统的比较分析，不仅可以揭示复杂网络的普适规律，还能为跨领域研究提供新的思路和方法。</p>
+
+                <div id="structural-comparison" class="card">
+                    <h3><i class="fas fa-sitemap"></i> 结构比较</h3>
+                    
+                    <h4>拓扑特征对比</h4>
+                    <p>两类网络的关键拓扑特征比较：</p>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>拓扑特征</th>
+                                <th>蛋白质相互作用网络</th>
+                                <th>神经网络</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>节点类型</td>
+                                <td>蛋白质分子（结构和功能多样）</td>
+                                <td>神经元（类型较少，功能相对统一）</td>
+                            </tr>
+                            <tr>
+                                <td>连接性质</td>
+                                <td>无向（相互作用），动态变化</td>
+                                <td>有向（突触传递），相对稳定</td>
+                            </tr>
+                            <tr>
+                                <td>度分布</td>
+                                <td>幂律分布，无标度特性明显</td>
+                                <td>混合分布，不同脑区特性不同</td>
+                            </tr>
+                            <tr>
+                                <td>聚类系数</td>
+                                <td>较高，功能模块内连接紧密</td>
+                                <td>高，局部神经元连接密集</td>
+                            </tr>
+                            <tr>
+                                <td>平均路径长度</td>
+                                <td>短（小世界特性）</td>
+                                <td>非常短（小世界特性显著）</td>
+                            </tr>
+                            <tr>
+                                <td>模块化程度</td>
+                                <td>高，与生物学功能关联紧密</td>
+                                <td>高，与认知功能模块对应</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>层级结构</h4>
+                    <p>两类网络均具有层级组织结构：
+                    <ul>
+                        <li>蛋白质网络：结构域 → 蛋白质 → 复合物 → 通路 → 网络</li>
+                        <li>神经网络：突触 → 神经元 → 微环路 → 脑区 → 全脑网络</li>
+                    </ul>
+                    层级之间通过向上和向下的因果关系实现功能整合。</p>
+
+                    <h4>网络演化</h4>
+                    <p>网络演化机制比较：
+                    <ul>
+                        <li>蛋白质网络：通过基因复制、融合和水平转移等演化，连接权重通过突变累积缓慢变化</li>
+                        <li>神经网络：生物神经网络通过突触可塑性动态调整连接强度；人工神经网络通过梯度下降等算法优化权重</li>
+                    </ul>
+                    </p>
+                </div>
+
+                <div id="dynamic-comparison" class="card">
+                    <h3><i class="fas fa-exchange"></i> 动力学比较</h3>
+                    
+                    <h4>时间尺度差异</h4>
+                    <p>两类网络的动力学过程在不同时间尺度上展开：
+                    <ul>
+                        <li>蛋白质相互作用网络：毫秒至小时尺度，主要涉及生化反应和构象变化</li>
+                        <li>神经网络：毫秒至秒尺度（电活动），长期可塑性则在分钟至天尺度</li>
+                    </ul>
+                    时间尺度的差异反映了它们处理信息的速度和持久性的不同。</p>
+
+                    <h4>稳定性与可塑性平衡</h4>
+                    <p>两类网络均需在稳定性和可塑性之间维持平衡：
+                    <ul>
+                        <li>蛋白质网络：通过负反馈回路维持稳态（如代谢调控），同时通过信号通路实现动态响应</li>
+                        <li>神经网络：通过兴奋-抑制平衡维持稳定活动，通过突触可塑性实现学习记忆</li>
+                    </ul>
+                    这种平衡可通过能量函数最小化描述：</p>
+                    <div class="formula-block">
+                        \[
+                        E = E_{\text{stability}} + \lambda E_{\text{plasticity}}
+                        \]
+                    </div>
+                    <p>其中 \( \lambda \) 是平衡参数，决定系统对环境变化的响应特性。</p>
+
+                    <h4>信息处理机制</h4>
+                    <p>信息处理的数学描述比较：
+                    <ul>
+                        <li>蛋白质网络：通过分子浓度的时空分布编码信息，传递函数为：
+                            <div class="formula-block">
+                                \[
+                                \mathbf{c}(t+1) = f(\mathbf{c}(t), \mathbf{W})
+                                \]
+                            </div>
+                            其中 \( \mathbf{c} \) 是浓度向量，\( \mathbf{W} \) 是相互作用矩阵
+                        </li>
+                        <li>神经网络：通过神经元放电频率或精确时间编码信息，传递函数为：
+                            <div class="formula-block">
+                                \[
+                                \mathbf{r}(t+1) = g(\mathbf{r}(t), \mathbf{W})
+                                \]
+                            </div>
+                            其中 \( \mathbf{r} \) 是放电率向量，\( \mathbf{W} \) 是突触权重矩阵
+                        </li>
+                    </ul>
+                    </p>
+                </div>
+
+                <div id="cross-applications" class="card">
+                    <h3><i class="fas fa-random"></i> 交叉应用</h3>
+                    
+                    <h4>从生物网络到人工智能</h4>
+                    <p>蛋白质网络研究为人工智能提供的启发：
+                    <ul>
+                        <li>模块化设计：借鉴蛋白质网络的功能模块划分，设计可解释的模块化神经网络</li>
+                        <li>动态连接：模拟蛋白质相互作用的动态变化，开发连接权重动态调整的神经网络</li>
+                        <li>鲁棒性设计：基于蛋白质网络的容错机制，提高神经网络的抗噪能力</li>
+                    </ul>
+                    </p>
+
+                    <h4>从神经网络到系统生物学</h4>
+                    <p>神经网络方法在蛋白质网络研究中的应用：
+                    <ul>
+                        <li>深度学习预测：使用图神经网络预测蛋白质相互作用：
+                            <div class="formula-block">
+                                \[
+                                \hat{y}_{ij} = \sigma(\mathbf{h}_i^T \mathbf{h}_j)
+                                \]
+                            </div>
+                            其中 \( \mathbf{h}_i \) 和 \( \mathbf{h}_j \) 是蛋白质节点的嵌入向量
+                        </li>
+                        <li>动态模拟：使用循环神经网络模拟蛋白质网络的动态演化</li>
+                        <li>功能预测：通过神经网络模型预测蛋白质复合物的功能</li>
+                    </ul>
+                    </p>
+
+                    <h4>统一分析框架</h4>
+                    <p>复杂网络理论提供的统一分析框架：
+                    <ul>
+                        <li>网络熵：量化网络复杂性 \( H = -\sum p_i \log p_i \)</li>
+                        <li>信息流：分析网络中的信息传递效率 \( I = \sum_{i \to j} T_{ij} \log \frac{T_{ij}}{p_i p_j} \)</li>
+                        <li> controllability：评估网络的可控性 \( \text{rank}(C) \)，其中 \( C \) 是可控性矩阵</li>
+                    </ul>
+                    这些指标可同时应用于两类网络的定量分析与比较。</p>
+                </div>
+            </section>
+
+            <section id="case-studies" class="section">
+                <h2>案例研究</h2>
+                <p>通过具体案例分析，可以更直观地理解蛋白质相互作用网络与神经网络的动力学特性及其研究方法。以下选取三个典型案例，展示两类网络的研究范式和交叉应用实例。</p>
+
+                <div class="card">
+                    <h3><i class="fas fa-vial"></i> 案例一：细胞周期调控网络与工作记忆网络的动力学比较</h3>
+                    
+                    <h4>细胞周期调控网络</h4>
+                    <p>酵母细胞周期调控网络包含约100个核心蛋白质，其动力学行为可通过布尔网络模型描述。该网络存在多个吸引子，对应细胞周期的不同阶段（G1、S、G2、M期）。关键调控环路包括：</p>
+                    <ul>
+                        <li>CDC28-CLB复合物的周期性激活与抑制</li>
+                        <li>APC/C介导的 cyclin 降解通路</li>
+                        <li>检查点调控的反馈回路</li>
+                    </ul>
+                    <p>网络的状态转换矩阵 \( T \in \mathbb{R}^{2^N \times 2^N} \) 描述状态间的转移概率，通过计算稳态分布可确定各细胞周期阶段的停留时间。</p>
+
+                    <h4>工作记忆神经网络</h4>
+                    <p>前额叶皮层工作记忆网络通过持续性神经元活动维持信息表征，其动力学模型为：</p>
+                    <div class="formula-block">
+                        \[
+                        \tau \frac{dr_i}{dt} = -r_i + \sum_j W_{ij} s(r_j) + I_i^{\text{ext}}
+                        \]
+                    </div>
+                    <p>其中 \( r_i \) 是神经元放电率，\( s(\cdot) \) 是sigmoid激活函数，\( W_{ij} \) 包含兴奋性自连接和抑制性互连接。网络通过多稳态吸引子实现不同记忆项目的表征。</p>
+
+                    <h4>动力学比较结论</h4>
+                    <p>尽管功能不同，两类网络均通过吸引子动力学实现状态维持与转换，但机制存在差异：
+                    <ul>
+                        <li>细胞周期网络：吸引子之间的转换由内在生化反应驱动，具有严格的时间顺序</li>
+                        <li>工作记忆网络：吸引子之间的转换由外部输入驱动，可灵活切换</li>
+                    </ul>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-vial"></i> 案例二：基于图神经网络的蛋白质相互作用预测</h3>
+                    
+                    <h4>问题背景</h4>
+                    <p>实验测定蛋白质相互作用成本高且覆盖率低，需要计算方法进行预测。基于图神经网络（GNN）的方法利用已知相互作用和蛋白质特征进行预测，显著提高了预测精度。</p>
+
+                    <h4>方法原理</h4>
+                    <p>图神经网络通过消息传递机制学习蛋白质节点的嵌入表示：</p>
+                    <div class="formula-block">
+                        \[
+                        \mathbf{h}_i^{(k)} = \sigma\left( \mathbf{h}_i^{(k-1)} + \sum_{j \in \mathcal{N}(i)} \phi\left( \mathbf{h}_i^{(k-1)}, \mathbf{h}_j^{(k-1)}, e_{ij} \right) \right)
+                        \]
+                    </div>
+                    <p>其中 \( \mathbf{h}_i^{(k)} \) 是第 \( k \) 层的节点嵌入，\( \mathcal{N}(i) \) 是节点 \( i \) 的邻居，\( e_{ij} \) 是边特征，\( \phi(\cdot) \) 是消息函数。</p>
+
+                    <h4>实验结果</h4>
+                    <p>在人类蛋白质相互作用数据集上，GNN方法的预测性能（AUC=0.92）显著优于传统方法（AUC=0.78-0.85）。通过注意力机制识别的重要特征包括：
+                    <ul>
+                        <li>蛋白质结构域的互补性</li>
+                        <li>共表达模式的相似性</li>
+                        <li>进化保守性特征</li>
+                    </ul>
+                    </p>
+
+                    <h4>Python代码示例：简单GNN用于蛋白质相互作用预测</h4>
+                    <div class="code-block">
+<pre><code class="language-python">
+import torch
+import torch.nn.functional as F
+from torch_geometric.nn import GCNConv
+from torch_geometric.data import Data
+
+# 定义图卷积网络模型
+class GNNModel(torch.nn.Module):
+    def __init__(self, input_dim, hidden_dim, output_dim):
+        super(GNNModel, self).__init__()
+        self.conv1 = GCNConv(input_dim, hidden_dim)
+        self.conv2 = GCNConv(hidden_dim, output_dim)
+        
+    def forward(self, x, edge_index):
+        # 第一层图卷积
+        x = self.conv1(x, edge_index)
+        x = F.relu(x)
+        # 第二层图卷积
+        x = self.conv2(x, edge_index)
+        return x
+
+# 计算节点对的相互作用得分
+def interaction_score(z, edge_index):
+    # z是节点嵌入，edge_index是边索引
+    src, dst = edge_index
+    return torch.sigmoid((z[src] * z[dst]).sum(dim=1))
+
+# 训练模型
+def train(model, data, optimizer, criterion):
+    model.train()
+    optimizer.zero_grad()
+    z = model(data.x, data.edge_index)
+    out = interaction_score(z, data.train_edge_index)
+    loss = criterion(out, data.train_edge_label)
+    loss.backward()
+    optimizer.step()
+    return loss.item()
+
+# 示例数据准备（实际应用中需使用真实蛋白质数据）
+# x: 蛋白质特征，edge_index: 已知相互作用
+x = torch.randn(1000, 50)  # 1000个蛋白质，每个50维特征
+edge_index = torch.randint(0, 1000, (2, 5000))  # 5000个已知相互作用
+data = Data(x=x, edge_index=edge_index)
+
+# 初始化模型和优化器
+model = GNNModel(input_dim=50, hidden_dim=128, output_dim=64)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+criterion = torch.nn.BCELoss()
+
+# 训练过程
+for epoch in range(100):
+    loss = train(model, data, optimizer, criterion)
+    if epoch % 10 == 0:
+        print(f'Epoch {epoch}, Loss: {loss:.4f}')</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-vial"></i> 案例三：基于蛋白质网络模块化原理的神经网络设计</h3>
+                    
+                    <h4>设计理念</h4>
+                    <p>借鉴蛋白质网络的模块化组织原则，设计具有功能模块划分的神经网络，提高模型的可解释性和鲁棒性。每个模块负责特定子任务，模块间通过少数关键节点进行通信。</p>
+
+                    <h4>网络结构</h4>
+                    <p>模块化神经网络结构：
+                    <ul>
+                        <li>输入层：接收原始数据</li>
+                        <li>功能模块层：多个并行的子网络模块，每个模块包含卷积层和池化层</li>
+                        <li>连接器层：少量节点负责模块间信息传递</li>
+                        <li>输出层：整合模块信息并产生最终输出</li>
+                    </ul>
+                    模块间的连接稀疏性 \( \rho \) 控制为：</p>
+                    <div class="formula-block">
+                        \[
+                        \rho = \frac{E_{\text{inter}}}{E_{\text{intra}} + E_{\text{inter}}}
+                        \]
+                    </div>
+                    <p>其中 \( E_{\text{intra}} \) 是模块内连接数，\( E_{\text{inter}} \) 是模块间连接数，通常设置 \( \rho = 0.1-0.2 \)，接近蛋白质网络的模块化程度。</p>
+
+                    <h4>实验验证</h4>
+                    <p>在图像分类任务上的实验表明，模块化神经网络相比传统网络具有：
+                    <ul>
+                        <li>更高的抗噪性：单个模块损坏时性能下降幅度小</li>
+                        <li>更好的可解释性：每个模块对应图像的特定特征（如边缘、纹理、形状）</li>
+                        <li>更高的训练效率：可并行训练各个模块</li>
+                    </ul>
+                    </p>
+                </div>
+            </section>
+
+            <section id="future-directions" class="section">
+                <h2>未来展望</h2>
+                <p>蛋白质相互作用网络与神经网络的研究正处于快速发展阶段，随着实验技术和计算方法的进步，未来研究将在以下几个方向取得突破，进一步加深我们对复杂网络动力学的理解，并推动跨学科应用。</p>
+
+                <div class="card">
+                    <h3><i class="fas fa-lightbulb"></i> 多尺度整合建模</h3>
+                    <p>发展多尺度整合模型是理解两类网络复杂性的关键：
+                    <ul>
+                        <li>蛋白质网络：整合原子尺度的分子动力学、细胞尺度的相互作用网络和组织尺度的信号传导，建立跨尺度模型</li>
+                        <li>神经网络：结合分子尺度的突触可塑性、神经元尺度的电活动和脑区尺度的功能连接，构建多尺度神经模型</li>
+                        <li>数学挑战：开发能够处理多尺度耦合的计算方法，如异质多尺度方法（HMM）</li>
+                    </ul>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-lightbulb"></i> 网络动力学的普适规律探索</h3>
+                    <p>探索复杂网络动力学的普适规律：
+                    <ul>
+                        <li>寻找描述网络状态转换的统一数学框架，如基于能量地形的分析方法</li>
+                        <li>研究网络稳健性与脆弱性的定量关系，建立网络容错能力的预测模型</li>
+                        <li>探索网络演化的普适机制，比较生物进化与人工网络优化的异同</li>
+                    </ul>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-lightbulb"></i> 交叉学科方法创新</h3>
+                    <p>推动交叉学科方法创新：
+                    <ul>
+                        <li>将神经网络的学习算法应用于蛋白质网络的动态重构，提高网络推断精度</li>
+                        <li>借鉴蛋白质网络的自组织原理，开发具有自主演化能力的人工神经网络</li>
+                        <li>发展基于网络科学的疾病诊断方法，同时适用于蛋白质网络异常（如癌症）和神经网络异常（如神经退行性疾病）</li>
+                    </ul>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-lightbulb"></i> 实验技术与计算方法的融合</h3>
+                    <p>促进实验技术与计算方法的深度融合：
+                    <ul>
+                        <li>利用冷冻电镜和超分辨率显微镜数据，构建更精确的蛋白质相互作用网络模型</li>
+                        <li>结合脑成像技术（如fMRI、EEG）和神经记录技术，验证神经网络动力学模型</li>
+                        <li>发展实时反馈的实验-模拟闭环系统，实现计算模型指导实验设计</li>
+                    </ul>
+                    </p>
+                </div>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>总结</h2>
+                <div class="card">
+                    <p>蛋白质相互作用网络与神经网络作为两类典型的复杂网络系统，尽管其物质基础和功能目标存在显著差异，但在拓扑结构、动力学特性和信息处理机制上存在深刻的相似性和可比性。本报告通过系统分析发现：</p>
+                    
+                    <p>1. 结构上，两类网络均具有小世界特性、模块化组织和层级结构，但蛋白质网络表现出更强的无标度特性，而神经网络的连接具有更强的方向性和可塑性。</p>
+                    
+                    <p>2. 动力学上，两类网络均通过吸引子动力学实现状态维持与转换，在稳定性与可塑性之间维持平衡，但蛋白质网络的动力学过程主要依赖生化反应，时间尺度较慢；神经网络则依赖电信号传递，时间尺度较快。</p>
+                    
+                    <p>3. 方法学上，图论、线性代数和动力系统理论为两类网络的研究提供了统一的数学框架，而跨领域方法的借鉴（如将神经网络算法应用于蛋白质网络分析）已展现出巨大潜力。</p>
+                    
+                    <p>未来研究应进一步加强跨学科合作，发展多尺度整合模型，探索复杂网络的普适规律，不仅将深化我们对生命系统和智能系统的理解，还将推动疾病诊断、药物研发和人工智能等领域的创新发展。</p>
+                </div>
+            </section>
+
+            <a href="#" class="back-to-top" id="backToTop">
+                <i class="fas fa-arrow-up"></i>
+            </a>
+
+
+            <div class="card">
+                <a href="home.html" class="resource-link">首页</a>
+                <a href="physics.html" class="resource-link">上一篇: 物理学基础</a>
+                <a href="ComputerScience.html" class="resource-link">下一篇: 计算机科学基础</a>
+            </div>
+
+
+        </main>
+    </div>
+
+    <script>
+        // 侧边栏切换
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // 回到顶部按钮
+        window.addEventListener('scroll', function() {
+            const backToTopButton = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+
+        document.getElementById('backToTop').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // 在移动设备上点击导航链接后关闭侧边栏
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
