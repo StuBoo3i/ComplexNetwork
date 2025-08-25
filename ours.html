@@ -506,10 +506,63 @@
     <div class="container">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <img src="https://via.placeholder.com/100" alt="团队Logo" class="sidebar-logo">
-                <h2>图论研究团队</h2>
-                <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Graph Theory & Complex Networks</p>
+                <a href="home.html" class="resource-link">
+                    <i class="fas fa-home"></i> 首页
+                </a>
+                <div class="sidebar-title">
+                    <h2>图论研究团队</h2>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Graph Theory & Complex Networks</p>
+                    <div class="title-divider"></div>
+                </div>
             </div>
+
+            <style>
+            .sidebar-header {
+                margin-bottom: 2rem;
+                padding-bottom: 1.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: center;
+            }
+
+            .resource-link {
+                color: rgba(255, 255, 255, 0.8);
+                text-decoration: none;
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+                border-radius: 4px;
+                display: inline-block;
+                margin-bottom: 1rem;
+                transition: var(--transition);
+            }
+
+            .resource-link:hover {
+                color: white;
+                background-color: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .resource-link i {
+                margin-right: 6px;
+            }
+
+            .sidebar-title h2 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                letter-spacing: 1px;
+                margin: 0 0 0.5rem 0;
+                position: relative;
+                display: inline-block;
+                color: white; /* 新增：将标题颜色改为白色 */
+            }
+
+            .title-divider {
+                width: 40px;
+                height: 2px;
+                background-color: var(--primary-color);
+                margin: 0 auto;
+                border-radius: 1px;
+            }
+            </style>
             <ul class="nav-list">
                 <li class="nav-item">
                     <a href="#intro" class="nav-link active"><i class="fas fa-home"></i> 首页</a>
