@@ -307,9 +307,61 @@
     <div class="container">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <a href="home.html" class="resource-link">首页</a>
-                <p>概率论与统计物理</p>
+                <a href="home.html" class="resource-link">
+                    <i class="fas fa-home"></i> 首页
+                </a>
+                <div class="sidebar-title">
+                    <h2>概率论基础</h2>
+                    <div class="title-divider"></div>
+                </div>
             </div>
+
+            <style>
+            .sidebar-header {
+                margin-bottom: 2rem;
+                padding-bottom: 1.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: center;
+            }
+
+            .resource-link {
+                color: rgba(255, 255, 255, 0.8);
+                text-decoration: none;
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+                border-radius: 4px;
+                display: inline-block;
+                margin-bottom: 1rem;
+                transition: var(--transition);
+            }
+
+            .resource-link:hover {
+                color: white;
+                background-color: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .resource-link i {
+                margin-right: 6px;
+            }
+
+            .sidebar-title h2 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                letter-spacing: 1px;
+                margin: 0 0 0.5rem 0;
+                position: relative;
+                display: inline-block;
+            }
+
+            .title-divider {
+                width: 40px;
+                height: 2px;
+                background-color: var(--primary-color);
+                margin: 0 auto;
+                border-radius: 1px;
+            }
+            </style>
             <ul class="nav-list">
                 <li class="nav-item">
                     <a href="#intro" class="nav-link"><i class="fas fa-book-open"></i> 引言</a>
