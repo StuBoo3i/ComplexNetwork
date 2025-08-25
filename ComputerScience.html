@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算机科学基础</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- 引入Prism.js语法高亮库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --light-gray: #ecf0f1;
+            --dark-gray: #7f8c8d;
+            --accent-color: #e74c3c;
+            --sidebar-width: 280px;
+            --transition: all 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            overflow-x: hidden;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-color);
+            color: white;
+            position: fixed;
+            top: 0;          
+            bottom: 0;       
+            left: 0;         
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .nav-list {
+            list-style: none;
+        }
+        .nav-item {
+            margin-bottom: 0.8rem;
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        .nav-link i {
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+        .nav-sub-item {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .nav-sub-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .nav-sub-link:hover {
+            color: white;
+        }
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1200px;
+            margin-right: auto;
+        }
+        .section {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.5s ease;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        /* Cards for sections */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        /* Formula Block */
+        .formula-block {
+            margin: 1.5rem 0;
+            padding: 0.5rem 1rem;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        /* Table styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        .comparison-table th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+        .comparison-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        /* Code Block */
+        .code-block {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+        }
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 2000;
+                background-color: var(--secondary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+            .card {
+                padding: 1.2rem;
+            }
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 8px 10px;
+            }
+        }
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+        /* Sub-list Style */
+        .sub-list {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .card .resource-link {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin-right: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            display: inline-block;
+            transition: var(--transition);
+        }
+
+        .card .resource-link:hover {
+            color: var(--primary-color);
+            background-color: var(--light-gray);
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="home.html" class="resource-link">
+                    <i class="fas fa-home"></i> 首页
+                </a>
+                <div class="sidebar-title">
+                    <h2>计算机科学基础</h2>
+                </div>
+                <a href="SocialSciences.html" class="resource-link">
+                    <i class="fas fa-book"></i> 下一篇：社会科学基础
+                </a>
+            </div>
+
+            <style>
+            .sidebar-header {
+                margin-bottom: 2rem;
+                padding-bottom: 1.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: center;
+            }
+
+            .resource-link {
+                color: rgba(255, 255, 255, 0.8);
+                text-decoration: none;
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+                border-radius: 4px;
+                display: inline-block;
+                margin-bottom: 1rem;
+                transition: var(--transition);
+            }
+
+            .resource-link:hover {
+                color: white;
+                background-color: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
+
+            .resource-link i {
+                margin-right: 6px;
+            }
+
+            .sidebar-title h2 {
+                font-size: 1.2rem;
+                font-weight: 600;
+                letter-spacing: 1px;
+                margin: 0 0 0.5rem 0;
+                position: relative;
+                display: inline-block;
+                color: white;
+            }
+
+            .title-divider {
+                width: 40px;
+                height: 2px;
+                background-color: var(--primary-color);
+                margin: 0 auto;
+                border-radius: 1px;
+            }
+            </style>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#intro" class="nav-link"><i class="fas fa-book-open"></i> 引言</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#cs-foundations" class="nav-link"><i class="fas fa-code"></i> 计算机科学基础</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#algorithms" class="nav-sub-link">算法与数据结构</a></li>
+                        <li class="nav-sub-item"><a href="#complexity" class="nav-sub-link">计算复杂性理论</a></li>
+                        <li class="nav-sub-item"><a href="#ai-methods" class="nav-sub-link">人工智能方法</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#network-dynamics" class="nav-link"><i class="fas fa-project-diagram"></i> 复杂网络动力学</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#network-models" class="nav-sub-link">网络模型构建</a></li>
+                        <li class="nav-sub-item"><a href="#dynamic-behaviors" class="nav-sub-link">动力学行为分析</a></li>
+                        <li class="nav-sub-item"><a href="#emergent-phenomena" class="nav-sub-link">涌现现象研究</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#applications" class="nav-link"><i class="fas fa-flask"></i> 关键应用领域</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#epidemic" class="nav-sub-link">疫情传播模拟</a></li>
+                        <li class="nav-sub-item"><a href="#social-networks" class="nav-sub-link">社交网络分析</a></li>
+                        <li class="nav-sub-item"><a href="#brain-networks" class="nav-sub-link">脑网络研究</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#case-studies" class="nav-link"><i class="fas fa-vial"></i> 案例研究</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#future" class="nav-link"><i class="fas fa-lightbulb"></i> 未来展望</a>
+                </li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <section id="intro" class="section">
+                <h1>计算机科学基础在复杂网络动力学研究中的应用</h1>
+                <div class="card">
+                    <p>复杂网络广泛存在于自然界和人类社会中，从生态系统、神经网络到社交网络、互联网，这些由大量节点和连接构成的系统展现出丰富的动力学行为和涌现特性。计算机科学作为研究信息处理和计算方法的学科，为理解和分析复杂网络的动力学提供了强大的理论基础和技术工具。</p>
+                    <p>本报告系统梳理了计算机科学基础理论（包括算法设计、数据结构、计算复杂性、人工智能等）在复杂网络动力学研究中的应用，探讨了网络建模、动力学模拟、行为预测和控制优化等关键问题的解决方法。通过跨学科视角，揭示了计算机科学方法如何推动复杂网络研究的深入发展，并展望了未来的研究方向和应用前景。</p>
+                </div>
+            </section>
+
+            <section id="cs-foundations" class="section">
+                <h2>计算机科学基础理论</h2>
+                <p>计算机科学的核心理论为复杂网络研究提供了方法论基础。算法设计与分析帮助我们高效处理网络数据，计算复杂性理论界定了问题的可解范围，人工智能方法则为发现网络隐藏模式提供了新途径。这些理论共同构成了研究复杂网络动力学的计算框架。</p>
+
+                <div id="algorithms" class="card">
+                    <h3><i class="fas fa-cogs"></i> 算法与数据结构</h3>
+                    
+                    <h4>定义2.1（图的表示）</h4>
+                    <p>复杂网络可抽象为图 \( G = (V, E) \)，其中 \( V \) 是节点集合，\( E \) 是边集合。计算机中常用两种表示方式：</p>
+                    <ol>
+                        <li>邻接矩阵：\( n \times n \) 矩阵 \( A \)，其中 \( A_{ij} = 1 \) 表示节点 \( i \) 与 \( j \) 相连，否则为0</li>
+                        <li>邻接表：由节点列表和每个节点的邻居列表组成的数据结构</li>
+                    </ol>
+                    <div class="formula-block">
+                        \[
+                        A = \begin{bmatrix}
+                        0 & 1 & 0 & \cdots \\
+                        1 & 0 & 1 & \cdots \\
+                        0 & 1 & 0 & \cdots \\
+                        \vdots & \vdots & \vdots & \ddots
+                        \end{bmatrix}
+                        \]
+                    </div>
+                    <p>邻接矩阵适合稠密网络和矩阵运算，邻接表适合稀疏网络和遍历操作。</p>
+
+                    <h4>关键网络算法</h4>
+                    <p>网络分析的核心算法包括：</p>
+                    <ul>
+                        <li>最短路径算法：Dijkstra算法（单源最短路径）和Floyd-Warshall算法（全源最短路径）</li>
+                        <li>连通性分析：Union-Find（并查集）数据结构用于快速判断网络连通分量</li>
+                        <li>中心性计算：计算节点重要性的算法（度中心性、介数中心性、特征向量中心性等）</li>
+                        <li>社区发现：基于模块化优化的Louvain算法等</li>
+                    </ul>
+
+                    <h4>Python实现：邻接表与BFS遍历</h4>
+                    <div class="code-block">
+<pre><code class="language-python">
+from collections import defaultdict, deque
+
+class Network:
+    def __init__(self):
+        self.graph = defaultdict(list)
+    
+    def add_edge(self, u, v):
+        """添加无向边"""
+        self.graph[u].append(v)
+        self.graph[v].append(u)
+    
+    def bfs(self, start):
+        """广度优先搜索遍历网络"""
+        visited = set()
+        queue = deque([start])
+        visited.add(start)
+        
+        while queue:
+            node = queue.popleft()
+            yield node
+            
+            for neighbor in self.graph[node]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+
+# 示例用法
+if __name__ == "__main__":
+    net = Network()
+    edges = [(0,1), (0,2), (1,3), (1,4), (2,5)]
+    for u, v in edges:
+        net.add_edge(u, v)
+    
+    print("BFS遍历结果:", list(net.bfs(0)))</code></pre>
+                    </div>
+                </div>
+
+                <div id="complexity" class="card">
+                    <h3><i class="fas fa-tachometer-alt"></i> 计算复杂性理论</h3>
+                    
+                    <h4>定义2.2（问题复杂度类）</h4>
+                    <p>复杂网络研究中的问题可分为不同复杂度类：</p>
+                    <ul>
+                        <li>P类：多项式时间可解问题（如最短路径、度中心性计算）</li>
+                        <li>NP类：多项式时间可验证问题（如最大团问题）</li>
+                        <li>NP完全问题：NP类中最难的问题（如网络社区发现的最优解）</li>
+                    </ul>
+
+                    <h4>定理2.1（网络问题的复杂性）</h4>
+                    <p>许多网络分析问题具有固有复杂性：
+                    <ul>
+                        <li>最大流问题属于P类，可通过Ford-Fulkerson算法在多项式时间内求解</li>
+                        <li>最小顶点覆盖问题是NP完全问题</li>
+                        <li>精确计算网络介数中心性的时间复杂度为 \( O(nm) \)，其中 \( n \) 是节点数，\( m \) 是边数</li>
+                        <li>最优社区划分问题是NP难问题，通常需要近似算法</li>
+                    </ul>
+                    </p>
+
+                    <h4>近似算法与启发式</h4>
+                    <p>对于NP难的网络问题，常用近似算法和启发式方法：</p>
+                    <div class="formula-block">
+                        \[
+                        \text{近似比} = \frac{\text{近似解值}}{\text{最优解值}} \leq \rho
+                        \]
+                    </div>
+                    <p>其中 \( \rho \) 是近似算法的性能保证。例如，贪心算法求解网络最大覆盖问题可达到 \( 1-1/e \) 的近似比。</p>
+                </div>
+
+                <div id="ai-methods" class="card">
+                    <h3><i class="fas fa-brain"></i> 人工智能与机器学习方法</h3>
+                    
+                    <h4>定义2.3（网络表示学习）</h4>
+                    <p>网络表示学习旨在将网络节点映射到低维向量空间：</p>
+                    <div class="formula-block">
+                        \[
+                        f: v \in V \mapsto \mathbf{z}_v \in \mathbb{R}^d \quad (d \ll |V|)
+                        \]
+                    </div>
+                    <p>使得相似节点的向量表示具有较高相似度。典型方法包括DeepWalk、Node2Vec等。</p>
+
+                    <h4>图神经网络</h4>
+                    <p>图神经网络（GNN）通过聚合邻居信息更新节点表示：</p>
+                    <div class="formula-block">
+                        \[
+                        \mathbf{h}_v^{(k)} = \sigma\left( \mathbf{W}^{(k)} \sum_{u \in N(v)} \mathbf{h}_u^{(k-1)} + \mathbf{b}^{(k)} \right)
+                        \]
+                    </div>
+                    <p>其中 \( \mathbf{h}_v^{(k)} \) 是节点 \( v \) 在第 \( k \) 层的隐藏表示，\( N(v) \) 是节点 \( v \) 的邻居集合，\( \sigma \) 是非线性激活函数。</p>
+
+                    <h4>强化学习在网络控制中的应用</h4>
+                    <p>强化学习通过智能体与网络环境的交互学习最优控制策略，目标是最大化累积奖励：</p>
+                    <div class="formula-block">
+                        \[
+                        R = \sum_{t=0}^{\infty} \gamma^t r_t
+                        \]
+                    </div>
+                    <p>其中 \( \gamma \in [0,1) \) 是折扣因子，\( r_t \) 是第 \( t \) 步的奖励。在网络动力学控制中，可用于优化节点干预策略。</p>
+                </div>
+            </section>
+
+            <section id="network-dynamics" class="section">
+                <h2>复杂网络动力学建模与分析</h2>
+                <p>复杂网络的动力学研究关注网络结构与动态行为之间的关系。计算机科学方法为构建网络模型、模拟动态过程和分析涌现行为提供了关键技术支持，使我们能够处理大规模网络数据并揭示其内在规律。</p>
+
+                <div id="network-models" class="card">
+                    <h3><i class="fas fa-sitemap"></i> 网络模型构建方法</h3>
+                    
+                    <h4>随机网络模型</h4>
+                    <p>Erdős-Rényi模型（ER模型）是最基本的随机网络模型，其中 \( n \) 个节点中任意两个节点以概率 \( p \) 相连。其度分布近似为泊松分布：</p>
+                    <div class="formula-block">
+                        \[
+                        P(k) = \frac{e^{-\lambda} \lambda^k}{k!}, \quad \lambda = p(n-1)
+                        \]
+                    </div>
+
+                    <h4>无标度网络模型</h4>
+                    <p>Barabási-Albert（BA）模型通过"优先连接"机制生成无标度网络，其度分布遵循幂律：</p>
+                    <div class="formula-block">
+                        \[
+                        P(k) \sim k^{-\gamma}, \quad \gamma = 3
+                        \]
+                    </div>
+                    <p>Python实现BA模型的核心代码：</p>
+                    <div class="code-block">
+<pre><code class="language-python">
+import networkx as nx
+import matplotlib.pyplot as plt
+
+def ba_model(n, m):
+    """
+    生成Barabási-Albert无标度网络
+    n: 总节点数
+    m: 每个新节点连接的边数
+    """
+    # 初始化为含有m个节点的完全图
+    G = nx.complete_graph(m)
+    
+    for i in range(m, n):
+        # 计算现有节点的度
+        degrees = list(G.degree().values())
+        total_degree = sum(degrees)
+        
+        # 按度的比例选择m个节点连接
+        targets = []
+        while len(targets) < m:
+            # 优先连接概率
+            probs = [d / total_degree for d in degrees]
+            node = np.random.choice(list(G.nodes), p=probs)
+            if node not in targets:
+                targets.append(node)
+        
+        # 添加新节点并连接
+        G.add_node(i)
+        for t in targets:
+            G.add_edge(i, t)
+    
+    return G
+
+# 示例
+G = ba_model(100, 2)
+nx.draw(G, node_size=50)
+plt.show()</code></pre>
+                    </div>
+
+                    <h4>社区结构网络模型</h4>
+                    <p>具有社区结构的网络可通过LFR模型生成，该模型控制：
+                    <ul>
+                        <li>节点度分布（幂律分布）</li>
+                        <li>社区大小分布（幂律分布）</li>
+                        <li>混合参数 \( \mu \)（节点连接到社区外部的概率）</li>
+                    </ul>
+                    </p>
+                </div>
+
+                <div id="dynamic-behaviors" class="card">
+                    <h3><i class="fas fa-chart-line"></i> 网络动力学行为分析</h3>
+                    
+                    <h4>同步动力学</h4>
+                    <p>网络节点的同步行为可通过耦合微分方程描述：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{x}_i(t) = f(x_i(t)) + \sigma \sum_{j=1}^n A_{ij} (x_j(t) - x_i(t))
+                        \]
+                    </div>
+                    <p>其中 \( x_i(t) \) 是节点 \( i \) 的状态，\( f \) 是节点动力学函数，\( \sigma \) 是耦合强度，\( A \) 是邻接矩阵。</p>
+
+                    <h4>传播动力学模型</h4>
+                    <p>SIR模型将节点分为易感（S）、感染（I）和恢复（R）三种状态，其动力学方程为：</p>
+                    <div class="formula-block">
+                        \[
+                        \begin{cases}
+                        \frac{dS}{dt} = -\beta \frac{S I}{N} \\
+                        \frac{dI}{dt} = \beta \frac{S I}{N} - \gamma I \\
+                        \frac{dR}{dt} = \gamma I
+                        \end{cases}
+                        \]
+                    </div>
+                    <p>其中 \( \beta \) 是感染率，\( \gamma \) 是恢复率，\( N \) 是总人口。基本再生数 \( R_0 = \beta/\gamma \) 决定了疫情是否扩散。</p>
+
+                    <h4>渗流理论</h4>
+                    <p>网络渗流描述节点或边被移除时网络连通性的变化，存在临界阈值 \( p_c \)：
+                    <ul>
+                        <li>当移除比例 \( p < p_c \) 时，网络保持大连通分量</li>
+                        <li>当 \( p > p_c \) 时，大连通分量瓦解为小碎片</li>
+                    </ul>
+                    随机网络的渗流阈值为 \( p_c = 1/n \)，无标度网络则具有抗随机攻击的鲁棒性。
+                    </p>
+                </div>
+
+                <div id="emergent-phenomena" class="card">
+                    <h3><i class="fas fa-magic"></i> 网络涌现现象的计算研究</h3>
+                    
+                    <h4>相变现象</h4>
+                    <p>复杂网络在参数变化时会出现相变现象，如：
+                    <ul>
+                        <li>同步相变：当耦合强度超过临界值时，网络从非同步状态转变为同步状态</li>
+                        <li>传播相变：当基本再生数 \( R_0 = 1 \) 时，疫情从消亡状态转变为流行状态</li>
+                        <li>渗流相变：网络连通性随节点移除比例变化的突变</li>
+                    </ul>
+                    </p>
+
+                    <h4>自组织临界性</h4>
+                    <p>许多网络系统表现出自组织临界性，即无需外部调节即可演化到临界状态，表现出幂律分布的事件规模：</p>
+                    <div class="formula-block">
+                        \[
+                        P(s) \sim s^{-\alpha}
+                        \]
+                    </div>
+                    <p>例如，沙堆模型中的雪崩规模分布、神经网络中的活动爆发规模分布等。</p>
+
+                    <h4>复杂网络的混沌行为</h4>
+                    <p>高度非线性的网络系统可能表现出混沌行为，其特征包括：
+                    <ul>
+                        <li>对初始条件的敏感依赖性</li>
+                        <li>非周期性</li>
+                        <li>分形吸引子结构</li>
+                    </ul>
+                    可通过计算最大Lyapunov指数判断系统是否处于混沌状态。
+                    </p>
+                </div>
+            </section>
+
+            <section id="applications" class="section">
+                <h2>关键应用领域</h2>
+                <p>计算机科学方法在复杂网络动力学研究中的应用已渗透到多个学科领域，从疫情传播预测到社交网络分析，从脑网络研究到工程网络优化，这些应用不仅推动了基础科学的发展，也产生了重要的社会价值。</p>
+
+                <div id="epidemic" class="card">
+                    <h3><i class="fas fa-virus"></i> 疫情传播模拟与控制</h3>
+                    
+                    <h4>网络流行病学模型</h4>
+                    <p>基于接触网络的SEIR模型将人群分为易感（S）、暴露（E）、感染（I）和恢复（R）四类，通过计算机模拟可预测疫情发展趋势：</p>
+                    <div class="code-block">
+<pre><code class="language-python">
+import networkx as nx
+import numpy as np
+import matplotlib.pyplot as plt
+
+def seir_simulation(G, beta, sigma, gamma, t_max):
+    """
+    在网络上模拟SEIR模型
+    G: 接触网络
+    beta: 感染率
+    sigma: 潜伏率(从E到I)
+    gamma: 恢复率(从I到R)
+    t_max: 模拟时间步
+    """
+    n = G.number_of_nodes()
+    # 初始化状态: 1个感染者，其余易感
+    states = np.full(n, 'S')
+    patient_zero = np.random.choice(n)
+    states[patient_zero] = 'I'
+    
+    # 记录各状态人数
+    S = [n-1]
+    E = [0]
+    I = [1]
+    R = [0]
+    
+    for t in range(t_max):
+        new_states = states.copy()
+        for node in range(n):
+            if states[node] == 'E':
+                # 暴露者变为感染者
+                if np.random.random() < sigma:
+                    new_states[node] = 'I'
+            elif states[node] == 'I':
+                # 感染者恢复
+                if np.random.random() < gamma:
+                    new_states[node] = 'R'
+            elif states[node] == 'S':
+                # 易感者被邻居感染
+                neighbors = list(G.neighbors(node))
+                infected_neighbors = sum(1 for v in neighbors if states[v] == 'I')
+                risk = 1 - (1 - beta)**infected_neighbors
+                if np.random.random() < risk:
+                    new_states[node] = 'E'
+        
+        states = new_states
+        S.append(np.sum(states == 'S'))
+        E.append(np.sum(states == 'E'))
+        I.append(np.sum(states == 'I'))
+        R.append(np.sum(states == 'R'))
+    
+    return S, E, I, R
+
+# 模拟示例
+G = nx.barabasi_albert_graph(1000, 5)
+S, E, I, R = seir_simulation(G, 0.1, 0.2, 0.15, 100)
+
+plt.plot(S, label='易感者')
+plt.plot(E, label='暴露者')
+plt.plot(I, label='感染者')
+plt.plot(R, label='恢复者')
+plt.xlabel('时间')
+plt.ylabel('人数')
+plt.legend()
+plt.show()</code></pre>
+                    </div>
+
+                    <h4>基于网络的干预策略</h4>
+                    <p>利用中心性分析识别关键传播节点，实施有针对性的干预：
+                    <ul>
+                        <li>度中心性高的节点：连接广泛，是传播的重要枢纽</li>
+                        <li>介数中心性高的节点：位于多条传播路径上，控制信息流动</li>
+                        <li>PageRank高的节点：在网络中具有重要影响力</li>
+                    </ul>
+                    计算表明，靶向干预5-10%的关键节点可显著降低疫情传播效率。
+                    </p>
+                </div>
+
+                <div id="social-networks" class="card">
+                    <h3><i class="fas fa-users"></i> 社交网络分析与信息传播</h3>
+                    
+                    <h4>信息传播模型</h4>
+                    <p>社交网络中的信息传播可通过阈值模型描述，节点 \( i \) 采纳信息的概率为：</p>
+                    <div class="formula-block">
+                        \[
+                        P_i = \frac{\sum_{j \in N_i} a_{ij} x_j}{\sum_{j \in N_i} a_{ij}}
+                        \]
+                    </div>
+                    <p>其中 \( x_j \) 表示节点 \( j \) 是否采纳信息（1为采纳，0为未采纳），当 \( P_i \) 超过节点 \( i \) 的阈值 \( \theta_i \) 时，节点 \( i \) 采纳信息。</p>
+
+                    <h4>社区检测与影响力分析</h4>
+                    <p>社区检测的目标是将网络划分为内部连接紧密、外部连接稀疏的子群，常用的模块化函数为：</p>
+                    <div class="formula-block">
+                        \[
+                        Q = \frac{1}{2m} \sum_{i,j} \left( A_{ij} - \frac{k_i k_j}{2m} \right) \delta(c_i, c_j)
+                        \]
+                    </div>
+                    <p>其中 \( c_i \) 是节点 \( i \) 所属社区，\( \delta \) 是克罗内克函数，\( m \) 是总边数，\( k_i \) 是节点 \( i \) 的度。</p>
+
+                    <h4>推荐系统应用</h4>
+                    <p>基于网络的推荐算法利用用户-物品二分图进行推荐，如协同过滤算法通过计算用户相似度预测偏好：</p>
+                    <div class="formula-block">
+                        \[
+                        \text{sim}(u, v) = \frac{|N(u) \cap N(v)|}{\sqrt{|N(u)| \cdot |N(v)|}}
+                        \]
+                    </div>
+                    <p>其中 \( N(u) \) 是用户 \( u \) 交互过的物品集合。</p>
+                </div>
+
+                <div id="brain-networks" class="card">
+                    <h3><i class="fas fa-brain"></i> 脑网络研究与神经动力学</h3>
+                    
+                    <h4>脑网络的图论分析</h4>
+                    <p>脑网络可分为结构网络（白质纤维连接）和功能网络（神经活动同步性），其关键特征包括：
+                    <ul>
+                        <li>小世界特性：高聚类系数和短平均路径长度</li>
+                        <li>模块化结构：不同脑区形成功能模块</li>
+                        <li>核心-边缘结构：核心区域（如默认模式网络）承担整合功能</li>
+                    </ul>
+                    </p>
+
+                    <h4>神经动力学模型</h4>
+                    <p>Wilson-Cowan模型描述神经元群体的平均活动：</p>
+                    <div class="formula-block">
+                        \[
+                        \begin{cases}
+                        \tau_e \frac{de_i}{dt} = -e_i + (1 - r_e e_i) S_e\left( w_{ee} e_i - w_{ei} i_i + I_e^{(i)} \right) \\
+                        \tau_i \frac{di_i}{dt} = -i_i + (1 - r_i i_i) S_i\left( w_{ie} e_i - w_{ii} i_i + I_i^{(i)} \right)
+                        \end{cases}
+                        \]
+                    </div>
+                    <p>其中 \( e_i \) 和 \( i_i \) 分别是兴奋性和抑制性神经元的活动，\( S \) 是 sigmoid 激活函数，\( w \) 是连接权重。</p>
+
+                    <h4>脑网络的计算模拟</h4>
+                    <p>基于脑结构连接矩阵的动力学模拟可重现脑功能活动模式，通过比较模拟结果与fMRI数据，可揭示脑功能异常的机制。图神经网络方法也被用于预测脑区之间的功能连接强度。</p>
+                </div>
+            </section>
+
+            <section id="case-studies" class="section">
+                <h2>案例研究</h2>
+                <div class="card">
+                    <h3><i class="fas fa-vial"></i> COVID-19传播的网络动力学模拟</h3>
+                    <p>本案例利用实际交通网络数据模拟COVID-19的空间传播，展示计算机科学方法在流行病学研究中的应用。</p>
+                    
+                    <h4>研究方法</h4>
+                    <ol>
+                        <li>构建城市间交通网络：以高铁和航空线路为边，城市为节点</li>
+                        <li>实现空间SEIR模型：考虑城市内部传播和城市间人员流动</li>
+                        <li>使用并行计算加速大规模模拟</li>
+                        <li>通过社区检测识别传播风险区域</li>
+                    </ol>
+                    
+                    <h4>关键发现</h4>
+                    <ul>
+                        <li>交通网络的社区结构与疫情传播波次高度吻合</li>
+                        <li>介数中心性高的交通枢纽城市是防控关键节点</li>
+                        <li>封锁措施对网络连通性的影响可通过渗流理论量化</li>
+                        <li>基于强化学习的动态封锁策略比静态策略更有效</li>
+                    </ul>
+                    
+                    <h4>代码框架</h4>
+                    <div class="code-block">
+<pre><code class="language-python">
+# 空间SEIR模型核心框架
+def spatial_seir_simulation(city_network, mobility_matrix, params, t_max):
+    num_cities = len(city_network.nodes)
+    # 初始化每个城市的SEIR状态
+    city_states = {city: {'S': pop, 'E': 0, 'I': 1, 'R': 0} 
+                  for city, pop in city_populations.items()}
+    
+    # 记录结果
+    results = {city: {'S': [], 'E': [], 'I': [], 'R': []} for city in city_network.nodes}
+    
+    for t in range(t_max):
+        new_states = deepcopy(city_states)
+        # 计算城市间人员流动导致的感染传播
+        for i in city_network.nodes:
+            for j in city_network.nodes:
+                if i == j: continue
+                # 从i流动到j的人数
+                migrants = mobility_matrix[i][j] * city_states[i]['S']
+                # 感染风险取决于目的地的感染率
+                infection_prob = city_states[j]['I'] / sum(city_states[j].values())
+                new_infections = migrants * infection_prob * params['beta']
+                
+                new_states[i]['S'] -= new_infections
+                new_states[j]['E'] += new_infections
+        
+        # 计算城市内部传播
+        for city in city_network.nodes:
+            s, e, i, r = [city_states[city][k] for k in ['S', 'E', 'I', 'R']]
+            total = s + e + i + r
+            
+            # SEIR状态转换
+            se = params['beta'] * s * i / total
+            ei = params['sigma'] * e
+            ir = params['gamma'] * i
+            
+            new_states[city]['S'] -= se
+            new_states[city]['E'] += se - ei
+            new_states[city]['I'] += ei - ir
+            new_states[city]['R'] += ir
+        
+        city_states = new_states
+        
+        # 记录数据
+        for city in city_network.nodes:
+            for k in ['S', 'E', 'I', 'R']:
+                results[city][k].append(city_states[city][k])
+    
+    return results</code></pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-brain"></i> 阿尔茨海默病的脑网络异常检测</h3>
+                    <p>本案例利用图神经网络方法分析fMRI数据，识别阿尔茨海默病患者的脑网络异常模式。</p>
+                    
+                    <h4>研究方法</h4>
+                    <ol>
+                        <li>从fMRI数据构建功能脑网络</li>
+                        <li>提取网络拓扑特征和功能连接特征</li>
+                        <li>使用图卷积网络（GCN）进行疾病分类</li>
+                        <li>通过注意力机制识别关键异常脑区</li>
+                    </ol>
+                    
+                    <h4>关键发现</h4>
+                    <ul>
+                        <li>患者脑网络的模块化程度显著降低</li>
+                        <li>默认模式网络与其他网络的连接强度异常</li>
+                        <li>GCN模型分类准确率达到89.7%，优于传统方法</li>
+                        <li>识别出的关键脑区与已知的阿尔茨海默病病理区域一致</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="future" class="section">
+                <h2>未来展望与挑战</h2>
+                <div class="card">
+                    <h3><i class="fas fa-lightbulb"></i> 研究前沿与发展方向</h3>
+                    <p>计算机科学与复杂网络动力学的交叉研究正面临新的机遇与挑战，未来的重要方向包括：</p>
+                    
+                    <h4>1. 大规模网络的高效计算方法</h4>
+                    <p>随着网络规模增长（如社交网络可达数十亿节点），需要发展：
+                    <ul>
+                        <li>分布式图计算框架（如Pregel、GraphX）</li>
+                        <li>网络采样与近似算法</li>
+                        <li>基于GPU的并行模拟技术</li>
+                        <li>量子计算在网络优化问题中的应用</li>
+                    </ul>
+                    </p>
+                    
+                    <h4>2. 多尺度与多层网络建模</h4>
+                    <p>现实网络具有多尺度和多层特性，需要突破传统单一网络模型的局限：
+                    <ul>
+                        <li>跨尺度网络动力学耦合机制</li>
+                        <li>多层网络的涌现行为分析</li>
+                        <li>动态网络的时序建模方法</li>
+                    </ul>
+                    </p>
+                    
+                    <h4>3. 网络智能控制与干预</h4>
+                    <p>面向实际应用的网络调控技术：
+                    <ul>
+                        <li>基于强化学习的自适应网络控制</li>
+                        <li>鲁棒性与可控性的平衡优化</li>
+                        <li>网络攻击与防御的博弈模型</li>
+                    </ul>
+                    </p>
+                    
+                    <h4>4. 跨学科融合与应用</h4>
+                    <p>推动计算机科学方法在更多领域的应用：
+                    <ul>
+                        <li>生物网络与系统生物学</li>
+                        <li>气候网络与地球系统模拟</li>
+                        <li>能源网络与智能电网优化</li>
+                        <li>经济网络与金融风险防控</li>
+                    </ul>
+                    </p>
+                    
+                    <h4>5. 伦理与社会影响</h4>
+                    <p>网络技术发展带来的伦理挑战：
+                    <ul>
+                        <li>社交网络中的信息传播与舆论引导</li>
+                        <li>网络隐私保护与数据安全</li>
+                        <li>算法偏见与公平性问题</li>
+                    </ul>
+                    </p>
+                </div>
+            </section>
+
+            <a href="#" class="back-to-top" id="backToTop">
+                <i class="fas fa-arrow-up"></i>
+            </a>
+
+            <div class="card">
+                <a href="home.html" class="resource-link">首页</a>
+                <a href="Biology.html" class="resource-link">上一篇: 生物学基础</a>
+                <a href="SocialSciences.html" class="resource-link">下一篇: 社会学基础</a>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // 侧边栏切换
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // 回到顶部按钮
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // 在移动设备上点击导航后关闭侧边栏
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
