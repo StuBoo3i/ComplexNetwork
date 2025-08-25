@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>线性代数基础</title>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- 引入Prism.js语法高亮库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -674,32 +678,33 @@
 
                     <h4>Python代码示例：基因调控网络模拟</h4>
                     <div class="code-block">
-                        import numpy as np
-                        from scipy.linalg import expm
-                        import matplotlib.pyplot as plt
+<pre><code class="language-python">
+import numpy as np
+from scipy.linalg import expm
+import matplotlib.pyplot as plt
 
-                        # 定义调控矩阵
-                        A = np.array([[-0.5, 0.3],
-                                     [0.2, -0.4]])
+# 定义调控矩阵
+A = np.array([[-0.5, 0.3],
+             [0.2, -0.4]])
 
-                        # 初始条件
-                        x0 = np.array([1.0, 0.5])
+# 初始条件
+x0 = np.array([1.0, 0.5])
 
-                        # 时间点
-                        t = np.linspace(0, 20, 100)
+# 时间点
+t = np.linspace(0, 20, 100)
 
-                        # 模拟
-                        x = np.zeros((len(t), 2))
-                        for i, ti in enumerate(t):
-                            x[i] = expm(A * ti) @ x0
+# 模拟
+x = np.zeros((len(t), 2))
+for i, ti in enumerate(t):
+    x[i] = expm(A * ti) @ x0
 
-                        # 绘图
-                        plt.plot(t, x[:, 0], label='基因1')
-                        plt.plot(t, x[:, 1], label='基因2')
-                        plt.xlabel('时间')
-                        plt.ylabel('表达水平')
-                        plt.legend()
-                        plt.show()
+# 绘图
+plt.plot(t, x[:, 0], label='基因1')
+plt.plot(t, x[:, 1], label='基因2')
+plt.xlabel('时间')
+plt.ylabel('表达水平')
+plt.legend()
+plt.show()</code></pre>
                     </div>
                 </div>
 
@@ -719,76 +724,75 @@
                         \hat{A} = \arg\min_A \sum_{k=1}^N \|\dot{\mathbf{x}}(t_k) - A\mathbf{x}(t_k)\|^2
                         \]
                     </div>
-                </div>
 
-                <h4>定理4.3（最小二乘解）</h4>
-                <p>网络识别问题的最小二乘解为：</p>
-                <div class="formula-block">
-                    \[
-                    \hat{A} = YX^T(XX^T)^{-1}
-                    \]
-                </div>
-                <p>其中 \( X = [\mathbf{x}(t_1), \mathbf{x}(t_2), \ldots, \mathbf{x}(t_N)] \) 是数据矩阵，\( Y = [\dot{\mathbf{x}}(t_1), \dot{\mathbf{x}}(t_2), \ldots, \dot{\mathbf{x}}(t_N)] \) 是导数矩阵。</p>
-
-                <h4>正则化方法</h4>
-                <p>为解决高维小样本问题，可采用L1正则化（Lasso）：</p>
-                <div class="formula-block">
-                    \[
-                    \hat{A} = \arg\min_A \left( \sum_{k=1}^N \|\dot{\mathbf{x}}(t_k) - A\mathbf{x}(t_k)\|^2 + \lambda \|A\|_1 \right)
-                    \]
-                </div>
-                <p>其中 \( \lambda \geq 0 \) 是正则化参数，\( \|A\|_1 = \sum_{i,j} |A_{ij}| \) 是矩阵的L1范数。L1正则化可产生稀疏解，符合生物网络的稀疏特性。</p>
-            </div>
-            </section>
-
-            <section id="case-studies" class="section">
-                <h2>案例研究：线性代数在生物网络分析中的实践</h2>
-                
-                <div class="card">
-                    <h3><i class="fas fa-dna"></i> 案例1：大肠杆菌基因调控网络的稳定性分析</h3>
-                    <p>大肠杆菌的乳糖操纵子是基因调控的经典模型，由三个结构基因（lacZ、lacY、lacA）和调控元件组成。其简化的线性化模型的雅可比矩阵为：</p>
+                    <h4>定理4.3（最小二乘解）</h4>
+                    <p>网络识别问题的最小二乘解为：</p>
                     <div class="formula-block">
                         \[
-                        J = \begin{bmatrix}
-                        -\alpha & -\beta & 0 \\
-                        0 & -\gamma & -\delta \\
-                        \epsilon & 0 & -\zeta
-                        \end{bmatrix}
+                        \hat{A} = YX^T(XX^T)^{-1}
                         \]
                     </div>
-                    <p>通过计算特征值发现，所有特征值均为负数，表明该网络具有稳定的稳态，这与实验观察一致。进一步的特征向量分析揭示了网络的三个主要调控模式，分别对应于葡萄糖存在、乳糖存在和两者同时存在的情况。</p>
-                </div>
+                    <p>其中 \( X = [\mathbf{x}(t_1), \mathbf{x}(t_2), \ldots, \mathbf{x}(t_N)] \) 是数据矩阵，\( Y = [\dot{\mathbf{x}}(t_1), \dot{\mathbf{x}}(t_2), \ldots, \dot{\mathbf{x}}(t_N)] \) 是导数矩阵。</p>
 
-                <div class="card">
-                    <h3><i class="fas fa-vial"></i> 案例2：酵母蛋白质相互作用网络的模块识别</h3>
-                    <p>利用谱聚类方法分析酵母蛋白质相互作用网络，通过计算拉普拉斯矩阵的特征值和特征向量，成功识别出12个功能模块。其中最大的模块富集了与核糖体组装相关的蛋白质，第二大模块富集了与DNA修复相关的蛋白质。</p>
-                    <p>模块性分析表明，识别出的模块具有显著高于随机网络的模块性得分（0.72 vs 0.15），验证了方法的有效性。矩阵分解技术进一步揭示了模块之间的层级关系，构建了酵母蛋白质网络的功能层次结构。</p>
+                    <h4>正则化方法</h4>
+                    <p>为解决高维小样本问题，可采用L1正则化（Lasso）：</p>
+                    <div class="formula-block">
+                        \[
+                        \hat{A} = \arg\min_A \left( \sum_{k=1}^N \|\dot{\mathbf{x}}(t_k) - A\mathbf{x}(t_k)\|^2 + \lambda \|A\|_1 \right)
+                        \]
+                    </div>
+                    <p>其中 \( \lambda \geq 0 \) 是正则化参数，\( \|A\|_1 = \sum_{i,j} |A_{ij}| \) 是矩阵的L1范数。L1正则化可产生稀疏解，符合生物网络的稀疏特性。</p>
                 </div>
+                </section>
 
-                <div class="card">
-                    <h3><i class="fas fa-flask"></i> 案例3：癌细胞代谢网络的流量平衡分析</h3>
-                    <p>利用化学计量矩阵和线性规划方法，对肝癌细胞的中心碳代谢网络进行了流量平衡分析。通过求解 \( S\mathbf{v} = 0 \) 约束下的最大生物量生产问题，确定了癌细胞与正常肝细胞的代谢流量差异。</p>
-                    <p>结果显示，癌细胞中糖酵解途径的流量显著增加，而氧化磷酸化途径的流量减少，这与Warburg效应一致。通过奇异值分解识别出的关键反应节点为癌症治疗提供了潜在靶点。</p>
-                </div>
-            </section>
-
-            <section id="conclusion" class="section">
-                <h2>总结</h2>
-                <div class="card">
-                    <p>线性代数作为生物网络动力学研究的基础数学工具，为理解复杂生物系统的结构和功能提供了严谨的理论框架和有效的计算方法。从基因调控网络的稳定性分析到蛋白质相互作用网络的模块识别，从代谢网络的流量平衡分析到生物网络的逆向工程，线性代数的概念和方法贯穿于生物网络研究的各个方面。</p>
+                <section id="case-studies" class="section">
+                    <h2>案例研究</h2>
                     
-                    <p>随着高通量测序和质谱技术的发展，生物网络数据的规模和复杂度不断增加，对线性代数方法提出了新的挑战和机遇。未来的研究方向包括：</p>
-                    <ul>
-                        <li>开发适用于高维稀疏生物网络的高效矩阵分解算法</li>
-                        <li>将线性代数方法与机器学习相结合，提高网络推断的准确性</li>
-                        <li>构建多尺度生物网络模型，整合基因、蛋白质和代谢物水平的数据</li>
-                        <li>发展在线性框架下处理非线性生物网络动态的近似方法</li>
-                    </ul>
-                    
-                    <p>可以预期，线性代数与系统生物学的深度融合将为揭示生命活动的基本规律、理解疾病的发生机制以及开发新的治疗策略提供更加强大的工具和方法。</p>
-                </div>
-            </section>
+                    <div class="card">
+                        <h3><i class="fas fa-dna"></i> 案例1：大肠杆菌基因调控网络的稳定性分析</h3>
+                        <p>大肠杆菌的乳糖操纵子是基因调控的经典模型，由三个结构基因（lacZ、lacY、lacA）和调控元件组成。其简化的线性化模型的雅可比矩阵为：</p>
+                        <div class="formula-block">
+                            \[
+                            J = \begin{bmatrix}
+                            -\alpha & -\beta & 0 \\
+                            0 & -\gamma & -\delta \\
+                            \epsilon & 0 & -\zeta
+                            \end{bmatrix}
+                            \]
+                        </div>
+                        <p>通过计算特征值发现，所有特征值均为负数，表明该网络具有稳定的稳态，这与实验观察一致。进一步的特征向量分析揭示了网络的三个主要调控模式，分别对应于葡萄糖存在、乳糖存在和两者同时存在的情况。</p>
+                    </div>
 
+                    <div class="card">
+                        <h3><i class="fas fa-vial"></i> 案例2：酵母蛋白质相互作用网络的模块识别</h3>
+                        <p>利用谱聚类方法分析酵母蛋白质相互作用网络，通过计算拉普拉斯矩阵的特征值和特征向量，成功识别出12个功能模块。其中最大的模块富集了与核糖体组装相关的蛋白质，第二大模块富集了与DNA修复相关的蛋白质。</p>
+                        <p>模块性分析表明，识别出的模块具有显著高于随机网络的模块性得分（0.72 vs 0.15），验证了方法的有效性。矩阵分解技术进一步揭示了模块之间的层级关系，构建了酵母蛋白质网络的功能层次结构。</p>
+                    </div>
+
+                    <div class="card">
+                        <h3><i class="fas fa-flask"></i> 案例3：癌细胞代谢网络的流量平衡分析</h3>
+                        <p>利用化学计量矩阵和线性规划方法，对肝癌细胞的中心碳代谢网络进行了流量平衡分析。通过求解 \( S\mathbf{v} = 0 \) 约束下的最大生物量生产问题，确定了癌细胞与正常肝细胞的代谢流量差异。</p>
+                        <p>结果显示，癌细胞中糖酵解途径的流量显著增加，而氧化磷酸化途径的流量减少，这与Warburg效应一致。通过奇异值分解识别出的关键反应节点为癌症治疗提供了潜在靶点。</p>
+                    </div>
+                </section>
+
+                <section id="conclusion" class="section">
+                    <h2>总结</h2>
+                    <div class="card">
+                        <p>线性代数作为生物网络动力学研究的基础数学工具，为理解复杂生物系统的结构和功能提供了严谨的理论框架和有效的计算方法。从基因调控网络的稳定性分析到蛋白质相互作用网络的模块识别，从代谢网络的流量平衡分析到生物网络的逆向工程，线性代数的概念和方法贯穿于生物网络研究的各个方面。</p>
+                        
+                        <p>随着高通量测序和质谱技术的发展，生物网络数据的规模和复杂度不断增加，对线性代数方法提出了新的挑战和机遇。未来的研究方向包括：</p>
+                        <ul>
+                            <li>开发适用于高维稀疏生物网络的高效矩阵分解算法</li>
+                            <li>将线性代数方法与机器学习相结合，提高网络推断的准确性</li>
+                            <li>构建多尺度生物网络模型，整合基因、蛋白质和代谢物水平的数据</li>
+                            <li>发展在线性框架下处理非线性生物网络动态的近似方法</li>
+                        </ul>
+                        
+                        <p>可以预期，线性代数与系统生物学的深度融合将为揭示生命活动的基本规律、理解疾病的发生机制以及开发新的治疗策略提供更加强大的工具和方法。</p>
+                    </div>
+                </section>
+            </div>
             <a href="#" class="back-to-top" id="backToTop">
                 <i class="fas fa-arrow-up"></i>
             </a>

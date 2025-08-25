@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微分方程与动力系统：复杂网络动力学建模</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --light-gray: #ecf0f1;
+            --dark-gray: #7f8c8d;
+            --accent-color: #e74c3c;
+            --sidebar-width: 280px;
+            --transition: all 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            overflow-x: hidden;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-color);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .nav-list {
+            list-style: none;
+        }
+        .nav-item {
+            margin-bottom: 0.8rem;
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        .nav-link i {
+            margin-right: 10px;
+            min-width: 24px;
+            text-align: center;
+        }
+        .nav-sub-item {
+            margin-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .nav-sub-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .nav-sub-link:hover {
+            color: white;
+        }
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            max-width: 1200px;
+            margin-right: auto;
+        }
+        .section {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.5s ease;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        /* Cards for sections */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        /* Formula Block */
+        .formula-block {
+            margin: 1.5rem 0;
+            padding: 0.5rem 1rem;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        /* Code Block */
+        .code-block {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+        }
+        /* Table styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        .comparison-table th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+        .comparison-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 2000;
+                background-color: var(--secondary-color);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+            .card {
+                padding: 1.2rem;
+            }
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 8px 10px;
+            }
+        }
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            transition: var(--transition);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+        /* Sub-list Style */
+        .sub-list {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>网络动力学建模</h2>
+            </div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#intro" class="nav-link"><i class="fas fa-book-open"></i> 引言</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#differential-equations" class="nav-link"><i class="fas fa-calculator"></i> 微分方程基础</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#ode" class="nav-sub-link">常微分方程</a></li>
+                        <li class="nav-sub-item"><a href="#pde" class="nav-sub-link">偏微分方程</a></li>
+                        <li class="nav-sub-item"><a href="#stability" class="nav-sub-link">稳定性理论</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#network-dynamics" class="nav-link"><i class="fas fa-project-diagram"></i> 网络动力学模型</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#coupled-oscillators" class="nav-sub-link">耦合振子网络</a></li>
+                        <li class="nav-sub-item"><a href="#neural-networks" class="nav-sub-link">神经网络模型</a></li>
+                        <li class="nav-sub-item"><a href="#epidemic-models" class="nav-sub-link">传染病传播模型</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#analysis-methods" class="nav-link"><i class="fas fa-flask"></i> 分析方法与工具</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#linear-stability" class="nav-sub-link">线性稳定性分析</a></li>
+                        <li class="nav-sub-item"><a href="#lyapunov" class="nav-sub-link">Lyapunov函数方法</a></li>
+                        <li class="nav-sub-item"><a href="#numerical-simulation" class="nav-sub-link">数值模拟技术</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#applications" class="nav-link"><i class="fas fa-industry"></i> 应用研究</a>
+                    <ul>
+                        <li class="nav-sub-item"><a href="#synchronization" class="nav-sub-link">同步现象分析</a></li>
+                        <li class="nav-sub-item"><a href="#consensus" class="nav-sub-link">群体共识动力学</a></li>
+                        <li class="nav-sub-item"><a href="#control" class="nav-sub-link">网络控制策略</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#conclusion" class="nav-link"><i class="fas fa-flag-checkered"></i> 结论与展望</a>
+                </li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <section id="intro" class="section">
+                <h1>微分方程与动力系统：复杂网络动力学建模</h1>
+                <div class="card">
+                    <p>微分方程与动力系统理论为描述和分析复杂网络中的动态行为提供了坚实的数学基础。从物理系统中的同步现象到生物网络中的信息传递，从社会网络中的观点演化到技术网络中的故障传播，动力系统模型都扮演着不可或缺的角色。</p>
+                    <p>本研究报告系统阐述微分方程理论在复杂网络动力学建模中的核心应用，深入分析网络拓扑结构与动态行为之间的内在关联，探讨同步、共识、传播等典型动力学现象的数学描述与分析方法，并通过具体案例展示理论模型在实际系统中的应用价值。</p>
+                </div>
+            </section>
+
+            <section id="differential-equations" class="section">
+                <h2>微分方程基础理论</h2>
+                <p>微分方程是描述系统状态随时间演化的数学工具，通过建立状态变量的变化率与状态变量本身的关系，刻画系统的动态行为。在复杂网络研究中，常微分方程(ODE)和偏微分方程(PDE)被广泛用于建模节点动态与网络交互过程。</p>
+
+                <div id="ode" class="card">
+                    <h3><i class="fas fa-clock-rotate-left"></i> 常微分方程理论</h3>
+                    
+                    <h4>定义2.1（常微分方程）</h4>
+                    <p>常微分方程是含有未知函数及其导数的等式，描述函数随单一自变量（通常是时间）的变化率。对于一个具有 \( n \) 个状态变量的系统，一阶常微分方程组可表示为：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{dx_i}{dt} = f_i(x_1, x_2, \ldots, x_n, t), \quad i = 1, 2, \ldots, n
+                        \]
+                    </div>
+                    <p>其中 \( x_i(t) \) 是状态变量，\( f_i \) 是关于状态变量和时间的函数。若函数 \( f_i \) 不显含时间 \( t \)，则称为自治系统：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{dx_i}{dt} = f_i(x_1, x_2, \ldots, x_n), \quad i = 1, 2, \ldots, n
+                        \]
+                    </div>
+
+                    <h4>定义2.2（解与流）</h4>
+                    <p>对于初值问题 \( \dot{x} = f(x) \)，\( x(0) = x_0 \)，若存在函数 \( \phi(t, x_0) \) 满足：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{d}{dt}\phi(t, x_0) = f(\phi(t, x_0)), \quad \phi(0, x_0) = x_0
+                        \]
+                    </div>
+                    <p>则称 \( \phi(t, x_0) \) 为该初值问题的解。映射 \( \phi_t(x_0) = \phi(t, x_0) \) 称为由向量场 \( f \) 生成的流。</p>
+
+                    <h4>定理2.1（存在唯一性定理）</h4>
+                    <p>若函数 \( f(x) \) 在包含 \( x_0 \) 的开集上连续且关于 \( x \) 满足Lipschitz条件，则初值问题 \( \dot{x} = f(x) \)，\( x(0) = x_0 \) 在某个区间 \( (-a, a) \) 上存在唯一解。</p>
+
+                    <h4>证明思路</h4>
+                    <p>通过构造Picard迭代序列：</p>
+                    <div class="formula-block">
+                        \[
+                        \phi_{n+1}(t) = x_0 + \int_0^t f(\phi_n(s)) ds
+                        \]
+                    </div>
+                    <p>证明该序列一致收敛到唯一解，利用Lipschitz条件保证收敛性和唯一性。</p>
+                </div>
+
+                <div id="pde" class="card">
+                    <h3><i class="fas fa-waves"></i> 偏微分方程理论</h3>
+                    
+                    <h4>定义2.3（偏微分方程）</h4>
+                    <p>偏微分方程是含有未知多元函数及其偏导数的等式，描述函数随多个自变量的变化率关系。在网络动力学中，常用的偏微分方程形式包括：</p>
+                    
+                    <h4>1. 扩散方程</h4>
+                    <p>描述物质或信息在网络中的扩散过程：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{\partial u(x, t)}{\partial t} = D \Delta u(x, t) + f(u(x, t))
+                        \]
+                    </div>
+                    <p>其中 \( D \) 是扩散系数，\( \Delta \) 是拉普拉斯算子，\( f(u) \) 是非线性反应项。</p>
+                    
+                    <h4>2. 波动方程</h4>
+                    <p>描述网络中扰动的传播：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{\partial^2 u(x, t)}{\partial t^2} = c^2 \Delta u(x, t)
+                        \]
+                    </div>
+                    <p>其中 \( c \) 是波速。</p>
+                    
+                    <h4>3. 反应-扩散方程</h4>
+                    <p>结合反应动力学与扩散过程：</p>
+                    <div class="formula-block">
+                        \[
+                        \frac{\partial u_i}{\partial t} = D_i \Delta u_i + f_i(u_1, u_2, \ldots, u_n), \quad i = 1, 2, \ldots, n
+                        \]
+                    </div>
+                    <p>在复杂网络中，空间变量 \( x \) 可离散化为网络节点，拉普拉斯算子可替换为网络拉普拉斯矩阵。</p>
+                </div>
+
+                <div id="stability" class="card">
+                    <h3><i class="fas fa-balance-scale"></i> 稳定性理论基础</h3>
+                    
+                    <h4>定义2.4（平衡点）</h4>
+                    <p>对于自治系统 \( \dot{x} = f(x) \)，若存在 \( x^* \) 满足 \( f(x^*) = 0 \)，则称 \( x^* \) 为系统的平衡点。</p>
+                    
+                    <h4>定义2.5（Lyapunov稳定性）</h4>
+                    <p>平衡点 \( x^* \) 是Lyapunov稳定的，若对任意 \( \epsilon > 0 \)，存在 \( \delta > 0 \)，使得当 \( \|x(0) - x^*\| < \delta \) 时，对所有 \( t \geq 0 \) 有 \( \|x(t) - x^*\| < \epsilon \)。</p>
+                    
+                    <h4>定义2.6（渐近稳定性）</h4>
+                    <p>平衡点 \( x^* \) 是渐近稳定的，若它是Lyapunov稳定的，且存在 \( \delta > 0 \)，使得当 \( \|x(0) - x^*\| < \delta \) 时，有 \( \lim_{t \to \infty} x(t) = x^* \)。</p>
+                    
+                    <h4>定理2.2（线性化稳定性定理）</h4>
+                    <p>考虑系统 \( \dot{x} = f(x) \) 在平衡点 \( x^* \) 处的线性化：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{y} = J(x^*) y
+                        \]
+                    </div>
+                    <p>其中 \( J(x^*) \) 是Jacobi矩阵。若 \( J(x^*) \) 的所有特征值实部均为负，则 \( x^* \) 是渐近稳定的；若存在特征值实部为正，则 \( x^* \) 是不稳定的。</p>
+                    
+                    <h4>定理2.3（Lyapunov直接法）</h4>
+                    <p>若存在连续可微函数 \( V(x) \) 满足：
+                    <ol>
+                        <li> \( V(x^*) = 0 \)</li>
+                        <li> \( V(x) > 0 \) 对所有 \( x \neq x^* \)</li>
+                        <li> \( \dot{V}(x) \leq 0 \) 对所有 \( x \)（沿系统轨迹的导数）</li>
+                    </ol>
+                    则 \( x^* \) 是Lyapunov稳定的。若进一步有 \( \dot{V}(x) < 0 \) 对所有 \( x \neq x^* \)，则 \( x^* \) 是渐近稳定的。</p>
+                </div>
+            </section>
+
+            <section id="network-dynamics" class="section">
+                <h2>复杂网络动力学模型</h2>
+                <p>复杂网络动力学模型通过结合节点动态方程与网络拓扑结构，描述群体行为的涌现过程。根据节点动态特性与耦合方式的不同，可分为耦合振子网络、神经网络、传染病模型等多种类型，每种模型都有其独特的数学表达与动力学特征。</p>
+
+                <div id="coupled-oscillators" class="card">
+                    <h3><i class="fas fa-wave-square"></i> 耦合振子网络模型</h3>
+                    
+                    <h4>定义3.1（Kuramoto模型）</h4>
+                    <p>Kuramoto模型描述一组耦合相位振子的同步行为：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{\theta}_i = \omega_i + \frac{K}{N} \sum_{j=1}^N a_{ij} \sin(\theta_j - \theta_i), \quad i = 1, 2, \ldots, N
+                        \]
+                    </div>
+                    <p>其中：
+                    <ul>
+                        <li> \( \theta_i(t) \) 是第 \( i \) 个振子的相位</li>
+                        <li> \( \omega_i \) 是振子的固有频率</li>
+                        <li> \( K \) 是耦合强度</li>
+                        <li> \( a_{ij} \) 是邻接矩阵元素（\( a_{ij}=1 \) 表示节点 \( i \) 与 \( j \) 相连）</li>
+                        <li> \( N \) 是网络节点总数</li>
+                    </ul>
+                    </p>
+                    
+                    <h4>定理3.1（完全同步条件）</h4>
+                    <p>对于全局耦合的Kuramoto模型（\( a_{ij}=1 \) 对所有 \( i,j \)），当耦合强度满足：</p>
+                    <div class="formula-block">
+                        \[
+                        K > 2 \sigma_\omega
+                        \]
+                    </div>
+                    <p>时，系统将达到完全同步状态，其中 \( \sigma_\omega \) 是固有频率分布的标准差。</p>
+                    
+                    <h4>定义3.2（Lorenz振子网络）</h4>
+                    <p>耦合Lorenz系统可描述为：</p>
+                    <div class="formula-block">
+                        \[
+                        \begin{cases}
+                        \dot{x}_i = \sigma(y_i - x_i) + c \sum_{j=1}^N a_{ij}(x_j - x_i) \\
+                        \dot{y}_i = x_i(\rho - z_i) - y_i \\
+                        \dot{z}_i = x_i y_i - \beta z_i
+                        \end{cases}
+                        \quad i = 1, 2, \ldots, N
+                        \]
+                    </div>
+                    <p>其中 \( \sigma, \rho, \beta \) 是Lorenz系统参数，\( c \) 是耦合强度。</p>
+                </div>
+
+                <div id="neural-networks" class="card">
+                    <h3><i class="fas fa-brain"></i> 神经网络动力学模型</h3>
+                    
+                    <h4>定义3.3（Hopfield神经网络）</h4>
+                    <p>离散时间Hopfield网络动力学方程：</p>
+                    <div class="formula-block">
+                        \[
+                        s_i(t+1) = \text{sgn}\left( \sum_{j=1}^N w_{ij} s_j(t) - \theta_i \right)
+                        \]
+                    </div>
+                    <p>其中 \( s_i \in \{+1, -1\} \) 是神经元状态，\( w_{ij} \) 是连接权重，\( \theta_i \) 是阈值，\( \text{sgn} \) 是符号函数。</p>
+                    
+                    <h4>定义3.4（连续时间神经网络）</h4>
+                    <p>连续时间递归神经网络模型：</p>
+                    <div class="formula-block">
+                        \[
+                        \tau_i \dot{x}_i = -x_i + \sum_{j=1}^N w_{ij} \sigma(x_j) + I_i
+                        \]
+                    </div>
+                    <p>其中：
+                    <ul>
+                        <li> \( x_i \) 是神经元 \( i \) 的状态变量</li>
+                        <li> \( \tau_i \) 是时间常数</li>
+                        <li> \( w_{ij} \) 是连接权重</li>
+                        <li> \( \sigma(\cdot) \) 是激活函数（通常为Sigmoid函数）</li>
+                        <li> \( I_i \) 是外部输入</li>
+                    </ul>
+                    </p>
+                    
+                    <h4>定义3.5（脉冲耦合神经网络）</h4>
+                    <p>脉冲耦合神经元模型：</p>
+                    <div class="formula-block">
+                        \[
+                        \tau \frac{dV_i}{dt} = -V_i + \sum_{j=1}^N w_{ij} \sum_{t_j^k < t} \delta(t - t_j^k - \Delta)
+                        \]
+                    </div>
+                    <p>当 \( V_i(t) \geq \theta \) 时，神经元发放脉冲 \( t_i^k \)，并重置 \( V_i(t_i^k^+) = 0 \)。</p>
+                </div>
+
+                <div id="epidemic-models" class="card">
+                    <h3><i class="fas fa-virus"></i> 网络传染病传播模型</h3>
+                    
+                    <h4>定义3.6（SIS模型）</h4>
+                    <p>易感-感染-易感模型描述可重复感染的疾病传播：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{s}_i = -\beta s_i \sum_{j=1}^N a_{ij} i_j + \gamma i_i
+                        \]
+                        \[
+                        \dot{i}_i = \beta s_i \sum_{j=1}^N a_{ij} i_j - \gamma i_i
+                        \]
+                    </div>
+                    <p>其中 \( s_i + i_i = 1 \)，\( \beta \) 是感染率，\( \gamma \) 是恢复率。</p>
+                    
+                    <h4>定义3.7（SIR模型）</h4>
+                    <p>易感-感染-恢复模型：</p>
+                    <div class="formula-block">
+                        \[
+                        \begin{cases}
+                        \dot{s}_i = -\beta s_i \sum_{j=1}^N a_{ij} i_j \\
+                        \dot{i}_i = \beta s_i \sum_{j=1}^N a_{ij} i_j - \gamma i_i \\
+                        \dot{r}_i = \gamma i_i
+                        \end{cases}
+                        \]
+                    </div>
+                    <p>其中 \( s_i + i_i + r_i = 1 \)，\( r_i \) 是恢复者比例。</p>
+                    
+                    <h4>定理3.2（传染病阈值定理）</h4>
+                    <p>网络传染病模型的基本再生数 \( R_0 \) 满足：</p>
+                    <div class="formula-block">
+                        \[
+                        R_0 = \frac{\beta}{\gamma} \lambda_{\text{max}}
+                        \]
+                    </div>
+                    <p>其中 \( \lambda_{\text{max}} \) 是网络邻接矩阵的最大特征值。当 \( R_0 > 1 \) 时，传染病可能爆发；当 \( R_0 < 1 \) 时，传染病将逐渐消亡。</p>
+                </div>
+            </section>
+
+            <section id="analysis-methods" class="section">
+                <h2>网络动力学分析方法与工具</h2>
+                <p>复杂网络动力学系统的分析需要结合数学理论与数值计算方法。线性稳定性分析、Lyapunov函数方法、分岔理论等解析工具与数值模拟技术相辅相成，共同揭示网络动态行为的规律与机制。</p>
+
+                <div id="linear-stability" class="card">
+                    <h3><i class="fas fa-chart-line"></i> 线性稳定性分析方法</h3>
+                    
+                    <h4>定义4.1（同步流形）</h4>
+                    <p>对于耦合动力系统，同步流形定义为：</p>
+                    <div class="formula-block">
+                        \[
+                        \mathcal{S} = \{ (x_1, x_2, \ldots, x_N) \in \mathbb{R}^{nN} \mid x_1 = x_2 = \cdots = x_N \}
+                        \]
+                    </div>
+                    <p>即所有节点状态相同的集合。</p>
+                    
+                    <h4>定理4.1（主稳定性函数方法）</h4>
+                    <p>对于对称耦合网络，同步流形的稳定性可通过主稳定性函数(MSF)分析。将系统在同步流形附近线性化，特征方程可分解为：</p>
+                    <div class="formula-block">
+                        \[
+                        \det( \dot{X} - (\alpha + \lambda_k \beta) I ) = 0
+                        \]
+                    </div>
+                    <p>其中 \( \lambda_k \) 是网络拉普拉斯矩阵的特征值，\( \alpha, \beta \) 是与节点动力学相关的参数矩阵。</p>
+                    
+                    <h4>算法4.1（线性稳定性分析步骤）</h4>
+                    <ol>
+                        <li>确定系统的平衡点或同步流形</li>
+                        <li>在平衡点处进行线性化，得到Jacobian矩阵</li>
+                        <li>计算Jacobian矩阵的特征值</li>
+                        <li>根据特征值实部判断稳定性：
+                            <ul class="sub-list">
+                                <li>所有特征值实部 < 0：渐近稳定</li>
+                                <li>存在特征值实部 > 0：不稳定</li>
+                                <li>部分特征值实部 = 0：需要进一步分析</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+
+                <div id="lyapunov" class="card">
+                    <h3><i class="fas fa-shield"></i> Lyapunov函数方法</h3>
+                    
+                    <h4>定义4.2（网络Lyapunov函数）</h4>
+                    <p>对于网络动力学系统，可构造如下形式的Lyapunov函数：</p>
+                    <div class="formula-block">
+                        \[
+                        V = \sum_{i=1}^N V_i(x_i) + \sum_{i < j} a_{ij} W(x_i, x_j)
+                        \]
+                    </div>
+                    <p>其中 \( V_i \) 是节点Lyapunov函数，\( W \) 是耦合项Lyapunov函数。</p>
+                    
+                    <h4>定理4.2（网络同步的Lyapunov判据）</h4>
+                    <p>若存在Lyapunov函数 \( V \) 满足：
+                    <div class="formula-block">
+                        \[
+                        \dot{V} \leq -c \sum_{i=1}^N \|x_i - s\|^2
+                        \]
+                    </div>
+                    其中 \( c > 0 \) 是常数，\( s \) 是同步状态，则网络将收敛到同步流形。</p>
+                    
+                    <h4>实例4.1（耦合系统的Lyapunov函数构造）</h4>
+                    <p>对于耦合振子系统，可构造如下Lyapunov函数：</p>
+                    <div class="formula-block">
+                        \[
+                        V = \frac{1}{2} \sum_{i=1}^N (\theta_i - \bar{\theta})^2
+                        \]
+                    </div>
+                    <p>其中 \( \bar{\theta} = \frac{1}{N} \sum_{i=1}^N \theta_i \) 是平均相位。计算其导数可分析同步趋势。</p>
+                </div>
+
+                <div id="numerical-simulation" class="card">
+                    <h3><i class="fas fa-laptop-code"></i> 数值模拟技术</h3>
+                    
+                    <h4>算法4.2（龙格-库塔方法）</h4>
+                    <p>四阶龙格-库塔(RK4)方法求解 \( \dot{x} = f(x, t) \)：</p>
+                    <div class="formula-block">
+                        \[
+                        \begin{cases}
+                        k_1 = f(x_n, t_n) \\
+                        k_2 = f(x_n + h k_1 / 2, t_n + h / 2) \\
+                        k_3 = f(x_n + h k_2 / 2, t_n + h / 2) \\
+                        k_4 = f(x_n + h k_3, t_n + h) \\
+                        x_{n+1} = x_n + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)
+                        \end{cases}
+                        \]
+                    </div>
+                    <p>其中 \( h \) 是时间步长。</p>
+                    
+                    <h4>代码示例4.1（Kuramoto模型数值模拟）</h4>
+                    <div class="code-block">
+                        import numpy as np
+                        import matplotlib.pyplot as plt
+
+                        def kuramoto(t, theta, omega, A, K):
+                            """Kuramoto模型的导数函数"""
+                            N = len(theta)
+                            dtheta = np.zeros(N)
+                            for i in range(N):
+                                sum_couple = 0
+                                for j in range(N):
+                                    sum_couple += A[i,j] * np.sin(theta[j] - theta[i])
+                                dtheta[i] = omega[i] + (K/N) * sum_couple
+                            return dtheta
+
+                        def rk4_step(f, t, x, h, *args):
+                            """单步RK4方法"""
+                            k1 = f(t, x, *args)
+                            k2 = f(t + h/2, x + h*k1/2, *args)
+                            k3 = f(t + h/2, x + h*k2/2, *args)
+                            k4 = f(t + h, x + h*k3, *args)
+                            return x + h*(k1 + 2*k2 + 2*k3 + k4)/6
+
+                        # 参数设置
+                        N = 50  # 节点数
+                        K = 4.0  # 耦合强度
+                        T = 100  # 总模拟时间
+                        h = 0.01  # 时间步长
+                        t = np.arange(0, T, h)
+
+                        # 生成随机频率和邻接矩阵
+                        omega = np.random.normal(0, 1, N)
+                        A = np.random.rand(N, N) < 0.2  # 随机网络
+                        A = A.astype(float)
+                        np.fill_diagonal(A, 0)  # 无自环
+
+                        # 初始相位
+                        theta0 = np.random.uniform(0, 2*np.pi, N)
+                        theta = np.zeros((len(t), N))
+                        theta[0] = theta0
+
+                        # 数值积分
+                        for i in range(len(t)-1):
+                            theta[i+1] = rk4_step(kuramoto, t[i], theta[i], h, omega, A, K)
+
+                        # 计算序参量
+                        r = np.abs(np.mean(np.exp(1j*theta), axis=1))
+
+                        # 绘图
+                        plt.figure(figsize=(12, 4))
+                        plt.plot(t, r)
+                        plt.xlabel('时间')
+                        plt.ylabel('序参量 r')
+                        plt.title('Kuramoto模型同步过程')
+                        plt.grid(True)
+                        plt.show()
+                    </div>
+                    
+                    <h4>算法4.3（网络分岔分析方法）</h4>
+                    <ol>
+                        <li>选择关键参数（如耦合强度）作为分岔参数</li>
+                        <li>对参数空间进行扫描，在每个参数值处：
+                            <ul class="sub-list">
+                                <li>运行数值模拟至稳态</li>
+                                <li>记录系统的关键特征量（如同步误差、周期等）</li>
+                            </ul>
+                        </li>
+                        <li>绘制分岔图，识别分岔点与动力学状态转变</li>
+                        <li>结合特征值分析验证分岔类型</li>
+                    </ol>
+                </div>
+            </section>
+
+            <section id="applications" class="section">
+                <h2>网络动力学建模的应用研究</h2>
+                <p>微分方程与动力系统理论在复杂网络中的应用广泛覆盖自然科学与工程技术领域。同步现象分析、群体共识达成、网络控制策略设计等研究不仅深化了对复杂系统行为的理解，也为实际问题的解决提供了理论指导。</p>
+
+                <div id="synchronization" class="card">
+                    <h3><i class="fas fa-sync"></i> 同步现象分析与应用</h3>
+                    
+                    <h4>定义5.1（完全同步）</h4>
+                    <p>网络中所有节点达到完全同步状态当且仅当：</p>
+                    <div class="formula-block">
+                        \[
+                        \lim_{t \to \infty} \|x_i(t) - x_j(t)\| = 0 \quad \forall i, j
+                        \]
+                    </div>
+                    
+                    <h4>定义5.2（相位同步）</h4>
+                    <p>对于振子网络，相位同步指振子频率锁定但振幅可能不同：</p>
+                    <div class="formula-block">
+                        \[
+                        \lim_{t \to \infty} (\theta_i(t) - \theta_j(t)) = \text{常数} \quad \forall i, j
+                        \]
+                    </div>
+                    
+                    <h4>定理5.1（网络同步能力）</h4>
+                    <p>网络的同步能力由其拉普拉斯矩阵的特征值谱决定。对于耦合强度 \( c \)，同步条件为：</p>
+                    <div class="formula-block">
+                        \[
+                        c > \frac{\lambda_{\text{max}}(L)}{\lambda_{\text{min}}(L)} c_0
+                        \]
+                    </div>
+                    <p>其中 \( c_0 \) 是单个节点系统的临界耦合强度，\( \lambda_{\text{max}}(L) \) 和 \( \lambda_{\text{min}}(L) \) 分别是拉普拉斯矩阵的最大和最小非零特征值。</p>
+                    
+                    <h4>应用实例5.1（电力网络同步）</h4>
+                    <p>电力网络中的同步问题可建模为：</p>
+                    <div class="formula-block">
+                        \[
+                        M_i \ddot{\theta}_i + D_i \dot{\theta}_i = P_i - \sum_{j=1}^N B_{ij} \sin(\theta_i - \theta_j)
+                        \]
+                    </div>
+                    <p>其中 \( M_i \) 是转动惯量，\( D_i \) 是阻尼系数，\( P_i \) 是功率注入，\( B_{ij} \) 是线路导纳。保持相位同步是电力系统稳定运行的关键。</p>
+                </div>
+
+                <div id="consensus" class="card">
+                    <h3><i class="fas fa-users"></i> 群体共识动力学</h3>
+                    
+                    <h4>定义5.3（一致性协议）</h4>
+                    <p>基本一致性协议描述为：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{x}_i(t) = \sum_{j=1}^N a_{ij}(x_j(t) - x_i(t)), \quad i = 1, 2, \ldots, N
+                        \]
+                    </div>
+                    <p>其中 \( x_i(t) \) 是智能体 \( i \) 的状态。</p>
+                    
+                    <h4>定理5.2（一致性收敛条件）</h4>
+                    <p>若网络是连通的，则对于任意初始状态，一致性协议将收敛到共识状态：</p>
+                    <div class="formula-block">
+                        \[
+                        \lim_{t \to \infty} x_i(t) = \frac{1}{N} \sum_{j=1}^N x_j(0)
+                        \]
+                    </div>
+                    <p>即所有智能体收敛到初始状态的平均值。</p>
+                    
+                    <h4>定义5.4（带时滞的一致性协议）</h4>
+                    <p>考虑通信时滞的一致性协议：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{x}_i(t) = \sum_{j=1}^N a_{ij}(x_j(t - \tau) - x_i(t - \tau))
+                        \]
+                    </div>
+                    <p>其中 \( \tau \) 是通信时滞。</p>
+                    
+                    <h4>定理5.3（时滞临界值）</h4>
+                    <p>带时滞的一致性协议保持稳定的最大时滞 \( \tau_{\text{max}} \) 满足：</p>
+                    <div class="formula-block">
+                        \[
+                        \tau_{\text{max}} = \frac{\pi}{2 \lambda_{\text{max}}(L)}
+                        \]
+                    </div>
+                    <p>其中 \( \lambda_{\text{max}}(L) \) 是网络拉普拉斯矩阵的最大特征值。</p>
+                </div>
+
+                <div id="control" class="card">
+                    <h3><i class="fas fa-sliders"></i> 网络控制策略设计</h3>
+                    
+                    <h4>定义5.5（牵制控制）</h4>
+                    <p>对网络中的部分节点施加控制输入以实现全局同步：</p>
+                    <div class="formula-block">
+                        \[
+                        \dot{x}_i = f(x_i) + c \sum_{j=1}^N a_{ij}(x_j - x_i) + u_i
+                        \]
+                    </div>
+                    <p>其中控制输入 \( u_i \) 仅对被选中的节点非零：</p>
+                    <div class="formula-block">
+                        \[
+                        u_i = -k(x_i - s(t)) \quad \text{若 } i \in \mathcal{C}, \quad u_i = 0 \text{ 否则}
+                        \]
+                    </div>
+                    <p>这里 \( \mathcal{C} \) 是受控节点集合，\( s(t) \) 是目标同步状态，\( k \) 是控制增益。</p>
+                    
+                    <h4>定理5.4（最优控制节点选择）</h4>
+                    <p>为实现网络同步，应优先选择对应于拉普拉斯矩阵最大特征值的特征向量中分量较大的节点进行控制。</p>
+                    
+                    <h4>应用实例5.2（传染病控制模型）</h4>
+                    <p>考虑控制措施的SIR模型：</p>
+                    <div class="formula-block">
+                        \[
+                        \begin{cases}
+                        \dot{s}_i = -\beta s_i \sum_{j=1}^N a_{ij} i_j - u_i s_i \\
+                        \dot{i}_i = \beta s_i \sum_{j=1}^N a_{ij} i_j - \gamma i_i \\
+                        \dot{r}_i = \gamma i_i + u_i s_i
+                        \end{cases}
+                        \]
+                    </div>
+                    <p>其中 \( u_i \) 是节点 \( i \) 的疫苗接种率，控制目标是最小化感染人数和控制成本的加权和。</p>
+                </div>
+            </section>
+
+            <section id="conclusion" class="section">
+                <h2>结论与展望</h2>
+                <div class="card">
+                    <p>微分方程与动力系统理论为复杂网络的动力学建模提供了系统性的数学框架，从基本的耦合振子模型到复杂的神经网络系统，从稳定性分析到控制策略设计，这些理论工具深刻揭示了网络拓扑与动态行为之间的关联规律。</p>
+                    
+                    <p>未来研究方向主要包括：</p>
+                    <ul>
+                        <li><strong>时变网络动力学</strong>：发展适应网络结构动态演化的建模方法，研究拓扑与动力学的共演化机制</li>
+                        <li><strong>多尺度网络模型</strong>：建立跨尺度耦合的网络动力学模型，揭示微观节点行为与宏观系统功能的关联</li>
+                        <li><strong>数据驱动的建模方法</strong>：结合机器学习与动力系统理论，发展基于实测数据的网络动力学模型辨识技术</li>
+                        <li><strong>鲁棒控制策略</strong>：研究在不确定性环境下的网络动力学控制方法，提高系统的抗干扰能力</li>
+                    </ul>
+                    
+                    <p>随着大数据技术与高性能计算的发展，微分方程与动力系统理论在复杂网络研究中的应用将更加广泛，为解决实际复杂系统中的关键问题提供更加强有力的理论支持。</p>
+                </div>
+            </section>
+
+            <a href="#" class="back-to-top" id="backToTop">
+                <i class="fas fa-arrow-up"></i>
+            </a>
+        </main>
+    </div>
+
+    <script>
+        // 侧边栏切换
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // 点击主内容区域关闭侧边栏（移动端）
+        const mainContent = document.querySelector('.main-content');
+        mainContent.addEventListener('click', () => {
+            if (window.innerWidth <= 1024 && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+        
+        // 回到顶部按钮
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // 在移动端点击导航后关闭侧边栏
+                    if (window.innerWidth <= 1024 && sidebar.classList.contains('active')) {
+                        sidebar.classList.remove('active');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
